@@ -24,12 +24,12 @@ void loop() {
 
   if (pos == 1000) {
     motorDirection = 1;
-    motorSpeed = 105;
+    motorSpeed = 150;
   }
   
   if (pos == 0) {
     motorDirection = 0;
-    motorSpeed = 130;
+    motorSpeed = 190;
   }
 
   if (motorDirection == 1) {
