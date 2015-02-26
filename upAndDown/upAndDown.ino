@@ -3,6 +3,10 @@ int dir1 = 2;
 int dir2 = 8;
 int motor = 11;
 int pos = 0;
+int touch = 7;
+int touchVal = 0;
+int touchValAvg = 0;
+int touchCount = 0;
 
 int motorEnabled = 1;
 int motorDirection = 0;
@@ -15,13 +19,37 @@ void setup() {
   pinMode(dir1, OUTPUT);
   pinMode(dir2, OUTPUT);
   pinMode(motor, OUTPUT);
+  pinMode(touch,INPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   pos = map(analogRead(pot),0,1023,0,1000);
-  Serial.println(pos);
+  touchVal = digitalRead(touch);
+ // Serial.println(pos);
+ // Serial.println(touchVal);
 
+//***********Buffer for touch input*******************
+  
+  if (touchCount == 10){
+    
+    //touchValAvg = touchValAvg/10;
+    if (touchValAvg < 3){
+      Serial.println("Touch");
+      //Serial.println(touchValAvg);
+    }
+    
+    touchValAvg = 0;
+    touchCount = 0;
+    
+  }
+  
+  touchValAvg = touchVal + touchValAvg;
+  
+  touchCount = touchCount + 1;
+  
+  
+//******************************************************
   if (pos == 1000) {
     motorDirection = 1;
     motorSpeed = 150;
