@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+  	<meta charset="utf-8">
+		<script src="jquery-1.8.3.min.js"></script>
+		<script src="main.js"></script>
+		<link rel="stylesheet" href="jquery.range.css">
+		<link rel="stylesheet" href="font-awesome-4.1.0/css/font-awesome.min.css">
+		
+		<style>
+			html {
+				margin-top: 300px;
+			}
+			body {
+				margin-top: 50px;
+			}
+			.content {
+				width: 500px;
+				margin: 0 auto;
+				text-align: center;
+			}
+			button {
+				width: 100px;
+				padding: 15px;
+				margin:10px;
+				font-size: 20px;
+				background: #776693;
+				border: 1px solid rgb(178, 168, 205);
+				color: #fff;
+				cursor: pointer;
+			}
+			button:hover {
+				background: #524567;
+			}
+			button:focus {
+				outline: 0;
+			}
+			button:focus:active {
+				box-shadow: inset 1px -4px 13px #3D324F;
+			}
+			.slider-container {
+				width: 100% !important;
+				margin: 50px 0;
+			}
+			i.fa {
+				color: #776693;
+				font-size: 40px;
+				cursor: pointer;
+			}
+		</style>
+
+	</head>
+	<body>
+		<div class="content">
+			<input class="single-slider" type="hidden" value="25" onchange="changeVolume();"/>
+			<audio src="takeMeToChurch.mp3"></audio>
+			<i class="fa fa-play"></i>
+		</div>
+
+		<script src="jquery.range.js"></script>
+	</body>
+</html>
+

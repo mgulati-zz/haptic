@@ -1,0 +1,16 @@
+{
+  "name": "Media Player!",
+  "description": "A media player to control the audio of an mp3 file",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "icons": { "16": "calculator-16.png", "128": "calculator-128.png" },
+  "permissions": [
+    "serial",
+    "usb"
+  ]
+}
