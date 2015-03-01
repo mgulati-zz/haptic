@@ -63,9 +63,29 @@ void loop() {
   }
   if (Serial.available() == 0 && strlen(inData) != 0 && inData[index - 1] == 10) {
     inData[index - 1] = 0;
+    Serial.print("data ");
     Serial.println(inData);
     
-    
+    if (inData[0] == 'R') {
+      red = String(inData).substring(1,4).toInt();
+      Serial.print("red ");
+      Serial.println(red);
+    }
+    if (inData[0] == 'G') {
+      green = String(inData).substring(1,4).toInt();
+      Serial.print("green ");
+      Serial.println(green);
+    }
+    if (inData[0] == 'B') {
+      blue = String(inData).substring(1,4).toInt();
+      Serial.print("blue ");
+      Serial.println(blue);
+    }
+    if (inData[0] == 'P') {
+      desiredPos = String(inData).substring(1,5).toInt();
+      Serial.print("desiredPos ");
+      Serial.println(desiredPos);
+    }
         
     for (int i=0;i<19;i++) {
       inData[i]=0;
