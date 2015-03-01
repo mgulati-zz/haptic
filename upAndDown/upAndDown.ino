@@ -4,8 +4,8 @@ int _motor = 11;
 int _dirDown = 2;
 int _dirUp = 8;
 int _ledR = 6;
-int _ledG = 5;
-int _ledB = 3;
+int _ledG = 3;
+int _ledB = 5;
 
 int _posTop = 1000;
 int _posBottom = 0;
@@ -46,10 +46,11 @@ void setup() {
   pinMode(_ledB, OUTPUT); //pwm
 }
 
-void loop() {
-  //Serial.print(touchState);
-  //Serial.print('   ');
-  //Serial.println(pos);
+void loop() { 
+  Serial.print(touchState);
+  Serial.print(',');
+  Serial.print(pos);
+  Serial.print('\n');
   
 //*****************SERIAL INPUT BUFFER******************
   while (Serial.available() > 0)
@@ -63,28 +64,18 @@ void loop() {
   }
   if (Serial.available() == 0 && strlen(inData) != 0 && inData[index - 1] == 10) {
     inData[index - 1] = 0;
-    Serial.print("data ");
-    Serial.println(inData);
     
     if (inData[0] == 'R') {
       red = String(inData).substring(1,4).toInt();
-      Serial.print("red ");
-      Serial.println(red);
     }
     if (inData[0] == 'G') {
       green = String(inData).substring(1,4).toInt();
-      Serial.print("green ");
-      Serial.println(green);
     }
     if (inData[0] == 'B') {
       blue = String(inData).substring(1,4).toInt();
-      Serial.print("blue ");
-      Serial.println(blue);
     }
     if (inData[0] == 'P') {
       desiredPos = String(inData).substring(1,5).toInt();
-      Serial.print("desiredPos ");
-      Serial.println(desiredPos);
     }
         
     for (int i=0;i<19;i++) {
@@ -145,3 +136,5 @@ void loop() {
   analogWrite(_ledG, green);
 //******************************************************
 }
+
+
