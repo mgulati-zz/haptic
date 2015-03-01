@@ -1,77 +1,127 @@
-int pot = A0;
-int dir1 = 2;
-int dir2 = 8;
-int motor = 11;
+int _slider = A0;
+int _touch = 7;
+int _motor = 11;
+int _dirDown = 2;
+int _dirUp = 8;
+int _ledR = 6;
+int _ledG = 5;
+int _ledB = 3;
+
+int _posTop = 1000;
+int _posBottom = 0;
+int _posStop = 700;
 int pos = 0;
-int touch = 7;
+int desiredPos = 0;
+
+int touchState = 0;
 int touchVal = 0;
 int touchValAvg = 0;
 int touchCount = 0;
 
-int motorEnabled = 1;
-int motorDirection = 0;
+int _motorSpeedLow;
+int _motorSpeedHigh;
+int _motorSpeedUpvDown;
 int motorSpeed = 150;
+int motorEnabled = 1;
+int motorDirectionDown = 0;
+
+int red = 0;
+int green = 0;
+int blue = 0;
+
+char inData[20]; // Allocate some space for the string
+char inChar=-1; // Where to store the character read
+byte index = 0; // Index into array; where to store the character
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
-  pinMode(pot, INPUT);
-  pinMode(dir1, OUTPUT);
-  pinMode(dir2, OUTPUT);
-  pinMode(motor, OUTPUT);
-  pinMode(touch,INPUT);
+  
+  pinMode(_slider, INPUT); //analog in
+  pinMode(_touch,INPUT); //digital in
+  pinMode(_motor, OUTPUT); //pwm
+  pinMode(_dirDown, OUTPUT); //digital out
+  pinMode(_dirUp, OUTPUT); //digital out
+  pinMode(_ledR, OUTPUT); //pwm
+  pinMode(_ledG, OUTPUT); //pwm
+  pinMode(_ledB, OUTPUT); //pwm
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  pos = map(analogRead(pot),0,1023,0,1000);
-  touchVal = digitalRead(touch);
- // Serial.println(pos);
- // Serial.println(touchVal);
-
-//***********Buffer for touch input*******************
+  //Serial.print(touchState);
+  //Serial.print('   ');
+  //Serial.println(pos);
   
-  if (touchCount == 10){
-    
-    //touchValAvg = touchValAvg/10;
-    if (touchValAvg < 3){
-      Serial.println("Touch");
-      //Serial.println(touchValAvg);
+//*****************SERIAL INPUT BUFFER******************
+  while (Serial.available() > 0)
+  {
+    if(index < 19) // One less than the size of the array
+    {
+      inChar = Serial.read(); // Read a character
+      inData[index] = inChar; // Store it
+      index++; // Increment where to write next
     }
+  }
+  if (Serial.available() == 0 && strlen(inData) != 0 && inData[index - 1] == 10) {
+    inData[index - 1] = 0;
+    Serial.println(inData);
     
+    
+        
+    for (int i=0;i<19;i++) {
+      inData[i]=0;
+    }
+    index = 0;
+  }
+//******************************************************
+
+//*****************TOUCH INPUT BUFFER*******************
+  if (touchCount == 10){
+    if (touchValAvg < 3){
+      touchState = 1;
+    } else {
+      touchState = 0;
+    }
     touchValAvg = 0;
     touchCount = 0;
-    
   }
   
+  touchVal = digitalRead(_touch);
   touchValAvg = touchVal + touchValAvg;
-  
   touchCount = touchCount + 1;
-  
-  
 //******************************************************
-  if (pos == 1000) {
-    motorDirection = 1;
+
+//*******************PID CONTROL LOOP*******************
+  pos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
+  if (pos == _posTop) {
+    motorDirectionDown = 1;
     motorSpeed = 150;
   }
   
-  if (pos == 0) {
-    motorDirection = 0;
+  if (pos == _posBottom) {
+    motorDirectionDown = 0;
     motorSpeed = 190;
   }
+//******************************************************
 
-  if (motorDirection == 1) {
-    digitalWrite(dir1, HIGH);
-    digitalWrite(dir2, LOW);
+//*******************WRITE TO MOTOR*********************
+  if (motorDirectionDown == 1) {
+    digitalWrite(_dirDown, HIGH);
+    digitalWrite(_dirUp, LOW);
   } else {
-    digitalWrite(dir1, LOW);
-    digitalWrite(dir2, HIGH);
+    digitalWrite(_dirDown, LOW);
+    digitalWrite(_dirUp, HIGH);
   }
 
   if (motorEnabled == 1) {
-    analogWrite(motor, motorSpeed);
+    analogWrite(_motor, motorSpeed);
   } else {
-    analogWrite(motor, 0);
+    analogWrite(_motor, 0);
   }
+//******************************************************
 
+//********************WRITE TO LEDS*********************
+  analogWrite(_ledR, red);
+  analogWrite(_ledB, blue);
+  analogWrite(_ledG, green);
+//******************************************************
 }
