@@ -10,10 +10,15 @@ function Arduino (onLineReceived) {
   }
 
   function onConnect(connectionInfo) {
-    if (connectionInfo == null) return
-      _self.connectionId = connectionInfo.connectionId;
+    if (connectionInfo == null) {
+      console.log("Couldn't connect to arduino");
+      return
+    };
+    _self.connectionId = connectionInfo.connectionId;
   }
-  chrome.serial.connect("/dev/tty.usbmodem1421", {bitrate: 9600}, onConnect);
+  chrome.serial.getDevices(function(ports) {
+    chrome.serial.connect(ports[ports.length - 1].path, {bitrate: 9600}, onConnect);
+  })
 
   // Convert string to ArrayBuffer
   function convertStringToArrayBuffer(str) {
