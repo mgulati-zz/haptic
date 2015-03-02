@@ -142,7 +142,6 @@ actualPos = map(actualPos, 680, 950, _posBottom, _posTop);
 actualPos = constrain(actualPos, _posBottom, _posTop);
 
 if (touchState == 1 && allowSlide == 1) desiredPos = actualPos;
-//if (desiredPos == actualPos) Integral = 0;
 
 Error = desiredPos - actualPos;
 Integral = Integral + Error;
