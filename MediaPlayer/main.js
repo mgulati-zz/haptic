@@ -81,12 +81,11 @@ function convertStringToArrayBuffer(str) {
 var stringReceived = '';
 
 function onLineReceived(str) {
-	str.split(',');
-	var touch = parseInt(str[0]);
-	var pos = parseInt(str[1]);
-
+	var strs = str.split(',');
+	var touch = parseInt(strs[0]);
+	var pos = parseInt(strs[1]);
 	var volume = pos * 0.1;
-	$('.single-slider').val(volume);
+	$('.single-slider').jRange('setValue', volume);
 	$('audio')[0].volume = volume;
 }
 
