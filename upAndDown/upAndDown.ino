@@ -109,7 +109,7 @@ void loop() {
 //********************************************************
 
 /*
-//*********************AKE CONTROL LOOP*******************
+//********************FAKE CONTROL LOOP*******************
   actualPos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
   if (actualPos > _posTop - 10) {
     motorDirectionDown = 1;
