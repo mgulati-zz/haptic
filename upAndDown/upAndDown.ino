@@ -64,27 +64,23 @@ void loop() {
   Serial.print('\n');
   
 //*****************SERIAL INPUT BUFFER******************
-  while (Serial.available() > 0)
+  while (Serial.available() > 0 && Serial.peek() != 10)
   {
-    if(index < 19) // One less than the size of the array
-    {
-      inChar = Serial.read(); // Read a character
-      inData[index] = inChar; // Store it
-      index++; // Increment where to write next
-    }
+    if(index > 19) index = 0;// One less than the size of the array
+    inChar = Serial.read(); // Read a character
+    inData[index] = inChar; // Store it
+    index++; // Increment where to write next
   }
-  if (Serial.available() == 0 && strlen(inData) != 0 && inData[index - 1] == 10) {
-    inData[index - 1] = 0;
+  
+  if (strlen(inData) != 0 && Serial.peek() == 10) {
+    Serial.read();
     
-    if (inData[0] == 'R') {
+    if (inData[0] == 'C') {
       red = constrain(String(inData).substring(1,4).toInt(),0,255);
+      green = constrain(String(inData).substring(4,7).toInt(),0,255);
+      blue = constrain(String(inData).substring(7,10).toInt(),0,255);
     }
-    if (inData[0] == 'G') {
-      green = constrain(String(inData).substring(1,4).toInt(),0,255);
-    }
-    if (inData[0] == 'B') {
-      blue = constrain(String(inData).substring(1,4).toInt(),0,255);
-    }
+    
     if (inData[0] == 'P') {
       desiredPos = constrain(String(inData).substring(1,5).toInt(),0,1000);
     }
