@@ -1,10 +1,34 @@
-
 function logIn() {
-	console.log('here');
+  if (!$(".login-button").hasClass('disabled')) {
+    $(".error-message").html("");
+    var name = $("#name").val();
+    var password = $("#password").val();
+    if (name == '' || password == '') {
+      $(".error-message").html("Please fill in all information");
+      console.log('Please fill in all information');
+    } else {
+      $(".login-button").html("LOGGING IN...");
+      window.setTimeout(function (){
+        if (password === 'password') {
+          $(".form").css("display","none");
+          $(".success").css("display","block");
+        } else {
+          $(".error-message").html("Password is incorrect");
+          $(".login-button").html("LOG IN");
+        }
+      }, 1000);
+    }
+  }  
 }
 
 $(document).ready(function(){
-  
+  $("input").keyup(function(){
+    var name = $("#name").val();
+    var password = $("#password").val();
+    if (name != '' && password != '') {
+      $(".login-button").removeClass('disabled');
+    }
+  })
 });
 
 var connectionId;
@@ -46,9 +70,9 @@ function convertStringToArrayBuffer(str) {
 var stringReceived = '';
 
 function onLineReceived(str) {
-	str.split(',');
-	var touch = parseInt(str[0]);
-	var pos = parseInt(str[1]);
+	strs = str.split(',');
+	var touch = parseInt(strs[0]);
+	var pos = parseInt(strs[1]);
 }
 
 /* Interprets an ArrayBuffer as UTF-8 encoded string data. */

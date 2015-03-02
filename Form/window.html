@@ -11,7 +11,7 @@
 
 		<style>
 			html {
-				margin-top: 220px;
+				margin-top: 200px;
 			}
 			body {
 				margin-top: 50px;
@@ -43,6 +43,11 @@
 				color: #fff;
 				cursor: pointer;
 			}
+			button.disabled, button.disabled:hover, button.disabled:focus:active {
+				background: #808080;
+				border: 1px solid #ccc;
+				box-shadow: none;
+			}
 			button:hover {
 				background: #524567;
 			}
@@ -61,17 +66,39 @@
 			.field {
 				position: relative;
 			}
+			.error {
+				padding: 10px;
+				text-align: center;
+				height: 35px;
+				font-size: 18px;
+				font-family: verdana;
+				color: #776693;
+			}
+			.success {
+				padding: 10px;
+				text-align: center;
+				font-size: 24px;
+				font-family: verdana;
+				color: #776693;
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
+		<div class="success">
+			Congratulations, you have logged in successfully!
+		</div>
 		<div class="form">
-			<div class="field">
-				<input type="text" id="name" placeholder="Name" autofocus/><i class="fa fa-user"></i>
+			<div class="error">
+				<span class="error-message"></span>
 			</div>
 			<div class="field">
-				<input type="password" placeholder="Password"/><i class="fa fa-lock"></i>
+				<input type="text" id="name" placeholder="Name" autofocus onfocus="$('.error-message').html('');"/><i class="fa fa-user"></i>
 			</div>
-			<button onclick="logIn();">LOG IN</button>
+			<div class="field">
+				<input type="password" id="password" placeholder="Password" onfocus="$('.error-message').html('');"/><i class="fa fa-lock"></i>
+			</div>
+			<button class="login-button disabled" onclick="logIn();">LOG IN</button>
 		</div>
 
 	</body>
