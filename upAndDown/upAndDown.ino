@@ -59,6 +59,8 @@ void loop() {
   Serial.print(touchState);
   Serial.print(',');
   Serial.print(actualPos);
+  Serial.print(',');
+  Serial.print(desiredPos);
   Serial.print('\n');
   
 //*****************SERIAL INPUT BUFFER******************
@@ -131,6 +133,13 @@ actualPos = constrain(actualPos, _posBottom, _posTop);
 
 Error = desiredPos - actualPos;
 Integral = Integral + Error;
+
+if (touchState == 1){
+  Error = 0;
+  Integral = 0;
+  desiredPos = actualPos;
+}
+
 slideSpeed = lastPos - actualPos;
 
 Drive = (Error*kP) + (Integral*kI) + (slideSpeed*kD);
