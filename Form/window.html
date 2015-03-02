@@ -45,18 +45,21 @@
 				color: #fff;
 				cursor: pointer;
 			}
-			button.disabled, button.disabled:hover, button.disabled:focus:active {
+			button.disabled, 
+			button.disabled:hover, button.disabled:focus:active, 
+			button.disabled.clicking, button.disabled.hovered {
 				background: #808080;
 				border: 1px solid #ccc;
 				box-shadow: none;
 			}
-			button:hover {
+
+			button:hover, button.hovered {
 				background: #524567;
 			}
 			button:focus {
 				outline: 0;
 			}
-			button:focus:active {
+			button:focus:active, button.clicking {
 				box-shadow: inset 1px -4px 13px #3D324F;
 			}
 			i {
