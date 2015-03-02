@@ -35,8 +35,10 @@ function Button (onUpdate) {
 
 	_self.sendTarget = function(target) {
 		if (parseInt(target*10) == _self.desiredPosition) return;
-  	if (target <= 100 && target >= 0) 
-  		_self.arduino.writeSerial("P" + parseInt(target*10));
+  	if (target <= 100 && target >= 0) {
+  		_self.desiredPosition = parseInt(target*10);
+  		_self.arduino.writeSerial("P" + _self.desiredPosition);
+  	}
 	}
 
 	_self.allowSlide = function() {
