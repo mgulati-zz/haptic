@@ -1,11 +1,11 @@
 int _slider = A0;
 int _touch = 7;
-int _motor = 11;
+int _motor = 3;
 int _dirDown = 2;
-int _dirUp = 8;
-int _ledR = 6;
-int _ledG = 3;
-int _ledB = 5;
+int _dirUp = 4;
+int _ledR = 5;
+int _ledG = 9;
+int _ledB = 6;
 
 int _posTop = 1000;
 int _posBottom = 0;
@@ -103,14 +103,14 @@ void loop() {
 
 //*******************PID CONTROL LOOP*******************
   pos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
-  if (pos == _posTop) {
+  if (pos > _posTop - 10) {
     motorDirectionDown = 1;
-    motorSpeed = 150;
+    motorSpeed = 255;
   }
   
-  if (pos == _posBottom) {
+  if (pos < _posBottom + 10) {
     motorDirectionDown = 0;
-    motorSpeed = 190;
+    motorSpeed = 255;
   }
 //******************************************************
 
