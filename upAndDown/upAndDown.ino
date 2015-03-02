@@ -24,6 +24,7 @@ double kD = 0.2;
 double Error = 0;
 double Integral = 0;
 int Drive = 0;
+int allowSlide = 1;
 
 long touchState = 0;
 int touchVal = 0;
@@ -49,7 +50,7 @@ byte index = 0; // Index into array; where to store the character
 
 void setup() {
   Serial.begin(9600);
-//  touchSense.set_CS_Timeout_Millis(50);
+  touchSense.set_CS_Timeout_Millis(100);
   
   pinMode(_slider, INPUT); //analog in
   pinMode(_touch,INPUT); //digital in
@@ -90,6 +91,10 @@ void loop() {
     if (inData[0] == 'P') {
       desiredPos = constrain(String(inData).substring(1,5).toInt(),0,1000);
     }
+    
+    if (inData[0] == 'A') {
+      allowSlide = constrain(String(inData).substring(1,2).toInt(),0,1);
+    }
         
     for (int i=0;i<19;i++) {
       inData[i]=0;
@@ -99,7 +104,7 @@ void loop() {
 //******************************************************
 
 //*****************TOUCH INPUT BUFFER*******************
-touchState = (touchSense.capacitiveSensor(3);
+touchState = touchSense.capacitiveSensor(3);
 //  if (touchCount == 10){
 //    if (touchValAvg < 3){
 //      touchState = 1;
@@ -134,7 +139,7 @@ touchState = (touchSense.capacitiveSensor(3);
 actualPos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
 actualPos = constrain(actualPos, _posBottom, _posTop);
 
-if (touchState == 1) desiredPos = actualPos;
+if (touchState == 1 && allowSlide == 1) desiredPos = actualPos;
 if (desiredPos == actualPos) Integral = 0;
 
 Error = desiredPos - actualPos;

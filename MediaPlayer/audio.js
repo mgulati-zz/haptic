@@ -1,7 +1,20 @@
+var fromUpdate = false;
+
 var button = new Button(function(btn) {
 	var volume = btn.desiredPosition * 0.1;
+  fromUpdate = true;
 	$('.single-slider').jRange('setValue', volume);
 });
+button.allowSlide();
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
 
 function changeVolume() {
 	//console.log('slider UI ' + $('.single-slider').val());
@@ -15,13 +28,13 @@ function changeVolume() {
   }
 	var volume = $('audio')[0].volume;
 
-	var color = "#000000";
-	if (volume == 1 ) color = "#ffffff";
-	if (volume < 1 ) color = "#0000ff";
-	if (volume < 0.50 ) color = "#00ff00";
-	if (volume < 0.25 ) color = "#ff0000";
-	if (volume == 0 ) color = "#000000";
-	button.changeColor(color);
+	var red = parseInt(255 * (1 - volume));
+  var green = parseInt(255 * volume);
+  var blue = 0;
+	button.changeColor(rgbToHex(red,green,blue));
+
+  if (fromUpdate == false) button.sendTarget(volume * 100);
+  else fromUpdate = false;
 }
 
 function toggleState() {

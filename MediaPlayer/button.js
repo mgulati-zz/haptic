@@ -35,6 +35,14 @@ function Button (onUpdate) {
 
 	_self.sendTarget = function(target) {
   	if (target <= 100 && target >= 0) 
-  		_self.arduino.writeSerial("P" + target*10);
+  		_self.arduino.writeSerial("P" + parseInt(target*10));
+	}
+
+	_self.allowSlide = function() {
+  	_self.arduino.writeSerial("A1");
+	}
+
+	_self.disableSlide = function() {
+  	_self.arduino.writeSerial("A0");
 	}
 }
