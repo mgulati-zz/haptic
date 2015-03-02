@@ -127,14 +127,11 @@ void loop() {
 actualPos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
 actualPos = constrain(actualPos, _posBottom, _posTop);
 
+if (touchState == 1) desiredPos = actualPos;
+if (desiredPos == actualPos) Integral = 0;
+
 Error = desiredPos - actualPos;
 Integral = Integral + Error;
-
-if (touchState == 1){
-  Error = 0;
-  Integral = 0;
-  desiredPos = actualPos;
-}
 
 slideSpeed = lastPos - actualPos;
 
