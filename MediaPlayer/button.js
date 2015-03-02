@@ -15,9 +15,9 @@ function Button (onUpdate) {
 
 	_self.arduino = new Arduino(onLineReceived);
 
-	function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
-	function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
-	function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+	function hexToR(h) {return ('000' + parseInt((cutHex(h)).substring(0,2),16)).substr(-3)}
+	function hexToG(h) {return ('000' + parseInt((cutHex(h)).substring(2,4),16)).substr(-3)}
+	function hexToB(h) {return ('000' + parseInt((cutHex(h)).substring(4,6),16)).substr(-3)}
 	function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 
 	_self.changeColor = function(hex) {
@@ -28,8 +28,11 @@ function Button (onUpdate) {
 		G = hexToG(_self.currentColor);
 		B = hexToB(_self.currentColor);
 
-		_self.arduino.writeSerial("R" + R + "\n");
-		_self.arduino.writeSerial("G" + G + "\n");
-		_self.arduino.writeSerial("B" + B + "\n");
+		_self.arduino.writeSerial("C" + R + G + B);
+	}
+
+	_self.sendTarget = function(target) {
+  	if (target <= 100 && target >= 0) 
+  		_self.arduino.writeSerial("P" + target*10);
 	}
 }
