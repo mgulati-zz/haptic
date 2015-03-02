@@ -4,12 +4,14 @@ function Button (onUpdate) {
 	_self.currentColor = '#000000';
 	_self.position = 0;
 	_self.touch = 0;
+	_self.desiredPosition = 0;
 
 	function onLineReceived(str) {
 		var strs = str.split(',');
 		if (_self.touch == parseInt(strs[0]) && _self.position == parseInt(strs[1])) return;
 		_self.touch = parseInt(strs[0]);
 		_self.position = parseInt(strs[1]);
+		_self.desiredPosition = parseInt(strs[2]);
 		onUpdate(_self);
 	}
 

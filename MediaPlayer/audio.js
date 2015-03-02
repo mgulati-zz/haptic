@@ -1,5 +1,5 @@
 var button = new Button(function(btn) {
-	var volume = btn.position * 0.1;
+	var volume = btn.desiredPosition * 0.1;
 	$('.single-slider').jRange('setValue', volume);
 });
 
@@ -21,7 +21,7 @@ function changeVolume() {
 	if (volume < 0.50 ) color = "#00ff00";
 	if (volume < 0.25 ) color = "#ff0000";
 	if (volume == 0 ) color = "#000000";
-	// button.changeColor(color);
+	button.changeColor(color);
 }
 
 function toggleState() {
@@ -48,7 +48,7 @@ $(document).ready(function(){
       onstatechange: changeVolume
   });
 
-  $('.clickable-dummy').click(function() {
+  $('.clickable-dummy').click(function(e) {
     button.sendTarget($('.single-slider').val())
   });
 
