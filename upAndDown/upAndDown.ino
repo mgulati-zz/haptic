@@ -10,8 +10,17 @@ int _ledB = 6;
 int _posTop = 1000;
 int _posBottom = 0;
 int _posStop = 700;
-int pos = 0;
+int actualPos = 0;
 int desiredPos = 0;
+double lastPos = 0;
+double slideSpeed = 0;
+
+double kI = 0.02;
+double kP = 0.5;
+double kD = 0.2;
+double Error = 0;
+double Integral = 0;
+int Drive = 0;
 
 int touchState = 0;
 int touchVal = 0;
@@ -49,7 +58,7 @@ void setup() {
 void loop() { 
   Serial.print(touchState);
   Serial.print(',');
-  Serial.print(pos);
+  Serial.print(actualPos);
   Serial.print('\n');
   
 //*****************SERIAL INPUT BUFFER******************
@@ -66,16 +75,16 @@ void loop() {
     inData[index - 1] = 0;
     
     if (inData[0] == 'R') {
-      red = String(inData).substring(1,4).toInt();
+      red = constrain(String(inData).substring(1,4).toInt(),0,255);
     }
     if (inData[0] == 'G') {
-      green = String(inData).substring(1,4).toInt();
+      green = constrain(String(inData).substring(1,4).toInt(),0,255);
     }
     if (inData[0] == 'B') {
-      blue = String(inData).substring(1,4).toInt();
+      blue = constrain(String(inData).substring(1,4).toInt(),0,255);
     }
     if (inData[0] == 'P') {
-      desiredPos = String(inData).substring(1,5).toInt();
+      desiredPos = constrain(String(inData).substring(1,5).toInt(),0,1000);
     }
         
     for (int i=0;i<19;i++) {
@@ -99,19 +108,42 @@ void loop() {
   touchVal = digitalRead(_touch);
   touchValAvg = touchVal + touchValAvg;
   touchCount = touchCount + 1;
-//******************************************************
+//********************************************************
 
-//*******************PID CONTROL LOOP*******************
-  pos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
-  if (pos > _posTop - 10) {
+/*
+//*********************AKE CONTROL LOOP*******************
+  actualPos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
+  if (actualPos > _posTop - 10) {
     motorDirectionDown = 1;
     motorSpeed = 255;
   }
   
-  if (pos < _posBottom + 10) {
+  if (actualPos < _posBottom + 10) {
     motorDirectionDown = 0;
     motorSpeed = 255;
   }
+//******************************************************
+*/
+
+//*******************CUSTOM PID ************************
+actualPos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
+actualPos = constrain(actualPos, _posBottom, _posTop);
+
+Error = desiredPos - actualPos;
+Integral = Integral + Error;
+slideSpeed = lastPos - actualPos;
+
+Drive = (Error*kP) + (Integral*kI) + (slideSpeed*kD);
+motorSpeed = constrain(abs(map(Drive,-500,500,-255,255)),0,255);
+
+if (Drive < 0){
+  motorDirectionDown = 1;
+}
+else{
+  motorDirectionDown = 0;
+}
+
+lastPos = actualPos;
 //******************************************************
 
 //*******************WRITE TO MOTOR*********************
