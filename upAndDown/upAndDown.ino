@@ -1,5 +1,8 @@
+#include <CapacitiveSensor.h>
+
 int _slider = A0;
-int _touch = 7;
+byte _touch = 7;
+byte _touchSend = 8;
 int _motor = 3;
 int _dirDown = 2;
 int _dirUp = 4;
@@ -22,10 +25,12 @@ double Error = 0;
 double Integral = 0;
 int Drive = 0;
 
-int touchState = 0;
+long touchState = 0;
 int touchVal = 0;
 int touchValAvg = 0;
 int touchCount = 0;
+
+CapacitiveSensor touchSense = CapacitiveSensor(_touchSend, _touch);
 
 int _motorSpeedLow;
 int _motorSpeedHigh;
@@ -44,6 +49,7 @@ byte index = 0; // Index into array; where to store the character
 
 void setup() {
   Serial.begin(9600);
+//  touchSense.set_CS_Timeout_Millis(50);
   
   pinMode(_slider, INPUT); //analog in
   pinMode(_touch,INPUT); //digital in
@@ -93,19 +99,20 @@ void loop() {
 //******************************************************
 
 //*****************TOUCH INPUT BUFFER*******************
-  if (touchCount == 10){
-    if (touchValAvg < 3){
-      touchState = 1;
-    } else {
-      touchState = 0;
-    }
-    touchValAvg = 0;
-    touchCount = 0;
-  }
-  
-  touchVal = digitalRead(_touch);
-  touchValAvg = touchVal + touchValAvg;
-  touchCount = touchCount + 1;
+touchState = (touchSense.capacitiveSensor(3);
+//  if (touchCount == 10){
+//    if (touchValAvg < 3){
+//      touchState = 1;
+//    } else {
+//      touchState = 0;
+//    }
+//    touchValAvg = 0;
+//    touchCount = 0;
+//  }
+//  
+//  touchVal = digitalRead(_touch);
+//  touchValAvg = touchVal + touchValAvg;
+//  touchCount = touchCount + 1;
 //********************************************************
 
 /*
