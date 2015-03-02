@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	  <title>Form</title>
+
+	 	<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+  	<meta charset="utf-8">
+		<script src="jquery-1.8.3.min.js"></script>
+		<script src="main.js"></script>
+		<link rel="stylesheet" href="font-awesome-4.1.0/css/font-awesome.min.css">
+
+		<style>
+			html {
+				margin-top: 220px;
+			}
+			body {
+				margin-top: 50px;
+/*				background: url("galaxy.jpg");*/
+			}
+			.form {
+				width: 400px;
+				margin: auto;
+			}
+			input{
+				font-size: 20px;
+				padding: 10px 15px;
+				width: 100%;
+				margin: 5px 10px;
+				color: #808080;
+				border: 1px solid rgb(178, 168, 205);
+				box-sizing: border-box;
+			}
+			input:focus {
+				outline: 1px solid #776693;
+			}
+			button {
+				width: 100%;
+				padding: 15px;
+				margin:10px;
+				font-size: 20px;
+				background: #776693;
+				border: 1px solid rgb(178, 168, 205);
+				color: #fff;
+				cursor: pointer;
+			}
+			button:hover {
+				background: #524567;
+			}
+			button:focus {
+				outline: 0;
+			}
+			button:focus:active {
+				box-shadow: inset 1px -4px 13px #3D324F;
+			}
+			i {
+				color: #808080;
+				position: relative;
+				right: -382px;
+				top: -36px;
+			}
+			.field {
+				position: relative;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="form">
+			<div class="field">
+				<input type="text" id="name" placeholder="Name" autofocus/><i class="fa fa-user"></i>
+			</div>
+			<div class="field">
+				<input type="password" placeholder="Password"/><i class="fa fa-lock"></i>
+			</div>
+			<button onclick="logIn();">LOG IN</button>
+		</div>
+
+	</body>
+</html>
