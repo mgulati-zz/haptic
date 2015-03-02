@@ -19,7 +19,7 @@ double lastPos = 0;
 double slideSpeed = 0;
 
 double kI = 0.02;
-double kP = 0.5;
+double kP = 0.6;
 double kD = 0.2;
 double Error = 0;
 double Integral = 0;
@@ -104,7 +104,7 @@ void loop() {
 //******************************************************
 
 //*****************TOUCH INPUT BUFFER*******************
-touchState = (touchSense.capacitiveSensor(1) > 300 
+touchState = (touchSense.capacitiveSensor(1) > 500 
               || touchSense.capacitiveSensor(1) == -2);
 //  if (touchCount == 10){
 //    if (touchValAvg < 3){
@@ -138,10 +138,11 @@ touchState = (touchSense.capacitiveSensor(1) > 300
 
 //*******************CUSTOM PID ************************
 actualPos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
+actualPos = map(actualPos, 680, 950, _posBottom, _posTop);
 actualPos = constrain(actualPos, _posBottom, _posTop);
 
 if (touchState == 1 && allowSlide == 1) desiredPos = actualPos;
-if (desiredPos == actualPos) Integral = 0;
+//if (desiredPos == actualPos) Integral = 0;
 
 Error = desiredPos - actualPos;
 Integral = Integral + Error;
@@ -150,6 +151,7 @@ slideSpeed = lastPos - actualPos;
 
 Drive = (Error*kP) + (Integral*kI) + (slideSpeed*kD);
 motorSpeed = constrain(abs(map(Drive,-500,500,-255,255)),0,255);
+if (motorSpeed < 150) motorSpeed = 0;
 
 if (Drive < 0){
   motorDirectionDown = 1;
