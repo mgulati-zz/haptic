@@ -57,10 +57,10 @@ void setup() {
 }
 
 void loop() { 
-  Serial.print(touchState);
-  Serial.print(',');
-  Serial.print(pos);
-  Serial.print('\n');
+ // Serial.print(touchState);
+ // Serial.print(',');
+ // Serial.print(pos);
+ // Serial.print('\n');
   
 //*****************SERIAL INPUT BUFFER******************
   while (Serial.available() > 0)
@@ -125,6 +125,10 @@ void loop() {
   }
 //******************************************************
 */
+kP = 1;
+kI = 0.02;
+kD = 0.2;
+desiredPos = 500;
 //*******************Custom PID ************************
 Actual = map(analogRead(_slider),0,1023,_posBottom,_posTop);
 Error = desiredPos - Actual;
@@ -134,8 +138,10 @@ Integral = Integral + Error;
 Derivative = Last - Actual;
 
 Drive = (Error*kP) + (Integral*kI) + (Derivative*kD);
-
-motorSpeed = map(Drive,-1000,1000,-255,255);
+Serial.print(Drive,DEC);
+Serial.print(" ");
+Serial.println("A");
+motorSpeed = abs(map(Drive,-500,500,-255,255));
 
 if (Drive < 0){
   motorDirectionDown = 1;
@@ -143,6 +149,9 @@ if (Drive < 0){
 else{
   motorDirectionDown = 0;
 }
+
+//motorDirectionDown = 0;
+//motorSpeed = 255;
 
 Last = Actual;
 //*******************WRITE TO MOTOR*********************
