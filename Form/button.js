@@ -34,6 +34,7 @@ function Button (onUpdate) {
 	}
 
 	_self.sendTarget = function(target) {
+		if (parseInt(target*10) == _self.desiredPosition) return;
   	if (target <= 100 && target >= 0) 
   		_self.arduino.writeSerial("P" + parseInt(target*10));
 	}
