@@ -1,8 +1,8 @@
-var fromUpdate = false;
+// var fromUpdate = false;
 
 var button = new Button(function(btn) {
 	var volume = btn.desiredPosition * 0.1;
-  fromUpdate = true;
+  // fromUpdate = true;
 	$('.single-slider').jRange('setValue', volume);
 });
 button.allowSlide();
@@ -33,8 +33,8 @@ function changeVolume() {
   var blue = 0;
 	button.changeColor(rgbToHex(red,green,blue));
 
-  if (fromUpdate == false) button.sendTarget(volume * 100);
-  else fromUpdate = false;
+  // if (fromUpdate == false) button.sendTarget(volume * 100);
+  // else fromUpdate = false;
 }
 
 function toggleState() {
