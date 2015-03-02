@@ -1,17 +1,27 @@
 int _slider = A0;
 int _touch = 7;
-int _motor = 11;
+int _motor = 3;
 int _dirDown = 2;
-int _dirUp = 8;
-int _ledR = 6;
-int _ledG = 3;
-int _ledB = 5;
+int _dirUp = 4;
+int _ledR = 9;
+int _ledG = 5;
+int _ledB = 6;
 
 int _posTop = 1000;
 int _posBottom = 0;
 int _posStop = 700;
 int pos = 0;
+
 int desiredPos = 0;
+double kI = 0.2;
+double kP = 0.2;
+double kD = 0.2;
+double Integral = 0;
+double Derivative = 0;
+double Last = 0;
+double Error = 0;
+double Actual = 0;
+int Drive = 0;
 
 int touchState = 0;
 int touchVal = 0;
@@ -101,6 +111,7 @@ void loop() {
   touchCount = touchCount + 1;
 //******************************************************
 
+/*
 //*******************PID CONTROL LOOP*******************
   pos = map(analogRead(_slider),0,1023,_posBottom,_posTop);
   if (pos == _posTop) {
@@ -113,7 +124,27 @@ void loop() {
     motorSpeed = 190;
   }
 //******************************************************
+*/
+//*******************Custom PID ************************
+Actual = map(analogRead(_slider),0,1023,_posBottom,_posTop);
+Error = desiredPos - Actual;
 
+Integral = Integral + Error;
+
+Derivative = Last - Actual;
+
+Drive = (Error*kP) + (Integral*kI) + (Derivative*kD);
+
+motorSpeed = map(Drive,-1000,1000,-255,255);
+
+if (Drive < 0){
+  motorDirectionDown = 1;
+}
+else{
+  motorDirectionDown = 0;
+}
+
+Last = Actual;
 //*******************WRITE TO MOTOR*********************
   if (motorDirectionDown == 1) {
     digitalWrite(_dirDown, HIGH);
