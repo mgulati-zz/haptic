@@ -20,11 +20,6 @@ function changeVolume() {
   if (color == "#000000") {
     console.warn("BAD")
   }
- //  counter += 1
-	// if (counter > 5) {
- //    changeColor(color);
- //    counter = 0;
- //  }
 }
 
 function toggleState() {
@@ -50,6 +45,10 @@ $(document).ready(function(){
       showLabels: true,
       onstatechange: changeVolume
   });
+  $('.clickable-dummy').click(function() {
+    sendTarget($('.single-slider').val())
+  });
+
   $('audio')[0].volume = $('.single-slider').val() * 0.01;
 
   $(".fa").click(function(){
@@ -81,6 +80,10 @@ function changeColor(hex) {
 	writeSerial("R" + R + "\n");
 	writeSerial("G" + G + "\n");
 	writeSerial("B" + B + "\n");
+}
+
+function sendTarget(target) {
+  if (target <= 100 && target >= 0) writeSerial("P" + target*10 + "\n");
 }
 
 function onConnect(connectionInfo) {
