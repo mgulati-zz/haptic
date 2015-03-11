@@ -1,7 +1,7 @@
 <head>
   <style>
     /* /!\ You need to add vendor prefixes in order to render the CSS properly (or simply use http://leaverou.github.io/prefixfree/) /!\ */ 
-    #tridiv {
+    #model3D {
       perspective: 800px;
       position: absolute;
       overflow: hidden;
@@ -220,7 +220,6 @@
 
     }
 
-
     function freeRotate(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -252,11 +251,31 @@
 
     }
 
+    function zoom (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      var scrollVal = e.wheelDelta;
+      var currentZoom = parseFloat($('#model3D').css('zoom'));
+      var newZoom = currentZoom + scrollVal/100;
+      if (newZoom < 0.75) newZoom = 0.75;
+      if (newZoom > 1.5) newZoom = 1.5;
+
+      $('#model3D').css('zoom',newZoom);      
+
+    }
+
+    $(function() {
+      $(document).on('mousewheel',function(e) {zoom(e.originalEvent)});
+      $('body').on('dragstart',function(e) {freeRotate(e.originalEvent)});
+      $('[class*="slide"]').on('dragstart',function(e) {sliderDrag(e.originalEvent)});
+    })
+
   </script>
 
 </head>
-<body draggable="true" ondragstart="freeRotate(event)">
-  <div id="tridiv">
+<body draggable="true">
+  <div id="model3D">
     <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
 
       <div class="shape cuboid out-1">
@@ -299,7 +318,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-1" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-1" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -307,7 +326,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-2" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-2" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -315,7 +334,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-3" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-3" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -323,7 +342,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-4" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-4" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -331,7 +350,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-5" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-5" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -339,7 +358,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-6" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-6" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -347,7 +366,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-7" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-7" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -355,7 +374,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-8" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-8" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -363,7 +382,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-9" draggable="true" ondragstart="sliderDrag(event)">
+      <div class="shape cuboid slide-9" draggable="true">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
