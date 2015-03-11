@@ -35,6 +35,7 @@ function changeVolume() {
 
   // if (fromUpdate == false) button.sendTarget(volume * 100);
   // else fromUpdate = false;
+
 }
 
 function toggleState() {
