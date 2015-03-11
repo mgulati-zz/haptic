@@ -10,6 +10,9 @@
       background: transparent;
       font-size: 100%;
     }
+    body {
+      cursor: move;
+    }
     .face {
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
     }
@@ -115,6 +118,7 @@
       width:3em;
       height:10em;
       margin:-5em 0 0 -1.5em;
+      cursor: -webkit-grab;
       /*transition: transform 0.5s ease-in-out;*/
     }
     [class*="slide"] .ft {
@@ -177,11 +181,19 @@
       }
     }
 
-    function myFunction(e) {
+    function setRotate(X, Y) {
+      var newRotate = 'rotateX(' + X + 'deg) rotateY(' + Y + 'deg)';
+      $('.scene')[0].style.transform = newRotate;
+    }
+
+    function sliderDrag(e) {
       e.preventDefault();
       e.stopPropagation();
 
       var slider = $(e.target);
+      $("body").css('cursor','-webkit-grabbing');
+      $('[class*="slide"]').css('cursor','-webkit-grabbing');
+
       var starterY = getTransform(slider)[1]/-160;
 
       var Xi = (e.pageX);
@@ -202,6 +214,40 @@
       $("body").on('mouseup',function(e3){
         $("body").off('mousemove');
         $("body").off('mouseup');
+        $("body").css('cursor','move');
+        $('[class*="slide"]').css('cursor','-webkit-grab');
+      });
+
+    }
+
+
+    function freeRotate(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var rotateVals = $('.scene')[0].style.transform.split(' ');
+
+      var starterX = parseInt(rotateVals[0].substring(rotateVals[0].indexOf('(')+1, rotateVals[0].indexOf('deg)')));
+      var starterY = parseInt(rotateVals[1].substring(rotateVals[1].indexOf('(')+1, rotateVals[1].indexOf('deg)')));
+
+      var Xi = (e.pageX);
+      var Yi = (e.pageY);
+
+      $("body").on('mousemove', function(e2){
+        if (e2.which == 1) {
+          var dragX = e2.pageX;
+          var dragY = e2.pageY;
+          var diffX = Xi - dragX;
+          var diffY = Yi - dragY;
+          var newX = starterX + diffY*0.6;
+          var newY = starterY - diffX*0.4;
+          setRotate(newX, newY);
+        }
+      });
+
+      $("body").on('mouseup',function(e3){
+        $("body").off('mousemove');
+        $("body").off('mouseup');
       });
 
     }
@@ -209,9 +255,9 @@
   </script>
 
 </head>
-<body draggable="true">
+<body draggable="true" ondragstart="freeRotate(event)">
   <div id="tridiv">
-    <div class="scene" style="-webkit-transform:rotateX(325deg) rotateY(400deg); -moz-transform:rotateX(325deg) rotateY(400deg); -ms-transform:rotateX(325deg) rotateY(400deg); transform:rotateX(325deg) rotateY(400deg); ">
+    <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
 
       <div class="shape cuboid out-1">
         <div class="face ft"></div>
@@ -253,7 +299,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-1" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-1" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -261,7 +307,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-2" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-2" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -269,7 +315,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-3" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-3" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -277,7 +323,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-4" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-4" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -285,7 +331,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-5" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-5" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -293,7 +339,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-6" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-6" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -301,7 +347,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-7" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-7" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -309,7 +355,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-8" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-8" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
@@ -317,7 +363,7 @@
         <div class="face bm"></div>
         <div class="face tp"></div>
       </div>
-      <div class="shape cuboid slide-9" draggable="true" ondragstart="myFunction(event)">
+      <div class="shape cuboid slide-9" draggable="true" ondragstart="sliderDrag(event)">
         <div class="face ft"></div>
         <div class="face bk"></div>
         <div class="face rt"></div>
