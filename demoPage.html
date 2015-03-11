@@ -1,0 +1,330 @@
+<head>
+  <style>
+    /* /!\ You need to add vendor prefixes in order to render the CSS properly (or simply use http://leaverou.github.io/prefixfree/) /!\ */ 
+    #tridiv {
+      perspective: 800px;
+      position: absolute;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-size: 100%;
+    }
+    .face {
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+    }
+    .scene, .shape, .face, .face-wrapper, .cr {
+      position: absolute;
+      transform-style: preserve-3d;
+    }
+    .scene {
+      width: 80em;
+      height: 80em;
+      top: 50%;
+      left: 50%;
+      margin: -40em 0 0 -40em;
+    }
+    .shape {
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform-origin: 50%;
+    }
+    .face, .face-wrapper {
+      overflow: hidden;
+      transform-origin: 0 0;
+      backface-visibility: hidden;
+      /* hidden by default, prevent blinking and other weird rendering glitchs */
+    }
+    .face {
+      background-size: 100% 100%!important;
+      background-position: center;
+    }
+    .face-wrapper .face {
+      left: 100%;
+      width: 100%;
+      height: 100%
+    }
+    [class*="cuboid"] .ft, [class*="cuboid"] .bk {
+      width: 100%;
+      height: 100%;
+    }
+    [class*="cuboid"] .bk {
+      left: 100%;
+    }
+    [class*="cuboid"] .rt {
+      transform: rotateY(-90deg) translateX(-50%);
+    }
+    [class*="cuboid"] .lt {
+      transform: rotateY(90deg) translateX(-50%);
+    }
+    [class*="cuboid"] .tp {
+      transform: rotateX(90deg) translateY(-50%);
+    }
+    [class*="cuboid"] .bm {
+      transform: rotateX(-90deg) translateY(-50%);
+    }
+    [class*="cuboid"] .lt {
+      left: 100%;
+    }
+    [class*="cuboid"] .bm {
+      top: 100%;
+    }
+
+    [class*="out"] {
+      opacity:1;
+      width:1em;
+      height:10em;
+      margin:-5em 0 0 -0.5em;
+    }
+    [class*="out"] .ft {
+      transform:translateZ(5.5em);
+    }
+    [class*="out"] .bk {
+      transform:translateZ(-5.5em) rotateY(180deg);
+    }
+    [class*="out"] .rt, [class*="out"] .lt {
+      width:11em;
+      height:10em;
+    }
+    [class*="out"] .tp, [class*="out"] .bm {
+      width:1em;
+      height:11em;
+    }
+    [class*="out"] .face {
+      background-color:#a78049;
+    }
+
+    .out-1{transform:translate3D(-5em, 0em, 0em);}
+    .out-2{transform:translate3D(5em, 0em, 0em);}
+    .out-3{transform:translate3D(0em, 0em, 5em) rotateY(90deg);}
+    .out-4{transform:translate3D(0em, 0em, -5em) rotateY(90deg);}
+
+    .out-bottom {
+      transform:translate3D(0em, 5em, 0em) rotateZ(90deg);
+      height:11em;
+    }
+    .out-bottom .rt, .out-bottom .lt {
+      width:11em;
+      height:11em;
+    }
+
+    [class*="slide"] {
+      opacity:1;
+      width:3em;
+      height:10em;
+      margin:-5em 0 0 -1.5em;
+      /*transition: transform 0.5s ease-in-out;*/
+    }
+    [class*="slide"] .ft {
+        transform:translateZ(1.5em);
+    }
+    [class*="slide"] .bk {
+      transform:translateZ(-1.5em) rotateY(180deg);
+    }
+    [class*="slide"] .rt, [class*="slide"] .lt {
+      width:3em;
+      height:10em;
+    }
+    [class*="slide"] .tp, [class*="slide"] .bm {
+      width:3em;
+      height:3em;
+    }
+    [class*="slide"] .face {
+      background-color:#FFFFFF;
+    }
+
+    .slide-1{transform:translate3D(48px, 0px, 48px);}
+    .slide-2{transform:translate3D(48px, 0px, 0px);}
+    .slide-3{transform:translate3D(48px, 0px, -48px);}
+    .slide-4{transform:translate3D(0px, 0px, 48px);}
+    .slide-5{transform:translate3D(0px, 0px, 0px);}
+    .slide-6{transform:translate3D(0px, 0px, -48px);}
+    .slide-7{transform:translate3D(-48px, 0px, 48px);}
+    .slide-8{transform:translate3D(-48px, 0px, 0px);}
+    .slide-9{transform:translate3D(-48px, 0px, -48px);}
+  </style>
+  
+  <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+
+  <script>
+
+    function getTransform(el) {
+      var results = $(el).css('transform').match(/matrix(?:(3d)\(-{0,1}\d+(?:, -{0,1}\d+)*(?:, (-{0,1}\d+))(?:, (-{0,1}\d+))(?:, (-{0,1}\d+)), -{0,1}\d+\)|\(-{0,1}\d+(?:, -{0,1}\d+)*(?:, (-{0,1}\d+))(?:, (-{0,1}\d+))\))/)
+
+      if(!results) return [0, 0, 0];
+      if(results[1] == '3d') return results.slice(2,5);
+
+      results.push(0);
+      return results.slice(5, 8);
+    }
+
+    function setTransform(el, arr_xyz) {
+      var translation = arr_xyz.join('px,') + 'px';
+      $(el).css('transform', 'translate3D(' + translation + ')');
+    }
+
+    function setY(slider, percentage) {
+      var current = getTransform(slider);
+      current[1] = Math.floor(-159 * percentage);
+      setTransform(slider, current);
+    }
+
+    function setShape(percentageArr) {
+      for (var i = 1; i < 10; i++) {
+        setY($('.slide-' + i), percentageArr[i-1]);
+      }
+    }
+
+    function myFunction(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var slider = $(e.target);
+      var starterY = getTransform(slider)[1]/-160;
+
+      var Xi = (e.pageX);
+      var Yi = (e.pageY);
+
+      $("body").on('mousemove', function(e2){
+        if (e2.which == 1) {
+          var dragX = e2.pageX;
+          var dragY = e2.pageY;
+          var diffY = Yi - dragY;
+          var newY = starterY + diffY/200;
+          if (newY < 0) newY = 0;
+          if (newY > 1) newY = 1;
+          setY(slider, newY);
+        }
+      });
+
+      $("body").on('mouseup',function(e3){
+        $("body").off('mousemove');
+        $("body").off('mouseup');
+      });
+
+    }
+
+  </script>
+
+</head>
+<body draggable="true">
+  <div id="tridiv">
+    <div class="scene" style="-webkit-transform:rotateX(325deg) rotateY(400deg); -moz-transform:rotateX(325deg) rotateY(400deg); -ms-transform:rotateX(325deg) rotateY(400deg); transform:rotateX(325deg) rotateY(400deg); ">
+
+      <div class="shape cuboid out-1">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid out-2">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid out-3">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid out-4">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid out-bottom">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-1" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-2" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-3" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-4" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-5" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-6" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-7" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-8" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid slide-9" draggable="true" ondragstart="myFunction(event)">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+    </div>
+  </div>
+</body>
