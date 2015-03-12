@@ -15,7 +15,7 @@
       background: black;
     }
     .face {
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 1);
     }
     .scene, .shape, .face, .face-wrapper, .cr {
       position: absolute;
@@ -78,41 +78,38 @@
 
     [class*="out"] {
       opacity:1;
-      width:1em;
+      width:0.5em;
       height:10em;
-      margin:-5em 0 0 -0.5em;
+      margin:-5em 0 0 -0.25em;
     }
     [class*="out"] .ft {
-      transform:translateZ(5.5em);
+      transform:translateZ(4.5em);
     }
     [class*="out"] .bk {
-      transform:translateZ(-5.5em) rotateY(180deg);
+      transform:translateZ(-4.5em) rotateY(180deg);
     }
     [class*="out"] .rt, [class*="out"] .lt {
-      width:11em;
+      width:9em;
       height:10em;
     }
     [class*="out"] .tp, [class*="out"] .bm {
-      width:1em;
-      height:11em;
+      width:0.5em;
+      height:9em;
     }
     [class*="out"] .face {
-      background-color:#a78049;
+      background-color:#333;
     }
 
-    .out-1{transform:translate3D(-5em, 0em, 0em);}
-    .out-2{transform:translate3D(5em, 0em, 0em);}
-    .out-3{transform:translate3D(0em, 0em, 5em) rotateY(90deg);}
-    .out-4{transform:translate3D(0em, 0em, -5em) rotateY(90deg);}
+    .out-1{transform:translate3D(-4.75em, 0em, 0em);}
+    .out-2{transform:translate3D(4.75em, 0em, 0em);}
+    .out-3{transform:translate3D(0em, 0em, 4.75em) rotateY(90deg);}
+    .out-4{transform:translate3D(0em, 0em, -4.75em) rotateY(90deg);}
 
-    .out-bottom {
-      transform:translate3D(0em, 5em, 0em) rotateZ(90deg);
-      height:11em;
-    }
-    .out-bottom .rt, .out-bottom .lt {
-      width:11em;
-      height:11em;
-    }
+    .out-bottom {transform:translate3D(0em, 5.25em, 0em) rotateZ(90deg);}
+    .out-bottom .ft, .out-1 .ft, .out-2 .ft {transform:translateZ(5em);}
+    .out-bottom .bk, .out-1 .bk, .out-2 .bk  {transform:translateZ(-5em) rotateY(180deg);}
+    .out-bottom .rt, .out-bottom .lt, .out-1 .rt, .out-1 .lt, .out-2 .rt, .out-2 .lt {width:10em;}
+    .out-bottom .tp, .out-bottom .bm, .out-1 .tp, .out-1 .bm, .out-2 .tp, .out-2 .bm {height:10em;}
 
     [class*="slide"] {
       opacity:1;
