@@ -3,7 +3,6 @@
     /* /!\ You need to add vendor prefixes in order to render the CSS properly (or simply use http://leaverou.github.io/prefixfree/) /!\ */ 
     #model3D {
       perspective: 800px;
-      position: absolute;
       overflow: hidden;
       width: 100%;
       height: 100%;
@@ -11,8 +10,42 @@
       font-size: 100%;
     }
     body {
-      cursor: move;
       background: black;
+    }
+    button {
+      width: 150px;
+      padding: 15px;
+      font-size: 20px;
+      background: #776693;
+      border: 1px solid rgb(178, 168, 205);
+      color: #fff;
+      cursor: pointer;
+    }
+    .leftPane {
+      width:60%;
+      float: left;
+      cursor: move;
+    }
+    .rightPane {
+      width: 40%;
+      float: right;
+    }
+    button.disabled, 
+    button.disabled:hover, button.disabled:focus:active, 
+    button.disabled.clicking, button.disabled.hovered {
+      background: #808080;
+      border: 1px solid #ccc;
+      box-shadow: none;
+    }
+
+    button:hover, button.hovered {
+      background: #524567;
+    }
+    button:focus {
+      outline: 0;
+    }
+    button:focus:active, button.clicking {
+      box-shadow: inset 1px -4px 13px #3D324F;
     }
     .face {
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 1);
@@ -22,11 +55,8 @@
       transform-style: preserve-3d;
     }
     .scene {
-      width: 80em;
-      height: 80em;
-      top: 50%;
-      left: 50%;
-      margin: -40em 0 0 -40em;
+      width: 100%;
+      height: 100%;
     }
     .shape {
       top: 50%;
@@ -111,7 +141,7 @@
     .out-bottom .rt, .out-bottom .lt, .out-1 .rt, .out-1 .lt, .out-2 .rt, .out-2 .lt {width:10em;}
     .out-bottom .tp, .out-bottom .bm, .out-1 .tp, .out-1 .bm, .out-2 .tp, .out-2 .bm {height:10em;}
 
-    [class*="slide"] {
+    .slide {
       opacity:1;
       width:3em;
       height:10em;
@@ -119,22 +149,23 @@
       cursor: -webkit-grab;
       /*transition: transform 0.5s ease-in-out;*/
     }
-    [class*="slide"] .ft {
+    .slide .ft {
         transform:translateZ(1.5em);
     }
-    [class*="slide"] .bk {
+    .slide .bk {
       transform:translateZ(-1.5em) rotateY(180deg);
     }
-    [class*="slide"] .rt, [class*="slide"] .lt {
+    .slide .rt, .slide .lt {
       width:3em;
       height:10em;
     }
-    [class*="slide"] .tp, [class*="slide"] .bm {
+    .slide .tp, .slide .bm {
       width:3em;
       height:3em;
     }
-    [class*="slide"] .face {
+    .slide .face {
       background-color:#FFFFFF;
+      transition: background-color 0.5s ease;
     }
 
     .slide-1{transform:translate3D(48px, 0px, 48px);}
@@ -146,6 +177,21 @@
     .slide-7{transform:translate3D(-48px, 0px, 48px);}
     .slide-8{transform:translate3D(-48px, 0px, 0px);}
     .slide-9{transform:translate3D(-48px, 0px, -48px);}
+
+    .matrix {
+      width: 400px;
+      height: 250px;
+      font-size: 14px;
+      margin: 50px 0;
+    }
+
+    .element {
+      display: inline-block;
+      width: 30%;
+      height: 30%;
+      color: #ffffff;
+      text-align: center; 
+    }
   </style>
   
   <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
@@ -173,15 +219,39 @@
       setTransform(slider, current);
     }
 
+    function updatePositionMatrix(element, pos) {
+      $('.position-matrix .element-' + element).html(pos.toFixed(2));
+    }
+
+    function updateColorMatrix(element, color) {
+      $('.color-matrix .element-' + element).html(color);
+    }
+
     function setShape(percentageArr) {
+      $('.slide').css('transition','transform 0.5s ease-in-out');
       for (var i = 1; i < 10; i++) {
         setY($('.slide-' + i), percentageArr[i-1]);
       }
+      setTimeout(function() {$('.slide').css('transition','');},500);
     }
 
     function setRotate(X, Y) {
       var newRotate = 'rotateX(' + X + 'deg) rotateY(' + Y + 'deg)';
       $('.scene')[0].style.transform = newRotate;
+    }
+
+    function resetAll() {
+
+      //colors
+      $('.slide').children().css('background-color','white');
+      
+      //position
+      setShape([0,0,0,0,0,0,0,0,0]);
+
+      //rotation
+      $('.scene').css('transition','transform 0.5s ease-in-out');
+      setRotate(325, 400);
+      setTimeout(function() {$('.scene').css('transition','');},500);
     }
 
     function sliderDrag(e) {
@@ -190,7 +260,7 @@
 
       var slider = $(e.target);
       $("body").css('cursor','-webkit-grabbing');
-      $('[class*="slide"]').css('cursor','-webkit-grabbing');
+      $('.slide').css('cursor','-webkit-grabbing');
 
       var starterY = getTransform(slider)[1]/-160;
 
@@ -206,6 +276,10 @@
           if (newY < 0) newY = 0;
           if (newY > 1) newY = 1;
           setY(slider, newY);
+
+          var classes = slider.attr('class');
+          var element = classes.substring(classes.indexOf('-')+1, classes.length);
+          updatePositionMatrix(element, newY);
         }
       });
 
@@ -213,7 +287,7 @@
         $("body").off('mousemove');
         $("body").off('mouseup');
         $("body").css('cursor','move');
-        $('[class*="slide"]').css('cursor','-webkit-grab');
+        $('.slide').css('cursor','-webkit-grab');
       });
 
     }
@@ -226,6 +300,11 @@
 
       var slider = $(e.target);
       slider.parent().children().css('background-color',colors[Math.floor(Math.random() * colors.length)]);
+
+      var classes = slider.parent().attr('class');
+      var element = classes.substring(classes.indexOf('-')+1, classes.length);
+
+       (element, slider.parent().children().css('background-color'));
     }
 
     function freeRotate(e) {
@@ -275,130 +354,163 @@
 
     $(function() {
       $(document).on('mousewheel',function(e) {zoom(e.originalEvent)});
-      $('body').on('dragstart',function(e) {freeRotate(e.originalEvent)});
-      $('[class*="slide"]').on('dragstart',function(e) {sliderDrag(e.originalEvent)});
-      $('[class*="slide"]').on('click',function(e) {sliderClick(e.originalEvent)});
+      $('.leftPane').on('dragstart',function(e) {freeRotate(e.originalEvent)});
+      $('button').on('click',function() {resetAll()});
+      $('.slide').on('dragstart',function(e) {sliderDrag(e.originalEvent)});
+      $('.slide').on('click',function(e) {sliderClick(e.originalEvent)});
     })
 
   </script>
 
 </head>
-<body draggable="true">
-  <div id="model3D">
-    <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
+<body>
+  <div class="leftPane" draggable="true">
+    <div id="model3D">
+      <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
 
-      <div class="shape cuboid out-1">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid out-2">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid out-3">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid out-4">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid out-bottom">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-1" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-2" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-3" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-4" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-5" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-6" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-7" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-8" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
-      </div>
-      <div class="shape cuboid slide-9" draggable="true">
-        <div class="face ft"></div>
-        <div class="face bk"></div>
-        <div class="face rt"></div>
-        <div class="face lt"></div>
-        <div class="face bm"></div>
-        <div class="face tp"></div>
+        <div class="shape cuboid out-1">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid out-2">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid out-3">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid out-4">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid out-bottom">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-1" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-2" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-3" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-4" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-5" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-6" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-7" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-8" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
+        <div class="shape cuboid slide slide-9" draggable="true">
+          <div class="face ft"></div>
+          <div class="face bk"></div>
+          <div class="face rt"></div>
+          <div class="face lt"></div>
+          <div class="face bm"></div>
+          <div class="face tp"></div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="rightPane">
+    <div class="matrix position-matrix">
+      <div class="element element-1">0</div>
+      <div class="element element-2">0</div>
+      <div class="element element-3">0</div>
+      <div class="element element-4">0</div>
+      <div class="element element-5">0</div>
+      <div class="element element-6">0</div>
+      <div class="element element-7">0</div>
+      <div class="element element-8">0</div>
+      <div class="element element-9">0</div>
+    </div>
+    <div class="matrix color-matrix">
+      <div class="element element-1">rgba(255,255,255)</div>
+      <div class="element element-2">rgba(255,255,255)</div>
+      <div class="element element-3">rgba(255,255,255)</div>
+      <div class="element element-4">rgba(255,255,255)</div>
+      <div class="element element-5">rgba(255,255,255)</div>
+      <div class="element element-6">rgba(255,255,255)</div>
+      <div class="element element-7">rgba(255,255,255)</div>
+      <div class="element element-8">rgba(255,255,255)</div>
+      <div class="element element-9">rgba(255,255,255)</div>  
+    </div>
+
+    <button>RESET</button>
+  </div>
+
+  
+
 </body>
