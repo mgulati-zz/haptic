@@ -42,6 +42,8 @@ int S2 = 0;
 int S3 = 0;
 int analogMux = A0;
 
+int skips = 0;
+
 void setup() {
   Serial.begin(9600);
 
@@ -72,17 +74,21 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  skips += 1;
   for (int i = 0; i < numPixels; i++) {
     pixels[i].actualPos = analogRead(pixels[i].analogPos);
-    //Serial.print(pixels[i].actualPos);
-    //Serial.print(" ");
-    //pixels[i].desiredPos += (i + 1);
-      setDirection(i);
+    if (skips > 20) {
+      pixels[i].desiredPos += 5;
+    }
+    setDirection(i);
     if (pixels[i].desiredPos > 1023) pixels[i].desiredPos = 0;
+  }
+  if (skips > 20) {
+    skips = 0;
   }
   Tlc.clear();
   Tlc.set(pixels[0].motor, 200);
-  Tlc.set(pixels[1].motor, 1000);
+  Tlc.set(pixels[1].motor, 200);
   Tlc.update();
   //Serial.println("");
 }
