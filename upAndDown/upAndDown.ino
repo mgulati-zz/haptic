@@ -1,30 +1,65 @@
+#include <Tlc5940.h>
+#include <tlc_animations.h>
+#include <tlc_config.h>
+#include <tlc_fades.h>
+#include <tlc_progmem_utils.h>
+#include <tlc_servos.h>
+#include <tlc_shifts.h>
+
 #include <CapacitiveSensor.h>
 
-int _slider = A0;
-byte _touch = 7;
-byte _touchSend = 8;
-int _motor = 3;
-int _dirDown = 2;
-int _dirUp = 4;
-int _ledR = 5;
-int _ledG = 9;
-int _ledB = 6;
+
+struct pixel {
+  int _slider;
+  byte _touch;
+  byte _touchSend;
+  int _motor;
+  int _dirDown;
+  int _dirUp;
+  
+  int ledR;
+  int ledG;
+  int ledB;
+  int motorChannel;
+  
+  int actualPos;
+  int desiredPos;
+  double kI;
+  double kP;
+  double kD;
+  int allowSlide;
+
+  int motorDirectionDown;
+}
+
+int numPixels = 1;
+struct pixel pixels[numPixels];
+
+pixels[0]._slider = A0;
+pixels[0]._touch = 7;
+pixels[0]._touchSend = 8;
+pixels[0]._motor = 3;
+pixels[0]._dirDown = 2;
+pixels[0]._dirUp = 4;
+pixels[0]._ledR = 5;
+pixels[0]._ledG = 9;
+pixels[0]._ledB = 6;
 
 int _posTop = 1000;
 int _posBottom = 0;
 int _posStop = 700;
-int actualPos = 0;
-int desiredPos = 0;
+pixels[0].actualPos = 0;
+pixels[0].desiredPos = 0;
 double lastPos = 0;
 double slideSpeed = 0;
 
-double kI = 0.02;
-double kP = 0.6;
-double kD = 0.2;
+pixels[0].kI = 0.02;
+pixels[0].kP = 0.6;
+pixels[0].kD = 0.2;
 double Error = 0;
 double Integral = 0;
 int Drive = 0;
-int allowSlide = 1;
+pixels[0].allowSlide = 1;
 
 int touchState = 0;
 int touchVal = 0;
@@ -163,19 +198,21 @@ lastPos = actualPos;
 //******************************************************
 
 //*******************WRITE TO MOTOR*********************
-  if (motorDirectionDown == 1) {
-    digitalWrite(_dirDown, HIGH);
-    digitalWrite(_dirUp, LOW);
+for (int i = 0; i < numPixels; i ++) {
+  if (pixels[i].motorDirectionDown == 1) {
+    digitalWrite(pixels[i]._dirDown, HIGH);
+    digitalWrite(pixels[i]._dirUp, LOW);
   } else {
-    digitalWrite(_dirDown, LOW);
-    digitalWrite(_dirUp, HIGH);
+    digitalWrite(pixels[i]._dirDown, LOW);
+    digitalWrite(pixels[i]._dirUp, HIGH);
   }
 
   if (motorEnabled == 1) {
-    analogWrite(_motor, motorSpeed);
+    analogWrite(pixels[i]._motor, motorSpeed);
   } else {
-    analogWrite(_motor, 0);
+    analogWrite(pixels[i]._motor, 0);
   }
+}
 //******************************************************
 
 //********************WRITE TO LEDS*********************
