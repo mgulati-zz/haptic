@@ -94,10 +94,10 @@ void loop() {
 }
 
 int setAnalogMux(int channel) {
-  analogWrite(S0, channel & 0b0001);
-  analogWrite(S1, channel & 0b0010);
-  analogWrite(S2, channel & 0b0100);
-  analogWrite(S3, channel & 0b1000);
+  digitalWrite(S0, channel & 0b0001);
+  digitalWrite(S1, channel & 0b0010);
+  digitalWrite(S2, channel & 0b0100);
+  digitalWrite(S3, channel & 0b1000);
 }
 
 int analogMuxRead(int channel) {
