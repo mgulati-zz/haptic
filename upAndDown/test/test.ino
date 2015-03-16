@@ -22,27 +22,40 @@ struct pixel {
   
   int actualPos;
   int desiredPos;
+  int lastPos;
   int analogPos;
   
   double kI;
   double kP;
   double kD;
   
+  int integral;
+  int derivative;
+  
   int allowSlide;
-
-  int motorDirectionDown;
+  int touchState;
+  
+  int red;
+  int blue;
+  int green;
 };
 
 const int numPixels = 2;
 struct pixel pixels[numPixels];
 
-int S0 = 0;
-int S1 = 0;
-int S2 = 0;
-int S3 = 0;
+int S0 = 7;
+int S1 = 6;
+int S2 = 5;
+int S3 = 4;
 int analogMux = A0;
 
 int skips = 0;
+
+char inData[20];
+
+const int _posTop = 1000;
+const int _posBottom = 0;
+const int _posStop = 700;
 
 void setup() {
   Serial.begin(9600);
@@ -74,25 +87,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  skips += 1;
+  serialRead();
   for (int i = 0; i < numPixels; i++) {
     pixels[i].actualPos = analogRead(pixels[i].analogPos);
-    if (skips > 20) {
-      pixels[i].desiredPos += 5;
-    }
-    setDirection(i);
-    if (pixels[i].desiredPos > 1023) pixels[i].desiredPos = 0;
+    readPosition(i);
+    int action = calculatePIDAction(i);
+    setDirection(i, action);
   }
-  if (skips > 20) {
-    skips = 0;
-  }
-  Tlc.clear();
-  Tlc.set(pixels[0].motor, 200);
-  Tlc.set(pixels[1].motor, 200);
   Tlc.update();
-  //Serial.println("");
 }
 
+//set channel on analog mux to read from
 int setAnalogMux(int channel) {
   digitalWrite(S0, channel & 0b0001);
   digitalWrite(S1, channel & 0b0010);
@@ -100,24 +105,91 @@ int setAnalogMux(int channel) {
   digitalWrite(S3, channel & 0b1000);
 }
 
+//read value from certain channel of analog multiplexer
 int analogMuxRead(int channel) {
   setAnalogMux(channel);
   return analogRead(analogMux);
 }
 
-void setDirection(int pixelNum) {
-  int diff = pixels[pixelNum].desiredPos - pixels[pixelNum].actualPos;
-  if (diff > 0) {
+//set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
+void setDirection(int pixelNum, int dir) {
+  if (dir > 0) {
     digitalWrite(pixels[pixelNum].dirUp, HIGH);
     digitalWrite(pixels[pixelNum].dirDown, LOW); 
   } else {
     digitalWrite(pixels[pixelNum].dirUp, LOW);
     digitalWrite(pixels[pixelNum].dirDown, HIGH); 
-    //Serial.print("DOWN");
   }
 }
 
-//int analogMuxWrite(int channel, int value) {
-//  setAnalogMux(channel);
-//  analogWrite(analogMux, value);
-//}
+//set Tlc (pwm multiplexer) channel value. Note: changes won't take effect until Tlc.update() is called
+void setPWMValue(int channel, int value) {
+  Tlc.set(channel, value);
+}
+
+//read current position of slider and update its respective stored value
+void readPosition(int channel) {
+  pixels[channel].actualPos = map(analogMuxRead(pixels[channel].analogPos),0,1023,_posBottom,_posTop);
+  pixels[channel].actualPos = map(pixels[channel].actualPos, 680, 950, _posBottom, _posTop);
+  pixels[channel].actualPos = constrain(pixels[channel].actualPos, _posBottom, _posTop);
+}
+
+//returns which direction to move according to PID calculations (also sets motor speed based on these calculations)
+int calculatePIDAction(int channel) {
+  
+  if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
+  
+  int error = pixels[channel].desiredPos - pixels[channel].actualPos;
+  pixels[channel].integral = pixels[channel].integral + error;
+  
+  pixels[channel].derivative = pixels[channel].lastPos - pixels[channel].actualPos;
+  
+  double drive = (error*pixels[channel].kP) + (pixels[channel].integral*pixels[channel].kI) + (pixels[channel].derivative*pixels[channel].kD);
+  
+  int motorSpeed = constrain(abs(map(drive,-500,500,-255,255)),0,255);
+  if (motorSpeed < 150) motorSpeed = 0;
+  setPWMValue(pixels[channel].motor, motorSpeed);
+  
+  if (drive < 0){
+    return 0;
+  }
+  else{
+    return 1;
+  }
+}
+
+//read one command from serial interface and react accordingly
+void serialRead() {
+  int index = 0;
+  char inChar;
+  while (Serial.available() > 0 && Serial.peek() != 10)
+  {
+    if(index > 19) index = 0;// One less than the size of the array
+    inData[index] = Serial.read(); // Read a character, store it
+    index++; // Increment where to write next
+  }
+  
+  if (strlen(inData) != 0 && Serial.peek() == 10) {
+    Serial.read();
+    int id = inData[0];
+    if (sizeof(pixels) / sizeof(pixels[0]) <= id) return;
+    
+    if (inData[1] == 'C') {
+      pixels[id].red = constrain(String(inData).substring(1,4).toInt(),0,255);
+      pixels[id].green = constrain(String(inData).substring(4,7).toInt(),0,255);
+      pixels[id].blue = constrain(String(inData).substring(7,10).toInt(),0,255);
+    }
+    
+    if (inData[1] == 'P') {
+      pixels[id].desiredPos = constrain(String(inData).substring(1,5).toInt(),0,1000);
+    }
+    
+    if (inData[1] == 'A') {
+      pixels[id].allowSlide = constrain(String(inData).substring(1,2).toInt(),0,1);
+    }
+        
+    for (int i=0;i<19;i++) {
+      inData[i]=0;
+    }
+  }
+}
