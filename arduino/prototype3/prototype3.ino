@@ -81,8 +81,6 @@ int S2 = 5;
 int S3 = 4;
 int analogMux = A0;
 
-int skips = 0;
-
 char inData[20];
 
 const int _posTop = 1000;
