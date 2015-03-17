@@ -29,6 +29,8 @@ S2 - 5
 S3 - 4
 
 */
+
+
 #ifndef prog_uint8_t
 #define prog_uint8_t const uint8_t
 #endif
@@ -86,12 +88,13 @@ char inData[20];
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int MAX_MOTOR = 1600;
-const int MIN_MOTOR = 0;
-const int BUZZ_THRESHOLD = 100;
+const int BUZZ_THRESHOLD = 150;
+const int MOTOR_MIN = 2700;
 
-const int PWM_LOW = 4095;
-const int PWM_HIGH = 0;
+const int PWM_HIGH = 4095;
+const int PWM_LOW = 0;
+
+int index = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -101,8 +104,8 @@ void setup() {
   //MOTOR 1 (pixels[0])
   pixels[0].motor = 1;
   pixels[0].desiredPos = 500;
-  pixels[0].dirDown = 2;
-  pixels[0].dirUp = 3;
+  pixels[0].dirDown = 3;
+  pixels[0].dirUp = 2;
   pixels[0].analogPos = 2;
   pixels[0].integral = 0;
   pixels[0].derivative = 0;
@@ -113,8 +116,8 @@ void setup() {
   //MOTOR 2 (pixels[1])
   pixels[1].motor = 6;
   pixels[1].desiredPos = 500;
-  pixels[1].dirDown = 7;
-  pixels[1].dirUp = 8;
+  pixels[1].dirDown = 5;
+  pixels[1].dirUp = 4;
   pixels[1].analogPos = 1;
   pixels[1].integral = 0;
   pixels[1].derivative = 0;
@@ -125,8 +128,8 @@ void setup() {
   //MOTOR 3
   pixels[2].motor = 9;
   pixels[2].desiredPos = 500;
-  pixels[2].dirDown = 10;
-  pixels[2].dirUp = 11;
+  pixels[2].dirDown = 7;
+  pixels[2].dirUp = 8;
   pixels[2].analogPos = 7;
   pixels[2].integral = 0;
   pixels[2].derivative = 0;
@@ -135,16 +138,16 @@ void setup() {
   pixels[2].kI = 0.02;
   
   //MOTOR 4
-  pixels[3].motor = 12;
+  pixels[3].motor = 10;
   pixels[3].desiredPos = 500;
-  pixels[3].dirDown = 13;
-  pixels[3].dirUp = 14;
+  pixels[3].dirDown = 11;
+  pixels[3].dirUp = 12;
   pixels[3].analogPos = 4;
   pixels[3].integral = 0;
   pixels[3].derivative = 0;
-  pixels[2].kP = 0.6;
-  pixels[2].kD = 0.2;
-  pixels[2].kI = 0.02;
+  pixels[3].kP = 0.6;
+  pixels[3].kD = 0.2;
+  pixels[3].kI = 0.02;
   
   pinMode(analogMux, INPUT);
   pinMode(S0,OUTPUT);
@@ -166,11 +169,10 @@ void loop() {
     Serial.print(" ");
    
     int action = calculatePIDAction(i);
-    padPrint(action, 4);
-    Serial.print(" ");
+    padPrint(action, 3);
+    Serial.print("     ");
     
-    setDirection(i, action);
-    setPWMValue(pixels[i].motor, action);
+    moveMotor(i, action);
   }
   Serial.println("");
   Tlc.update();
@@ -201,23 +203,30 @@ int calculatePIDAction(int pixel) {
   //if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
  
   int error = pixels[pixel].desiredPos - pixels[pixel].actualPos;
+  
   pixels[pixel].integral = pixels[pixel].integral + error;
-  
-  pixels[pixel].derivative = pixels[pixel].lastPos - pixels[pixel].actualPos;
-  
-  double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
-  int motorSpeed = constrain(map(abs(drive),0,500,PWM_LOW,PWM_HIGH),PWM_LOW, PWM_HIGH);
+//  if (pixels[pixel].integral > PWM_HIGH) pixels[pixel].integral = PWM_HIGH;
+//  if (pixels[pixel].integral < -PWM_HIGH) pixels[pixel].integral = -PWM_HIGH;
 
-  if (motorSpeed < BUZZ_THRESHOLD) {
-    motorSpeed = PWM_LOW;
-  }
+  pixels[pixel].derivative = pixels[pixel].lastPos - pixels[pixel].actualPos;
+  pixels[pixel].lastPos = pixels[pixel].actualPos;
   
+  //taken out integral acction for now )
+  double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
+  
+  int motorSpeed = constrain(map(drive,-500, 500, PWM_HIGH, -PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
+  
+  if (abs(motorSpeed) < BUZZ_THRESHOLD) {
+    motorSpeed = 0;
+  }
+ 
   return motorSpeed;
 }
 
 //set Tlc (pwm multiplexer) channel value. Note: changes won't take effect until Tlc.update() is called
 void setPWMValue(int channel, int value) {
-  Tlc.set(channel, value);
+  //this thing is actually reverse
+  Tlc.set(channel, PWM_HIGH-value);
 }
 
 //set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
@@ -231,10 +240,15 @@ void setDirection(int pixel, int action) {
   }
 }
 
+void moveMotor(int pixel, int action) {
+  setDirection(pixel, action);
+  int pwmWrite = map(abs(action),PWM_LOW, PWM_HIGH, MOTOR_MIN, PWM_HIGH);
+  if (action == PWM_LOW) pwmWrite = PWM_LOW;
+  setPWMValue(pixels[pixel].motor, pwmWrite);
+}
+
 //read one command from serial interface and react accordingly
 void serialRead() {
-  int index = 0;
-  char inChar;
   while (Serial.available() > 0 && Serial.peek() != 10)
   {
     if(index > 19) index = 0;// One less than the size of the array
@@ -244,7 +258,7 @@ void serialRead() {
   
   if (strlen(inData) != 0 && Serial.peek() == 10) {
     Serial.read();
-    int id = inData[0];
+    int id = String(inData).substring(0,1).toInt();
     if (sizeof(pixels) / sizeof(pixels[0]) <= id) return;
     
     if (inData[1] == 'C') {
@@ -264,6 +278,7 @@ void serialRead() {
     for (int i=0;i<19;i++) {
       inData[i]=0;
     }
+    index = 0;
   }
 }
 
