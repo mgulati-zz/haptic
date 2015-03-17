@@ -100,13 +100,10 @@
     var colors = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","DarkOrange","DarkOrchid","DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","GoldenRod","Gray","Green","GreenYellow","HoneyDew","HotPink","IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","RebeccaPurple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"]
 
     function getTransform(el) {
-      var results = $(el).css('transform').match(/matrix(?:(3d)\(-{0,1}\d+(?:, -{0,1}\d+)*(?:, (-{0,1}\d+))(?:, (-{0,1}\d+))(?:, (-{0,1}\d+)), -{0,1}\d+\)|\(-{0,1}\d+(?:, -{0,1}\d+)*(?:, (-{0,1}.+))(?:, (-{0,1}.+))\))/);
-
-      if(!results) return [0, 0, 0];
-      if(results[1] == '3d') return results.slice(2,5);
-
-      results.push(0);
-      return results.slice(5, 8);
+      var matrix = $(el).css('transform');
+      if (matrix.indexOf('matrix3d') == 0) return matrix.substring(9,matrix.length-1).split(',').slice(12,15);
+      else if (matrix.indexOf('matrix') == 0) return matrix.substring(7,matrix.length-1).split(',').slice(4,6).concat("0");
+      else return [0,0,0]
     }
 
     function setTransform(el, arr_xyz) {
@@ -222,22 +219,21 @@
       });
     }
 
-    // function zoom (e) {
-    //   e.preventDefault();
-    //   e.stopPropagation();
+    function zoom (e) {
+      e.preventDefault();
+      e.stopPropagation();
       
-    //   var scrollVal = e.wheelDelta;
-    //   var currentZoom = parseFloat($('#model3D').css('zoom'));
-    //   var newZoom = currentZoom + scrollVal/100;
-    //   if (newZoom < 1) newZoom = 1;
-    //   if (newZoom > 1.6) newZoom = 1.6;
+      var scrollVal = e.wheelDelta;
+      var currentZoom = parseFloat($('#model3D').css('zoom'));
+      var newZoom = currentZoom + scrollVal/100;
+      if (newZoom < 1) newZoom = 1;
+      if (newZoom > 1.6) newZoom = 2;
 
-    //   $('#model3D').css('zoom',newZoom);      
-    // }
+      $('#model3D').css('zoom',newZoom);      
+    }
 
     $(function() {
-      //zoom currently disabled due to crazy transformations
-      // $('.leftPane').on('mousewheel',function(e) {zoom(e.originalEvent)});
+      $('.leftPane').on('mousewheel',function(e) {zoom(e.originalEvent)});
       $('.leftPane').on('dragstart',function(e) {freeRotate(e.originalEvent)});
       $('button').on('click',function() {resetAll()});
       $('.scene').on('dragstart','.slide',function(e) {sliderDrag(e.originalEvent)});
