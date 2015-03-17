@@ -94,9 +94,9 @@
   </style>
   
   <script src="jquery.js"></script>
-  <script src="libraries/arduino.js"></script>
-  <script src="libraries/button.js"></script>
-  <script src="libraries/grid.js"></script>
+  <script src="chrome/libraries/arduino.js"></script>
+  <script src="chrome/libraries/button.js"></script>
+  <script src="chrome/libraries/grid.js"></script>
   <script src="demo.js"></script>
   <script>
     var slideLimit = 1;
@@ -118,6 +118,7 @@
     function setY(slider, percentage) {
       var current = getTransform(slider);
       if (percentage >= slideLimit) percentage = slideLimit;
+      if (percentage >= 1) percentage = 1;
       current[1] = Math.floor(- $(slider).height() * percentage);
       setTransform(slider, current);
     }
@@ -170,9 +171,10 @@
           var dragX = e2.pageX;
           var dragY = e2.pageY;
           var diffY = Yi - dragY;
-          var newY = starterY + diffY/200;
+          var newY = starterY + diffY/(slider.height()*2);
           if (newY < 0) newY = 0;
           if (newY > 1) newY = 1;
+          grid.updateDesiredPos($(".slide").index(slider), newY * 1000);
           setY(slider, newY);
         }
       });

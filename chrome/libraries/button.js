@@ -8,7 +8,7 @@ function Button (id, arduino, onUpdate) {
 	_self.arduino = arduino;
 	_self.id = id;
 
-	function updateValues(touch, position, desiredPosition) {
+	_self.updateValues = function(touch, position, desiredPosition) {
 		_self.touch = touch;
 		_self.position = position;
 		_self.desiredPosition = desiredPosition;

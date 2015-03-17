@@ -1,7 +1,9 @@
 $(document).ready(function() {
-  var grid = new Grid();
-  for (var i = 0; i < 4, i++) {
+  grid = new Grid();
+  for (var i = 0; i < 4; i++) {
     grid.newButton(i, function(button) {
-    setY(button.id, button.position);
-  });
+      $slider = $(".slide:eq(" + button.id +")");
+      setY($slider, button.position / 1000);
+    });
+  }
 });
