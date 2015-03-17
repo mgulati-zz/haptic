@@ -97,6 +97,7 @@ void setup() {
   Tlc.init();
   Tlc.clear();
   
+  //MOTOR 1 (pixels[0])
   pixels[0].motor = 1;
   pixels[0].desiredPos = 500;
   pixels[0].dirDown = 2;
@@ -108,6 +109,7 @@ void setup() {
   pixels[0].kD = 0.2;
   pixels[0].kI = 0.02;
   
+  //MOTOR 2 (pixels[1])
   pixels[1].motor = 6;
   pixels[1].desiredPos = 500;
   pixels[1].dirDown = 7;
@@ -115,10 +117,11 @@ void setup() {
   pixels[1].analogPos = 1;
   pixels[1].integral = 0;
   pixels[1].derivative = 0;
-  pixels[0].kP = 0.6;
-  pixels[0].kD = 0.2;
-  pixels[0].kI = 0.02;
+  pixels[1].kP = 0.6;
+  pixels[1].kD = 0.2;
+  pixels[1].kI = 0.02;
   
+  //MOTOR 3
   pixels[2].motor = 9;
   pixels[2].desiredPos = 500;
   pixels[2].dirDown = 10;
@@ -126,10 +129,11 @@ void setup() {
   pixels[2].analogPos = 7;
   pixels[2].integral = 0;
   pixels[2].derivative = 0;
-  pixels[0].kP = 0.6;
-  pixels[0].kD = 0.2;
-  pixels[0].kI = 0.02;
+  pixels[2].kP = 0.6;
+  pixels[2].kD = 0.2;
+  pixels[2].kI = 0.02;
   
+  //MOTOR 4
   pixels[3].motor = 12;
   pixels[3].desiredPos = 500;
   pixels[3].dirDown = 13;
@@ -137,9 +141,9 @@ void setup() {
   pixels[3].analogPos = 4;
   pixels[3].integral = 0;
   pixels[3].derivative = 0;
-  pixels[0].kP = 0.6;
-  pixels[0].kD = 0.2;
-  pixels[0].kI = 0.02;
+  pixels[2].kP = 0.6;
+  pixels[2].kD = 0.2;
+  pixels[2].kI = 0.02;
   
   pinMode(analogMux, INPUT);
   pinMode(S0,OUTPUT);
@@ -152,7 +156,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   serialRead();
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < numPixels; i++) {
     pixels[i].actualPos = analogMuxRead(pixels[i].analogPos);
     //readPosition(i);
     int action = calculatePIDAction(i);
