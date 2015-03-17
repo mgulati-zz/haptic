@@ -85,12 +85,13 @@ char inData[20];
 
 const int _posTop = 1000;
 const int _posBottom = 0;
-const int _posStop = 700;
 
 const int MAX_MOTOR = 1600;
 const int MIN_MOTOR = 0;
 const int BUZZ_THRESHOLD = 100;
-const int PWM_OFF = 4095;
+
+const int PWM_LOW = 4095;
+const int PWM_HIGH = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -157,21 +158,21 @@ void loop() {
   // put your main code here, to run repeatedly:
   serialRead();
   for (int i = 0; i < numPixels; i++) {
-    pixels[i].actualPos = analogMuxRead(pixels[i].analogPos);
-    //readPosition(i);
-    int action = calculatePIDAction(i);
-    //setPWMValue(pixels[i].motor, 1600);
-    padPrint(action, 3);
-
-    //setPWMValue(pixels[i].motor, 0);
-    setDirection(i, action);
-  }
-  
-  /*for (int i = 0; i < numPixels; i++) {
+    Serial.print(i);
+    Serial.print(" ");
+    
+    readPosition(i);
     padPrint(pixels[i].actualPos, 3);
     Serial.print(" ");
+   
+    int action = calculatePIDAction(i);
+    padPrint(action, 4);
+    Serial.print(" ");
+    
+    setDirection(i, action);
+    setPWMValue(pixels[i].motor, action);
   }
-  Serial.println("");*/
+  Serial.println("");
   Tlc.update();
 }
 
@@ -189,19 +190,29 @@ int analogMuxRead(int channel) {
   return map(analogRead(analogMux),0,1023,0,1000);
 }
 
-//set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
-void setDirection(int i, int dir) {
-  if (dir > 0) {
-     //digitalWrite(pixels[pixelNum].dirUp, HIGH);
-     //digitalWrite(pixels[pixelNum].dirDown, LOW); 
-     setPWMValue(pixels[i].dirUp, 0);    
-     setPWMValue(pixels[i].dirDown, 4000);
-  } else {
-    setPWMValue(pixels[i].dirUp, 4000);
-    setPWMValue(pixels[i].dirDown, 0);
-    //digitalWrite(pixels[pixelNum].dirUp, LOW);
-    //digitalWrite(pixels[pixelNum].dirDown, HIGH); 
+//read current position of slider and update its respective stored value
+void readPosition(int pixel) {
+  pixels[pixel].actualPos = map(analogMuxRead(pixels[pixel].analogPos),0,1023,_posBottom,_posTop);
+  pixels[pixel].actualPos = constrain(pixels[pixel].actualPos, _posBottom, _posTop);
+}
+
+//returns a motor speed, all pid controls
+int calculatePIDAction(int pixel) {
+  //if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
+ 
+  int error = pixels[pixel].desiredPos - pixels[pixel].actualPos;
+  pixels[pixel].integral = pixels[pixel].integral + error;
+  
+  pixels[pixel].derivative = pixels[pixel].lastPos - pixels[pixel].actualPos;
+  
+  double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
+  int motorSpeed = constrain(map(abs(drive),0,500,PWM_LOW,PWM_HIGH),PWM_LOW, PWM_HIGH);
+
+  if (motorSpeed < BUZZ_THRESHOLD) {
+    motorSpeed = PWM_LOW;
   }
+  
+  return motorSpeed;
 }
 
 //set Tlc (pwm multiplexer) channel value. Note: changes won't take effect until Tlc.update() is called
@@ -209,40 +220,14 @@ void setPWMValue(int channel, int value) {
   Tlc.set(channel, value);
 }
 
-//read current position of slider and update its respective stored value
-void readPosition(int channel) {
-  pixels[channel].actualPos = map(analogMuxRead(pixels[channel].analogPos),0,1023,_posBottom,_posTop);
-  pixels[channel].actualPos = map(pixels[channel].actualPos, 680, 950, _posBottom, _posTop);
-  pixels[channel].actualPos = constrain(pixels[channel].actualPos, _posBottom, _posTop);
-}
-
-//returns which direction to move according to PID calculations (also sets motor speed based on these calculations)
-int calculatePIDAction(int channel) {
-  
-  //if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
-  
-  int error = pixels[channel].desiredPos - pixels[channel].actualPos;
-  pixels[channel].integral = pixels[channel].integral + error;
-  
-  pixels[channel].derivative = pixels[channel].lastPos - pixels[channel].actualPos;
-  
-  double drive = (error*pixels[channel].kP) + (pixels[channel].integral*pixels[channel].kI) + (pixels[channel].derivative*pixels[channel].kD);
-    Serial.print(drive);
-
-  int motorSpeed = constrain(abs(map(abs(drive),0,500, 0,MAX_MOTOR)),0, MAX_MOTOR);
-  Serial.println();
-  //if (motorSpeed < 150) motorSpeed = 0;
-  if (motorSpeed < BUZZ_THRESHOLD) {
-    setPWMValue(pixels[channel].motor, PWM_OFF);
+//set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
+void setDirection(int pixel, int action) {
+  if (action > 0) {
+     setPWMValue(pixels[pixel].dirUp, PWM_HIGH);    
+     setPWMValue(pixels[pixel].dirDown, PWM_LOW);
   } else {
-    setPWMValue(pixels[channel].motor, MAX_MOTOR - motorSpeed);
-  }
-  
-  if (drive < 0){
-    return 0;
-  }
-  else{
-    return 1;
+    setPWMValue(pixels[pixel].dirUp, PWM_LOW);
+    setPWMValue(pixels[pixel].dirDown, PWM_HIGH); 
   }
 }
 
@@ -263,17 +248,17 @@ void serialRead() {
     if (sizeof(pixels) / sizeof(pixels[0]) <= id) return;
     
     if (inData[1] == 'C') {
-      pixels[id].red = constrain(String(inData).substring(1,4).toInt(),0,255);
-      pixels[id].green = constrain(String(inData).substring(4,7).toInt(),0,255);
-      pixels[id].blue = constrain(String(inData).substring(7,10).toInt(),0,255);
+      pixels[id].red = constrain(String(inData).substring(2,5).toInt(),0,255);
+      pixels[id].green = constrain(String(inData).substring(5,8).toInt(),0,255);
+      pixels[id].blue = constrain(String(inData).substring(8,11).toInt(),0,255);
     }
     
     if (inData[1] == 'P') {
-      pixels[id].desiredPos = constrain(String(inData).substring(1,5).toInt(),0,1000);
+      pixels[id].desiredPos = constrain(String(inData).substring(2,6).toInt(),0,1000);
     }
     
     if (inData[1] == 'A') {
-      pixels[id].allowSlide = constrain(String(inData).substring(1,2).toInt(),0,1);
+      pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
     }
         
     for (int i=0;i<19;i++) {
