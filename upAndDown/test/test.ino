@@ -1,4 +1,34 @@
+/*
+1 - speed
+2 - direction 
+3 - direction
 
+4 - direction 
+5 - direction
+6 - speed
+
+7 - direction
+8 - direction
+9 - speed
+
+10 - speed
+11 - direction
+12 - direction
+
+analog channels
+touch - potentiometer
+01 - 1 (456)
+23 - 2 (123)
+45 - 4 (10 11 12)
+67 - 7 (789)
+
+selector pins:
+S0 - 7
+S1 - 6
+S2 - 5
+S3 - 4
+
+*/
 #ifndef prog_uint8_t
 #define prog_uint8_t const uint8_t
 #endif
@@ -40,7 +70,7 @@ struct pixel {
   int green;
 };
 
-const int numPixels = 2;
+const int numPixels = 4;
 struct pixel pixels[numPixels];
 
 int S0 = 7;
@@ -57,68 +87,116 @@ const int _posTop = 1000;
 const int _posBottom = 0;
 const int _posStop = 700;
 
+const int MAX_MOTOR = 1600;
+const int MIN_MOTOR = 0;
+const int BUZZ_THRESHOLD = 100;
+const int PWM_OFF = 4095;
+
 void setup() {
   Serial.begin(9600);
-
   Tlc.init();
-  pixels[0].motor = 0;
-  pixels[0].desiredPos = 500;
-  pixels[0].dirDown = 4;
-  pixels[0].dirUp = 2;
-  pixels[0].analogPos = A0;
-
+  Tlc.clear();
   
-  pixels[1].motor = 1;
+  pixels[0].motor = 1;
+  pixels[0].desiredPos = 500;
+  pixels[0].dirDown = 2;
+  pixels[0].dirUp = 3;
+  pixels[0].analogPos = 2;
+  pixels[0].integral = 0;
+  pixels[0].derivative = 0;
+  pixels[0].kP = 0.6;
+  pixels[0].kD = 0.2;
+  pixels[0].kI = 0.02;
+  
+  pixels[1].motor = 6;
   pixels[1].desiredPos = 500;
-  pixels[1].dirDown = 6;
-  pixels[1].dirUp = 7;
-  pixels[1].analogPos = A1;
-
+  pixels[1].dirDown = 7;
+  pixels[1].dirUp = 8;
+  pixels[1].analogPos = 1;
+  pixels[1].integral = 0;
+  pixels[1].derivative = 0;
+  pixels[0].kP = 0.6;
+  pixels[0].kD = 0.2;
+  pixels[0].kI = 0.02;
+  
+  pixels[2].motor = 9;
+  pixels[2].desiredPos = 500;
+  pixels[2].dirDown = 10;
+  pixels[2].dirUp = 11;
+  pixels[2].analogPos = 7;
+  pixels[2].integral = 0;
+  pixels[2].derivative = 0;
+  pixels[0].kP = 0.6;
+  pixels[0].kD = 0.2;
+  pixels[0].kI = 0.02;
+  
+  pixels[3].motor = 12;
+  pixels[3].desiredPos = 500;
+  pixels[3].dirDown = 13;
+  pixels[3].dirUp = 14;
+  pixels[3].analogPos = 4;
+  pixels[3].integral = 0;
+  pixels[3].derivative = 0;
+  pixels[0].kP = 0.6;
+  pixels[0].kD = 0.2;
+  pixels[0].kI = 0.02;
   
   pinMode(analogMux, INPUT);
-  pinMode(pixels[0].dirDown, OUTPUT);
-  pinMode(pixels[0].dirUp, OUTPUT);
-  pinMode(pixels[1].dirDown, OUTPUT);
-  pinMode(pixels[1].dirUp, OUTPUT);
-  
-
+  pinMode(S0,OUTPUT);
+  pinMode(S1,OUTPUT);
+  pinMode(S2,OUTPUT);
+  pinMode(S3,OUTPUT);
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   serialRead();
-  for (int i = 0; i < numPixels; i++) {
-    pixels[i].actualPos = analogRead(pixels[i].analogPos);
-    readPosition(i);
+  for (int i = 0; i < 1; i++) {
+    pixels[i].actualPos = analogMuxRead(pixels[i].analogPos);
+    //readPosition(i);
     int action = calculatePIDAction(i);
+    //setPWMValue(pixels[i].motor, 1600);
+    padPrint(action, 3);
+
+    //setPWMValue(pixels[i].motor, 0);
     setDirection(i, action);
   }
+  
+  /*for (int i = 0; i < numPixels; i++) {
+    padPrint(pixels[i].actualPos, 3);
+    Serial.print(" ");
+  }
+  Serial.println("");*/
   Tlc.update();
 }
 
 //set channel on analog mux to read from
-int setAnalogMux(int channel) {
-  digitalWrite(S0, channel & 0b0001);
-  digitalWrite(S1, channel & 0b0010);
-  digitalWrite(S2, channel & 0b0100);
-  digitalWrite(S3, channel & 0b1000);
+void setAnalogMux(int channel) {
+  digitalWrite(S3, HIGH && (channel & B00001000));
+  digitalWrite(S2, HIGH && (channel & B00000100));
+  digitalWrite(S1, HIGH && (channel & B00000010));
+  digitalWrite(S0, HIGH && (channel & B00000001));
 }
 
 //read value from certain channel of analog multiplexer
 int analogMuxRead(int channel) {
   setAnalogMux(channel);
-  return analogRead(analogMux);
+  return map(analogRead(analogMux),0,1023,0,1000);
 }
 
 //set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
-void setDirection(int pixelNum, int dir) {
+void setDirection(int i, int dir) {
   if (dir > 0) {
-    digitalWrite(pixels[pixelNum].dirUp, HIGH);
-    digitalWrite(pixels[pixelNum].dirDown, LOW); 
+     //digitalWrite(pixels[pixelNum].dirUp, HIGH);
+     //digitalWrite(pixels[pixelNum].dirDown, LOW); 
+     setPWMValue(pixels[i].dirUp, 0);    
+     setPWMValue(pixels[i].dirDown, 4000);
   } else {
-    digitalWrite(pixels[pixelNum].dirUp, LOW);
-    digitalWrite(pixels[pixelNum].dirDown, HIGH); 
+    setPWMValue(pixels[i].dirUp, 4000);
+    setPWMValue(pixels[i].dirDown, 0);
+    //digitalWrite(pixels[pixelNum].dirUp, LOW);
+    //digitalWrite(pixels[pixelNum].dirDown, HIGH); 
   }
 }
 
@@ -137,7 +215,7 @@ void readPosition(int channel) {
 //returns which direction to move according to PID calculations (also sets motor speed based on these calculations)
 int calculatePIDAction(int channel) {
   
-  if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
+  //if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
   
   int error = pixels[channel].desiredPos - pixels[channel].actualPos;
   pixels[channel].integral = pixels[channel].integral + error;
@@ -145,10 +223,16 @@ int calculatePIDAction(int channel) {
   pixels[channel].derivative = pixels[channel].lastPos - pixels[channel].actualPos;
   
   double drive = (error*pixels[channel].kP) + (pixels[channel].integral*pixels[channel].kI) + (pixels[channel].derivative*pixels[channel].kD);
-  
-  int motorSpeed = constrain(abs(map(drive,-500,500,-255,255)),0,255);
-  if (motorSpeed < 150) motorSpeed = 0;
-  setPWMValue(pixels[channel].motor, motorSpeed);
+    Serial.print(drive);
+
+  int motorSpeed = constrain(abs(map(abs(drive),0,500, 0,MAX_MOTOR)),0, MAX_MOTOR);
+  Serial.println();
+  //if (motorSpeed < 150) motorSpeed = 0;
+  if (motorSpeed < BUZZ_THRESHOLD) {
+    setPWMValue(pixels[channel].motor, PWM_OFF);
+  } else {
+    setPWMValue(pixels[channel].motor, MAX_MOTOR - motorSpeed);
+  }
   
   if (drive < 0){
     return 0;
@@ -192,4 +276,18 @@ void serialRead() {
       inData[i]=0;
     }
   }
+}
+
+void padPrint(int value, int width)
+{
+  // pads values with leading zeros to make the given width
+  char valueStr[6]; // large enough to hold an int
+  itoa (value, valueStr, 10);
+  int len = strlen(valueStr);
+  if(len < width){
+    len = width-len;
+    while(len--)
+     Serial.print(' ');
+  }
+ Serial.print(valueStr);   
 }
