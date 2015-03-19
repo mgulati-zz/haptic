@@ -72,7 +72,7 @@
       left: 100%;
       transform: rotateY(90deg) translateX(-50%);
     }
-    .cuboid .tp {
+    .cuboid .tp, .cuboid .desired_tp {
       transform: rotateX(90deg) translateY(-50%);
     }
     .cuboid .bm {
@@ -89,8 +89,12 @@
     }
     .slide .face {
       background-color:#FFFFFF;
-      transition: background-color 0.5s ease;
+      transition: background-color 0.5s ease-in-out;
     }
+    .slide.desired .face {
+      opacity: 0.5;
+    }
+
   </style>
   
   <script src="jquery.js"></script>
@@ -101,29 +105,30 @@
 
     function getTransform(el) {
       var matrix = $(el).css('transform');
+      if (matrix == null) return [0,0,0];
       if (matrix.indexOf('matrix3d') == 0) return matrix.substring(9,matrix.length-1).split(',').slice(12,15);
       else if (matrix.indexOf('matrix') == 0) return matrix.substring(7,matrix.length-1).split(',').slice(4,6).concat("0");
       else return [0,0,0]
     }
 
-    function setTransform(el, arr_xyz) {
+    function setTransform(el, arr_xyz, animate) {
+      if (animate) $(el).css('transition','transform 0.5s ease-in-out');
       var translation = arr_xyz.join('px,') + 'px';
       $(el).css('transform', 'translate3D(' + translation + ')');
+      if (animate) setTimeout(function() {$(el).css('transition','')},500);
     }
 
-    function setY(slider, percentage) {
+    function setY(slider, percentage, animate) {
       var current = getTransform(slider);
       if (percentage >= slideLimit) percentage = slideLimit;
       current[1] = Math.floor(- $(slider).height() * percentage);
-      setTransform(slider, current);
+      setTransform(slider, current, animate)
     }
 
     function setAllY(percentage) {
-      $('.slide').css('transition','transform 0.5s ease-in-out');
-      for (var i = 0; i < $('.slide').length; i++) {
-        setY($('.slide')[i], percentage);
+      for (var i = 0; i < $('.slide.desired').length; i++) {
+        setY($('.slide.desired')[i], percentage, true);
       }
-      setTimeout(function() {$('.slide').css('transition','');},500);
     }
 
     function setRotate(X, Y) {
@@ -169,7 +174,7 @@
           var newY = starterY + diffY/200;
           if (newY < 0) newY = 0;
           if (newY > 1) newY = 1;
-          setY(slider, newY);
+          setY(slider,newY,false);
         }
       });
 
@@ -184,9 +189,17 @@
     function sliderClick(e) {
       e.preventDefault();
       e.stopPropagation();
-
       var slider = $(e.target);
-      slider.parent().children().css('background-color',colors[Math.floor(Math.random() * colors.length)]);
+
+      // set color for both desired and actual slider 
+      var sliderClasses = slider.parent().attr('class').split(' ');
+      setColor($('.'+sliderClasses[sliderClasses.length - 1]), colors[Math.floor(Math.random() * colors.length)]);
+    }
+
+    function setColor(slider, color) {
+      $(slider).each(function(slider_i) {
+        $($(slider)[slider_i]).children().css('background-color',color);
+      })
     }
 
     function freeRotate(e) {
@@ -284,7 +297,12 @@
     function makePixel (height, sideLength, x, z, x_tot, z_tot) {
       makeCuboid(sideLength, height, sideLength, 
                  z*sideLength - sideLength*(z_tot-1)/2, 0, x*sideLength - sideLength*(x_tot-1)/2,
-                 true, 'slide')
+                 false, 'slide ' + x + '_' + z);
+
+      // only desired one is draggable
+      makeCuboid(sideLength, height, sideLength, 
+                 z*sideLength - sideLength*(z_tot-1)/2, 0, x*sideLength - sideLength*(x_tot-1)/2,
+                 true, 'slide desired ' + x + '_' + z);
     }
 
     function makeGrid (x_pixels, z_pixels, height, sideLength) {
@@ -306,7 +324,26 @@
       $('.scene').html('');
     }
 
+    //functions to be used by slider
+    function setDesiredPos (x,z,percentage,animate) {
+      var id_class = x + '_' + z;
+      var desired_slider = $('.' + id_class)[1];
+      setY(desired_slider, percentage, animate);
+    }
+
+    function setPos (x,z,percentage,animate) {
+      var id_class = x + '_' + z;
+      var true_slider = $('.' + id_class)[0];
+      setY(true_slider, percentage, animate);
+    }
+
+    function setLEDColor (x,z,color) {
+      var id_class = x + '_' + z;
+      setColor($('.' + id_class),color);
+    }
+
   </script>
+
 </head>
 <body>
   <div class="leftPane" draggable="true">
