@@ -3,6 +3,7 @@ function Grid() {
   var _self = this;
   _self.arduino = null;//new Arduino(onLineReceived);
   _self.buttons = {};
+  _self.coordinates = {0: [0,0]};
 
   function onLineReceived(str) {
     var strs = str.split(',');
@@ -27,6 +28,14 @@ function Grid() {
 
   _self.updateDesiredPos = function(i, desiredPos) {
     _self.updateValues(i, null, null, desiredPos);
+  }
+
+  _self.coordinateLookup = function(x,y) {
+    for (var key in _self.coordinates) {
+      if (_self.coordinates.hasOwnProperty(key) && _self.coordinates[key] == [x, y]) {
+          return key;
+      }
+    }
   }
 
 }

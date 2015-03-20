@@ -93,6 +93,8 @@ const int PWM_HIGH = 4095;
 const int PWM_LOW = 0;
 
 int index = 0;
+unsigned int serialTimer = 0;
+const int STIMER_THRESHOLD = 100;
 
 void setup() {
   Serial.begin(9600);
@@ -110,6 +112,8 @@ void setup() {
   pixels[0].kP = 0.6;
   pixels[0].kD = 0.2;
   pixels[0].kI = 0.02;
+  pixels[0].touchState = 0;
+
   
   //MOTOR 2 (pixels[1])
   pixels[1].motor = 6;
@@ -122,6 +126,7 @@ void setup() {
   pixels[1].kP = 0.6;
   pixels[1].kD = 0.2;
   pixels[1].kI = 0.02;
+  pixels[1].touchState = 0;
   
   //MOTOR 3
   pixels[2].motor = 9;
@@ -134,6 +139,7 @@ void setup() {
   pixels[2].kP = 0.6;
   pixels[2].kD = 0.2;
   pixels[2].kI = 0.02;
+  pixels[2].touchState = 0;
   
   //MOTOR 4
   pixels[3].motor = 10;
@@ -146,6 +152,7 @@ void setup() {
   pixels[3].kP = 0.6;
   pixels[3].kD = 0.2;
   pixels[3].kI = 0.02;
+  pixels[3].touchState = 0;
   
   pinMode(analogMux, INPUT);
   pinMode(S0,OUTPUT);
@@ -158,22 +165,35 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   serialRead();
+  serialTimer++;
   for (int i = 0; i < numPixels; i++) {
-    Serial.print(i);
-    Serial.print(" ");
+    
     
     readPosition(i);
-    padPrint(pixels[i].actualPos, 3);
-    Serial.print(" ");
-   
-    int action = calculatePIDAction(i);
-    padPrint(action, 3);
-    Serial.print("     ");
+    //padPrint(pixels[i].actualPos, 3);
     
+    
+    int action = calculatePIDAction(i);
+    //padPrint(action, 3);
+    //Serial.print("     ");
+    if (serialTimer > STIMER_THRESHOLD) {
+      serialPrintPixel(i);
+    }
     moveMotor(i, action);
   }
-  Serial.println("");
+  if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
   Tlc.update();
+}
+
+void serialPrintPixel(int i) {
+    Serial.print(i);
+    Serial.print(",");
+    Serial.print(pixels[i].touchState);
+    Serial.print(",");
+    Serial.print(pixels[i].actualPos);
+    Serial.print(",");
+    Serial.print(pixels[i].desiredPos);
+   Serial.println("");
 }
 
 //set channel on analog mux to read from
@@ -202,7 +222,12 @@ int calculatePIDAction(int pixel) {
  
   int error = pixels[pixel].desiredPos - pixels[pixel].actualPos;
   
-  pixels[pixel].integral = pixels[pixel].integral + error;
+  pixels[pixel].integral = constrain((pixels[pixel].integral + error), -20000, 20000);
+  
+  if (pixels[pixel].derivative == 0 && error == 0) {
+    pixels[pixel].integral = 0;
+  }
+    
 //  if (pixels[pixel].integral > PWM_HIGH) pixels[pixel].integral = PWM_HIGH;
 //  if (pixels[pixel].integral < -PWM_HIGH) pixels[pixel].integral = -PWM_HIGH;
 
@@ -213,7 +238,7 @@ int calculatePIDAction(int pixel) {
   double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
   
   int motorSpeed = constrain(map(drive,-500, 500, PWM_HIGH, -PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
-  
+  if (pixel == 0) Serial.println(motorSpeed);
   if (abs(motorSpeed) < BUZZ_THRESHOLD) {
     motorSpeed = 0;
   }
