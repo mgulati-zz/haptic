@@ -14,7 +14,7 @@ function Grid() {
       var touch = parseInt(strs[1]);
       var position = parseInt(strs[2]);
       var desiredPosition = parseInt(strs[3]);
-      _self.updateValues(id,touch,position,desiredPosition);
+      _self.updateValues(id,position,touch,desiredPosition);
   }
 
   _self.newButton = function(id, onUpdate) {

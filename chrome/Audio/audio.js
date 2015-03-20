@@ -1,5 +1,5 @@
 var audio = new Audio();
-audio.src = 'pop.mp3';
+audio.src = 'opening.mp3';
 audio.controls = true;
 audio.loop = true;
 audio.autoplay = true;
@@ -51,7 +51,10 @@ function frameLooper(){
     //console.log(i, Math.round((-bar_height*10)/100)*100);
     skips[i] += 1;
     if (i < 4) {
-      grid.updateDesiredPos(i, Math.round((-bar_height*10)/10)*10);
+      var pos = Math.round((-bar_height*10)/10)*10;
+      pos = (pos - 500) * 10
+      if (pos > 1000) pos = 1000; 
+      grid.updateDesiredPos(i, pos);
       skips[i] = 0;
     }
     //  fillRect( x, y, width, height ) // Explanation of the parameters below
