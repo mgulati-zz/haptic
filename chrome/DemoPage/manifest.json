@@ -8,7 +8,7 @@
       "scripts": ["background.js"]
     }
   },
-  "icons": { "16": "logo.jpg", "128": "logo.jpg" },
+  "icons": { "16": "logo2.png", "128": "logo2.png" },
   "permissions": [
     "serial",
     "usb"
