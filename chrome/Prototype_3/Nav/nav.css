@@ -1,0 +1,9 @@
+.nav {position: absolute;}
+.nav button {
+  background: none;
+  position: relative;
+  border: none;
+  width: 150px;
+  padding: 15px;
+  font-size: 20px;
+}

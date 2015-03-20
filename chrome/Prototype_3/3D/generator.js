@@ -15,6 +15,7 @@ function Generator () {
     var draggingListener = emptyFunction;
     var clickListener = emptyFunction;
     var dragEndListener = emptyFunction;
+    var beforeDragListener = function() {return true};
 
     function getTransform(el) {
       var matrix = $(el).css('transform');
@@ -105,6 +106,7 @@ function Generator () {
       e.stopPropagation();
       var dragged_slider = $(e.target);
       var xzArr =  getXZFromSlider(dragged_slider);
+      if (!beforeDragListener(xzArr[0],xzArr[1])) return;
       var slider = $('.slide.desired.' + xzArr.join('_'));
       $("body").css('cursor','-webkit-grabbing');
       $('.slide').css('cursor','-webkit-grabbing');
@@ -205,7 +207,7 @@ function Generator () {
     }
 
     //functions to interface with this thing
-    _self.makeHaptic = function (x_pixels, z_pixels, height, sideLength, thickness, slideRange, onDragging, onDragEnd, onSlideClick) {
+    _self.makeHaptic = function (x_pixels, z_pixels, height, sideLength, thickness, slideRange, onDragging, onDragEnd, onSlideClick, beforeDrag) {
       clearCanvas();
       makeGrid(x_pixels, z_pixels, height, sideLength);
       makeCasing(height, x_pixels*sideLength, z_pixels*sideLength, thickness);
@@ -213,6 +215,7 @@ function Generator () {
       draggingListener = onDragging || emptyFunction;
       clickListener = onSlideClick || emptyFunction;
       dragEndListener = onDragEnd || emptyFunction;
+      beforeDragListener = beforeDrag || (function() {return true});
       attachListeners();
     }
 

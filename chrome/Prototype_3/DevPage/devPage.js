@@ -4,6 +4,7 @@ $(document).ready(function() {
 
   var x = 2;
   var z = 2;
+  var connected = false;
 
   //debuggable gnerator and grid
   generator = new Generator();
@@ -14,7 +15,12 @@ $(document).ready(function() {
   for (var i = 0; i < x*z; i++) {
     grid.newButton(i, function(button) {
       var coordinates = grid.coordinates[button.id];
-      generator.setPos(coordinates[0], coordinates[1], button.position / 1000, true);
+      generator.setPos(coordinates[0], coordinates[1], button.position / 1000, false);
+      generator.setDesiredPos(coordinates[0], coordinates[1], button.desiredPosition / 1000, false);
+      if (connected == false) {
+        connected = true;
+        $('.nav button').attr('disabled',false);
+      }
     });
   }
   grid.arduino.getPorts(function(ports) {
@@ -55,5 +61,7 @@ $(document).ready(function() {
       })
     })
   })
+
+  $('.nav button').attr('disabled',true)
 });
 

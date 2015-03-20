@@ -68,7 +68,7 @@
   transition: background-color 0.5s ease-in-out;
 }
 .slide .face.tp {
-  background-color:#222;
+  background-color:#fff;
 }
 .slide .face.lt, .slide .face.rt, .slide .face.bk, .slide .face.ft {
   background-color: rgb(191, 192, 189) !important;

@@ -3,6 +3,10 @@ function Arduino (onLineReceived) {
   var _self = this;
   _self.connectionId = -1;
 
+  chrome.serial.getConnections(function(connections) {
+    if (connections.length > 0) _self.connectionId = connections[0].connectionId;
+  });
+
   _self.writeSerial = function(str) {
     str += '\n';
     if (_self.connectionId > -1) {
