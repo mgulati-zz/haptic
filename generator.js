@@ -231,4 +231,8 @@ function Generator () {
       var id_class = x + '_' + z;
       setColor($('.' + id_class),color);
     }
+
+    _self.setRotate = function(X,Y) {
+      setRotate(X, Y);
+    }
 }
