@@ -9,7 +9,9 @@ function Grid() {
       var strs = str.split(",");
       if (strs.length != 4) return;
       var id = parseInt(strs[0]);
-      if (_self.buttons[id].touch == parseInt(strs[1]) && _self.buttons[id].position == parseInt(strs[2])) return;
+      if (    _self.buttons[id].touch == parseInt(strs[1]) 
+           && _self.buttons[id].position == parseInt(strs[2])
+           && _self.buttons[id].desiredPosition == parseInt(strs[2])) return;
       var touch = parseInt(strs[1]);
       var position = parseInt(strs[2]);
       var desiredPosition = parseInt(strs[3]);
@@ -21,18 +23,17 @@ function Grid() {
   }
 
   _self.updateValues = function(id, position, touch, desiredPosition) {
-    touch = touch || _self.buttons[id].touch;
-    position = position || _self.buttons[id].position;
-    desiredPosition = desiredPosition || _self.buttons[id].desiredPosition;
+    _self.buttons[id].touch = (touch == null)? _self.buttons[id].touch:touch;
+    _self.buttons[id].position = (position == null)? _self.buttons[id].position:position;
+    _self.buttons[id].desiredPosition = (desiredPosition == null)? _self.buttons[id].desiredPosition:desiredPosition;
     _self.buttons[id].updateValues(touch,position,desiredPosition);
   }
 
   _self.updateDesiredPos = function(i, desiredPos) {
-    var changed = (desiredPos != _self.buttons[i].desiredPosition);
+    console.log(desiredPos);
+    if (desiredPos == _self.buttons[i].desiredPosition) return;
     _self.updateValues(i, null, null, desiredPos);
-    console.log(changed);
-    if (changed)
-      _self.buttons[i].sendTarget();
+    _self.buttons[i].sendTarget();
   }
 
   _self.coordinateLookup = function(x,y) {
