@@ -1,0 +1,102 @@
+<head>
+
+  <style>
+    .leftPane {
+      width:60%;
+      float: left;
+      cursor: move;
+    }
+    .rightPane {
+      width: 40%;
+      float: right;
+    }
+    button {
+      width: 150px;
+      padding: 15px;
+      font-size: 20px;
+      background: #776693;
+      border: 1px solid rgb(178, 168, 205);
+      cursor: pointer;
+      position: absolute;
+    }
+    button.disabled, 
+    button.disabled:hover, button.disabled:focus:active, 
+    button.disabled.clicking, button.disabled.hovered {
+      background: #808080;
+      border: 1px solid #ccc;
+      box-shadow: none;
+    }
+    .nav button:disabled {opacity: 0.2;}
+    
+    button:hover, button.hovered {
+      background: #524567;
+    }
+    .nav button:hover, .nav button.hovered {
+      background: none;
+    }
+    button:focus {
+      outline: 0;
+    }
+    button:focus:active, button.clicking {
+      box-shadow: inset 1px -4px 13px #3D324F;
+    }
+    .nav button:focus:active, .nav button.clicking {
+      box-shadow: none;
+    }
+
+    #reset {top: 90px;}
+    #a_connect {top: 160px;}
+    #a_reset {top: 250px;}
+
+    #a_select {
+      position: absolute;
+      top: 215px;
+      background-color:#776693;
+      color:white;
+      padding: 12px;
+      width: 150px;
+      font-family:arial,tahoma;
+      font-size:16px;
+      font-weight:bold;
+      color:#fff;
+      text-align:center;
+      text-shadow:0 -1px 0 rgba(0, 0, 0, 0.25);
+      border-radius:3px;
+      border:0;
+      outline:0;
+      opacity: 0.5;
+    }
+
+  </style>
+
+  <script src="../jquery.js"></script>
+
+  <script src="../hardware/arduino.js"></script>
+  <script src="../hardware/button.js"></script>
+  <script src="../hardware/grid.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../3D/haptic3D.css"/>
+  <script src="../3D/generator.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
+  <script src="../Nav/nav.js"></script>
+  
+  <script src="devPage.js"></script>
+
+</head>
+<body>
+  <div class="leftPane" draggable="true">
+    <div id="model3D">
+      <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
+      </div>
+    </div>
+  </div>
+
+  <div class="rightPane">
+    <button id="reset">RESET</button>
+    <button id="a_connect" href="">CONNECT</button>
+    <select id="a_select"></select>
+    <button id="a_reset" href="">REFRESH</button>
+  </div>
+
+</body>

@@ -1,0 +1,19 @@
+.nav {
+  position: absolute;
+  margin-top: -60px;
+}
+.nav button {
+  background: none;
+  position: relative;
+  border: none;
+  width: 150px;
+  padding: 15px;
+  font-size: 20px;
+}
+body {
+  background-color: black;
+  margin-top: 75px;
+}
+button {
+  color: white;
+}

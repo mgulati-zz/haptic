@@ -239,7 +239,6 @@ int calculatePIDAction(int pixel) {
   double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
   
   int motorSpeed = constrain(map(drive,-500, 500, PWM_HIGH, -PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
-  if (pixel == 0) Serial.println(motorSpeed);
   if (abs(motorSpeed) < BUZZ_THRESHOLD) {
     motorSpeed = 0;
   }

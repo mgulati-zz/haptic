@@ -9,9 +9,12 @@ function Button (id, arduino, onUpdate) {
 	_self.id = id;
 
 	_self.updateValues = function(touch, position, desiredPosition) {
-		_self.touch = touch;
-		_self.position = position;
-		_self.desiredPosition = desiredPosition;
+		if ((_self.touch == touch || touch == null)
+			&& (_self.position == position || position == null)
+			&& (_self.desiredPosition == desiredPosition || desiredPosition == null)) return;
+		_self.touch = (touch == null)? _self.touch:touch;
+    _self.position = (position == null)? _self.position:position;
+    _self.desiredPosition = (desiredPosition == null)? _self.desiredPosition : desiredPosition;
 		onUpdate(_self);
 	}
 

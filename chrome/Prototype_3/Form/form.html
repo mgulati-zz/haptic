@@ -1,0 +1,65 @@
+<head>
+  <style>
+    .leftPane {
+      width:60%;
+      float: left;
+      cursor: move;
+    }
+    .rightPane {
+      width: 40%;
+      float: right;
+    }
+    .matrix {
+      width: 400px;
+      height: 200px;
+      font-size: 24px;
+      margin: 50px 0;
+      font-family: verdana;
+    }
+    .element {
+      display: inline-block;
+      width: 30%;
+      height: 30%;
+      color: #ffffff;
+      text-align: center; 
+    }
+    .slide.desired {
+      opacity: 0.2;
+    }
+  </style>
+
+  <script src="../jquery.js"></script>
+
+  <script src="../hardware/arduino.js"></script>
+  <script src="../hardware/button.js"></script>
+  <script src="../hardware/grid.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../3D/haptic3D.css"/>
+  <script src="../3D/generator.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
+  <script src="../Nav/nav.js"></script>
+
+  <script src="form.js"></script>
+</head>
+<body>
+
+  <div class="leftPane" draggable="true">
+    <div id="model3D">
+      <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
+      </div>
+    </div>
+  </div>
+
+  <div class="rightPane">
+    <div class="matrix position-matrix">
+      <div class="element element-1">Date</div>
+      <div class="element element-2">Month</div>
+      <div class="element element-3">Year</div>
+      <div class="element element-4">1980</div>
+      <div class="element element-5"></div>
+      <div class="element element-6"></div>
+    </div>
+  </div>
+
+</body>

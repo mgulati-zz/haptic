@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #mp3_player {
+        width: 300px;
+        overflow: hidden;
+        margin: auto;
+      }
+      #analyser_render {
+        width: 800px;
+        margin-left: 20px;
+      }
+    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <meta charset="utf-8">
+    <script src="../jquery.js"></script>
+    <script src="../hardware/arduino.js"></script>
+    <script src="../hardware/button.js"></script>
+    <script src="../hardware/grid.js"></script>
+    <script src="audio.js"></script>
+    <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
+    <script src="../Nav/nav.js"></script>
+  </head>
+
+  <body>
+    <div id="mp3_player">
+      <canvas id="analyser_render"></canvas>
+      <div id="audio_box"></div>
+    </div>
+  </body>
+  
+</html>
