@@ -4,11 +4,14 @@ function Generator () {
     var slideLimit = 1;
 
     function getXZFromSlider(slider) {
-      var sliderClasses = $(slider).parent().attr('class').split(' ');
+      var sliderClasses = $(slider).attr('class').split(' ');
+      if ($(slider).children('.face').length == 0) {
+        sliderClasses = slider.parent().attr('class').split(' ');
+      }
       return sliderClasses[sliderClasses.length - 1].split('_');
     }
 
-    function emptyFunction() {}:
+    function emptyFunction() {};
     var draggingListener = emptyFunction;
     var clickListener = emptyFunction;
     var dragEndListener = emptyFunction;
@@ -107,6 +110,7 @@ function Generator () {
       var Xi = (e.pageX);
       var Yi = (e.pageY);
       var newY;
+      var xzArr =  getXZFromSlider(slider);
       $("body").on('mousemove', function(e2){
         if (e2.which == 1) {
           var dragX = e2.pageX;
@@ -116,12 +120,11 @@ function Generator () {
           if (newY < 0) newY = 0;
           if (newY > 1) newY = 1;
           setY(slider,newY,false);
-          var xzArr =  getXZFromSlider(slider);
           draggingListener(xzArr[0], xzArr[1], newY);
         }
       });
       $("body").on('mouseup',function(e3){
-        dragEndListener($(".slide.desired").index(slider), newY);
+        dragEndListener(xzArr[0], xzArr[1], newY);
         $("body").off('mousemove');
         $("body").off('mouseup');
         $("body").css('cursor','move');
@@ -130,11 +133,11 @@ function Generator () {
     }
 
     function attachListeners () {
-      $('.scene').on('mousewheel',function(e) {zoom(e.originalEvent)});
-      $('.scene').on('dragstart',function(e) {freeRotate(e.originalEvent)});
+      $('.scene').parent().parent().on('mousewheel',function(e) {zoom(e.originalEvent)});
+      $('.scene').parent().parent().on('dragstart',function(e) {freeRotate(e.originalEvent)});
       $('.scene').on('dragstart','.slide',function(e) {sliderDrag(e.originalEvent)});
       $('.scene').on('click','.slide',function(e) {sliderClick(e.originalEvent)});
-    })
+    }
 
     function clearCanvas () {
       $('.scene').html('');
