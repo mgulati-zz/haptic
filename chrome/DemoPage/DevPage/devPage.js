@@ -7,7 +7,8 @@ $(document).ready(function() {
 
   //debuggable gnerator and grid
   generator = new Generator();
-  generator.makeHaptic(x,z,10,3,0.5,1, updateDesired, null, randomColor);
+  generator.makeHaptic(x,z,7,4,0.3,1, updateDesired, null, randomColor);
+  generator.setZoom(2.5);
 
   grid = new Grid();
   for (var i = 0; i < x*z; i++) {

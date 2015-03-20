@@ -59,14 +59,19 @@
   top: 100%;
 }
 .casing .face {
-  background-color:#333;
+  background-color: rgb(159, 161, 155);
 }
 .slide {
   cursor: -webkit-grab;
 }
 .slide .face {
-  background-color:#FFFFFF;
   transition: background-color 0.5s ease-in-out;
+}
+.slide .face.tp {
+  background-color:#222;
+}
+.slide .face.lt, .slide .face.rt, .slide .face.bk, .slide .face.ft {
+  background-color: rgb(191, 192, 189) !important;
 }
 .slide.desired .face {
   opacity: 0.5;
