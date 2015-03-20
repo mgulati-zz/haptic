@@ -6,7 +6,7 @@ function Arduino (onLineReceived) {
   _self.writeSerial = function(str) {
     str += '\n';
     if (_self.connectionId > -1);
-      chrome.serial.send(_self.connectionId, convertStringToArrayBuffer(str), function(){ console.log("write "+ str) });
+      chrome.serial.send(_self.connectionId, convertStringToArrayBuffer(str), function(){ });//console.log("write "+ str) });
   }
 
   function onConnect(connectionInfo) {
