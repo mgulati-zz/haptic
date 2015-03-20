@@ -19,6 +19,7 @@ $(document).ready(function() {
       for (var z = 0; z < 3; z++) {
         generator.setLEDColor(x,z,'white');
         generator.setDesiredPos(x,z,0,true);
+        grid.updateDesiredPos(x,z,0);
       }
     }
 

@@ -30,7 +30,7 @@ function Grid() {
   }
 
   _self.updateDesiredPos = function(i, desiredPos) {
-    var changed = (desiredPosition != _self.buttons[id].desiredPosition);
+    var changed = (desiredPos != _self.buttons[i].desiredPosition);
     _self.updateValues(i, null, null, desiredPos);
     if (changed)
       _self.buttons[i].sendTarget();

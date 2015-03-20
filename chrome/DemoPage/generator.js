@@ -103,14 +103,15 @@ function Generator () {
     function sliderDrag(e) {
       e.preventDefault();
       e.stopPropagation();
-      var slider = $(e.target);
+      var dragged_slider = $(e.target);
+      var xzArr =  getXZFromSlider(dragged_slider);
+      var slider = $('.slide.desired.' + xzArr.join('_'));
       $("body").css('cursor','-webkit-grabbing');
       $('.slide').css('cursor','-webkit-grabbing');
       var starterY = getTransform(slider)[1]/-slider.height();
       var Xi = (e.pageX);
       var Yi = (e.pageY);
       var newY;
-      var xzArr =  getXZFromSlider(slider);
       $("body").on('mousemove', function(e2){
         if (e2.which == 1) {
           var dragX = e2.pageX;
@@ -127,7 +128,7 @@ function Generator () {
         dragEndListener(xzArr[0], xzArr[1], newY);
         $("body").off('mousemove');
         $("body").off('mouseup');
-        $("body").css('cursor','move');
+        $("body").css('cursor','');
         $('.slide').css('cursor','-webkit-grab');
       });
     }
@@ -187,7 +188,7 @@ function Generator () {
     function makePixel (height, sideLength, x, z, x_tot, z_tot) {
       makeCuboid(sideLength, height, sideLength, 
                  z*sideLength - sideLength*(z_tot-1)/2, 0, x*sideLength - sideLength*(x_tot-1)/2,
-                 false, 'slide ' + x + '_' + z);
+                 true, 'slide ' + x + '_' + z);
 
       // only desired one is draggable
       makeCuboid(sideLength, height, sideLength, 
