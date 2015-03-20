@@ -97,7 +97,7 @@ unsigned int serialTimer = 0;
 const int STIMER_THRESHOLD = 100;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Tlc.init();
   Tlc.clear();
   
