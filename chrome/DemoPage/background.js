@@ -1,8 +1,8 @@
 chrome.app.runtime.onLaunched.addListener(function() {
-  chrome.app.window.create('lobby.html', {
+  chrome.app.window.create('DevPage/devPage.html', {
     'bounds': {
-      'width': 1400,
-      'height': 840
+      "width" :   window.screen.availWidth,
+      "height":   window.screen.availHeight
     }
   });
 });

@@ -9,16 +9,31 @@ function Arduino (onLineReceived) {
       chrome.serial.send(_self.connectionId, convertStringToArrayBuffer(str), function(){ });//console.log("write "+ str) });
   }
 
+  _self.getPorts = function(callback) {
+    chrome.serial.getDevices(function(ports) {
+      callback(ports);
+    });
+  }
+
+  _self.connect = function(port, bitrate) {
+    if (_self.connectionId != -1) chrome.serial.disconnect(_self.connectionId, function(success) {
+      if (success) {
+        console.log('disconnected from connection ' + _self.connectionId);
+        _self.connectionId = -1
+      }
+    })
+    chrome.serial.connect(port, bitrate, onConnect);
+  }
+
   function onConnect(connectionInfo) {
+    console.log(connectionInfo);
     if (connectionInfo == null) {
       console.log("Couldn't connect to arduino");
+      console.log(chrome.runtime.lastError);
       return
     };
     _self.connectionId = connectionInfo.connectionId;
   }
-  chrome.serial.getDevices(function(ports) {
-    chrome.serial.connect(ports[ports.length - 1].path, {bitrate: 9600}, onConnect);
-  })
 
   // Convert string to ArrayBuffer
   function convertStringToArrayBuffer(str) {

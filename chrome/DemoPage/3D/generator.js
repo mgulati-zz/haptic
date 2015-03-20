@@ -64,7 +64,7 @@ function Generator () {
       if (newZoom < 1) newZoom = 1;
       if (newZoom > 1.6) newZoom = 2;
 
-      $('#model3D').css('zoom',newZoom);      
+      _self.setZoom(newZoom);  
     }
 
     function freeRotate(e) {
@@ -235,5 +235,9 @@ function Generator () {
 
     _self.setRotate = function(X,Y) {
       setRotate(X, Y);
+    }
+
+    _self.setZoom = function(newZoom) {
+      $('#model3D').css('zoom',newZoom);
     }
 }

@@ -1,7 +1,7 @@
 function Grid() {
 
   var _self = this;
-  _self.arduino = null;//new Arduino(onLineReceived);
+  _self.arduino = new Arduino(onLineReceived);
   _self.buttons = {};
   _self.coordinates = {0: [0,0], 1:[0,1], 2:[1,1], 3:[1,0]};
 
@@ -30,6 +30,7 @@ function Grid() {
   _self.updateDesiredPos = function(i, desiredPos) {
     var changed = (desiredPos != _self.buttons[i].desiredPosition);
     _self.updateValues(i, null, null, desiredPos);
+    console.log(changed);
     if (changed)
       _self.buttons[i].sendTarget();
   }
