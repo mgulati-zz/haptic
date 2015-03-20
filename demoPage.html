@@ -180,9 +180,10 @@
 
     .matrix {
       width: 400px;
-      height: 250px;
-      font-size: 14px;
+      height: 200px;
+      font-size: 24px;
       margin: 50px 0;
+      font-family: verdana;
     }
 
     .element {
@@ -220,11 +221,11 @@
     }
 
     function updatePositionMatrix(element, pos) {
-      $('.position-matrix .element-' + element).html(pos.toFixed(2));
+      // $('.position-matrix .element-' + element).html(pos.toFixed(2));
     }
 
     function updateColorMatrix(element, color) {
-      $('.color-matrix .element-' + element).html(color);
+      // $('.color-matrix .element-' + element).html(color);
     }
 
     function setShape(percentageArr) {
@@ -241,7 +242,6 @@
     }
 
     function resetAll() {
-
       //colors
       $('.slide').children().css('background-color','white');
       
@@ -288,7 +288,36 @@
         $("body").off('mouseup');
         $("body").css('cursor','move');
         $('.slide').css('cursor','-webkit-grab');
+
+        transform1 = getTransform($('.slide-1').splice(','));
+        pos1 = transform1[1];
+        var year = Math.floor((pos1/-4.54));
+
+        if (year > 0){
+          $('.matrix .element-6').html(year+1980);
+        }
+
+        transform2 = getTransform($('.slide-2').splice(','));
+        pos2 = transform2[1];
+        $('.matrix .element-5').html(Math.floor((pos2*1)*-0.081));
+
+        transform3 = getTransform($('.slide-3').splice(','));
+        pos3 = transform3[1];
+        $('.matrix .element-4').html(Math.floor((pos3*-1)/5));
+
+        if (pos1 != 0 || pos2 != 0 || pos3 != 0) {
+          $('.slide-7 .face').css('background-color', 'rgb(250, 6, 6)');
+          $('.slide-7').css('transform', 'translate3d(-48px, -20px, 48px)');
+        }
+
+        if (pos1 != 0 && pos2 != 0 && pos3 != 0) {
+          $('.slide-9 .face').css('background-color', 'rgb(0, 255, 127)');
+          $('.slide-9').css('transform', 'translate3d(-48px, -20px, -48px)');
+        }
+
       });
+
+
 
     }
 
@@ -299,7 +328,7 @@
       e.stopPropagation();
 
       var slider = $(e.target);
-      slider.parent().children().css('background-color',colors[Math.floor(Math.random() * colors.length)]);
+      // slider.parent().children().css('background-color',colors[Math.floor(Math.random() * colors.length)]);
 
       var classes = slider.parent().attr('class');
       var element = classes.substring(classes.indexOf('-')+1, classes.length);
@@ -352,12 +381,31 @@
 
     }
 
+    function initializeForm() {
+      $('.slide-9 .face, .slide-7 .face').css('background-color', 'rgb(128, 128, 128)');
+      $('.slide-9').css('transform', 'translate3d(-48px, -5px, -48px)');
+      $('.slide-7').css('transform', 'translate3d(-48px, -5px, 48px)');
+    }
+
     $(function() {
       $(document).on('mousewheel',function(e) {zoom(e.originalEvent)});
       $('.leftPane').on('dragstart',function(e) {freeRotate(e.originalEvent)});
       $('button').on('click',function() {resetAll()});
       $('.slide').on('dragstart',function(e) {sliderDrag(e.originalEvent)});
       $('.slide').on('click',function(e) {sliderClick(e.originalEvent)});
+      $('.slide-7').on('click',function() {
+        resetAll();
+        initializeForm();
+        $('.matrix .element-4').html('0');
+        $('.matrix .element-5').html('0');
+        $('.matrix .element-6').html('0');
+      });
+
+      $('.slide-9').on('click',function() { 
+        alert('Thank you!');
+      });
+
+      initializeForm();
     })
 
   </script>
@@ -486,6 +534,14 @@
 
   <div class="rightPane">
     <div class="matrix position-matrix">
+      <div class="element element-1">Date</div>
+      <div class="element element-2">Month</div>
+      <div class="element element-3">Year</div>
+      <div class="element element-4">0</div>
+      <div class="element element-5">0</div>
+      <div class="element element-6">0</div>
+    </div>
+<!--     <div class="matrix position-matrix">
       <div class="element element-1">0</div>
       <div class="element element-2">0</div>
       <div class="element element-3">0</div>
@@ -505,7 +561,7 @@
       <div class="element element-6">rgba(255,255,255)</div>
       <div class="element element-7">rgba(255,255,255)</div>
       <div class="element element-8">rgba(255,255,255)</div>
-      <div class="element element-9">rgba(255,255,255)</div>  
+      <div class="element element-9">rgba(255,255,255)</div>   -->
     </div>
 
     <button>RESET</button>
