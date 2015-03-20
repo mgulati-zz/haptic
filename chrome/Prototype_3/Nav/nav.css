@@ -1,4 +1,7 @@
-.nav {position: absolute;}
+.nav {
+  position: absolute;
+  margin-top: -60px;
+}
 .nav button {
   background: none;
   position: relative;
@@ -6,4 +9,11 @@
   width: 150px;
   padding: 15px;
   font-size: 20px;
+}
+body {
+  background-color: black;
+  margin-top: 75px;
+}
+button {
+  color: white;
 }

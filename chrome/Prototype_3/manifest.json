@@ -1,7 +1,7 @@
 {
-  "name": "Demo Page",
-  "description": "3D n Shit",
-  "version": "0.1",
+  "name": "Haptic",
+  "description": "By Group 11",
+  "version": "0.3",
   "manifest_version": 2,
   "app": {
     "background": {
