@@ -1,5 +1,5 @@
 var audio = new Audio();
-audio.src = 'opening.mp3';
+audio.src = 'pop.mp3';
 audio.controls = true;
 audio.loop = true;
 audio.autoplay = true;

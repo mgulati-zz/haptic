@@ -1,14 +1,13 @@
 function Grid() {
 
   var _self = this;
-  _self.arduino = new Arduino(onLineReceived);
+  _self.arduino = null;//new Arduino(onLineReceived);
   _self.buttons = {};
   _self.coordinates = {0: [0,0], 1:[0,1], 2:[1,1], 3:[1,0]};
 
   function onLineReceived(str) {
       var strs = str.split(",");
       if (strs.length != 4) return;
-      //console.log(strs);
       var id = parseInt(strs[0]);
       if (_self.buttons[id].touch == parseInt(strs[1]) && _self.buttons[id].position == parseInt(strs[2])) return;
       var touch = parseInt(strs[1]);
@@ -22,9 +21,9 @@ function Grid() {
   }
 
   _self.updateValues = function(id, position, touch, desiredPosition) {
-    if (touch == null) touch = _self.buttons[id].touch;
-    if (position == null) position = _self.buttons[id].position;
-    if (desiredPosition == null) desiredPosition = _self.buttons[id].desiredPosition;
+    touch = touch || _self.buttons[id].touch;
+    position = position || _self.buttons[id].position;
+    desiredPosition = desiredPosition || _self.buttons[id].desiredPosition;
     _self.buttons[id].updateValues(touch,position,desiredPosition);
     console.log(position);
   }

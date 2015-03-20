@@ -1,0 +1,119 @@
+<head>
+  <style>
+    #model3D {
+      perspective: 800px;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-size: 100%;
+    }
+    body {
+      background: black;
+    }
+    .leftPane {
+      width:60%;
+      float: left;
+      cursor: move;
+    }
+    .rightPane {
+      width: 40%;
+      float: right;
+    }
+    button {
+      width: 150px;
+      padding: 15px;
+      font-size: 20px;
+      background: #776693;
+      border: 1px solid rgb(178, 168, 205);
+      color: #fff;
+      cursor: pointer;
+      position: absolute;
+    }
+    .face {
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 1);
+    }
+    .scene, .shape, .face, .face-wrapper, .cr {
+      position: absolute;
+      transform-style: preserve-3d;
+    }
+    .scene {
+      width: 100%;
+      height: 100%;
+    }
+    .shape {
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform-origin: 50%;
+    }
+    .face {
+      overflow: hidden;
+      transform-origin: 0 0;
+      backface-visibility: hidden;
+      /* hidden by default, prevent blinking and other weird rendering glitchs */
+    }
+    .face {
+      background-size: 100% 100%!important;
+      background-position: center;
+    }
+    .cuboid .face {
+      width: 100%;
+      height: 100%
+    }
+    .cuboid .bk {
+      transform: rotateY(180deg);
+      left: 100%;
+    }
+    .cuboid .rt {
+      transform: rotateY(-90deg) translateX(-50%);
+    }
+    .cuboid .lt {
+      left: 100%;
+      transform: rotateY(90deg) translateX(-50%);
+    }
+    .cuboid .tp, .cuboid {
+      transform: rotateX(90deg) translateY(-50%);
+    }
+    .cuboid .bm {
+      transform: rotateX(-90deg) translateY(-50%);
+    }
+    .cuboid .bm {
+      top: 100%;
+    }
+    .casing .face {
+      background-color:#333;
+    }
+    .slide {
+      cursor: -webkit-grab;
+    }
+    .slide .face {
+      background-color:#FFFFFF;
+      transition: background-color 0.5s ease-in-out;
+    }
+    .slide.desired .face {
+      opacity: 0.5;
+    }
+  </style>
+  
+  <script src="../jquery.js"></script>
+  <script src="../arduino.js"></script>
+  <script src="../button.js"></script>
+  <script src="../grid.js"></script>
+  <script src="generator.js"></script>
+  <script src="demo.js"></script>
+
+</head>
+<body>
+  <div class="leftPane" draggable="true">
+    <div id="model3D">
+      <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
+      </div>
+    </div>
+  </div>
+
+  <div class="rightPane">
+  <button class='audio'>Audio</button>
+  </div>
+</body>
