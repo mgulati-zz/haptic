@@ -31,12 +31,12 @@ function Button (id, arduino, onUpdate) {
 		_self.arduino.writeSerial(_self.id + "C" + R + G + B);
 	}
 
-	_self.sendTarget = function(target) {
-		if (parseInt(target*10) == _self.desiredPosition) return;
-  	if (target <= 100 && target >= 0) {
-  		_self.desiredPosition = parseInt(target*10);
-  		_self.arduino.writeSerial(_self.id + "P" + _self.desiredPosition);
-  	}
+	_self.sendTarget = function() {
+		//if (parseInt(target) == _self.desiredPosition) return;
+  	//if (target <= 1000 && target >= 20) {
+  		//_self.desiredPosition = parseInt(target);
+		_self.arduino.writeSerial(_self.id + "P" + _self.desiredPosition);
+  	//}
 	}
 
 	_self.allowSlide = function() {
