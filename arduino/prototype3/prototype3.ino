@@ -81,7 +81,8 @@ int S2 = 5;
 int S3 = 4;
 int analogMux = A0;
 
-char inData[20];
+const int BUFFER_SIZE = 100;
+char inData[BUFFER_SIZE];
 
 const int _posTop = 1000;
 const int _posBottom = 0;
@@ -274,7 +275,7 @@ void moveMotor(int pixel, int action) {
 void serialRead() {
   while (Serial.available() > 0 && Serial.peek() != 10)
   {
-    if(index > 19) index = 0;// One less than the size of the array
+    if(index > BUFFER_SIZE - 1) index = 0;// One less than the size of the array
     inData[index] = Serial.read(); // Read a character, store it
     index++; // Increment where to write next
   }
@@ -298,7 +299,7 @@ void serialRead() {
       pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
     }
         
-    for (int i=0;i<19;i++) {
+    for (int i=0;i<BUFFER_SIZE;i++) {
       inData[i]=0;
     }
     index = 0;
