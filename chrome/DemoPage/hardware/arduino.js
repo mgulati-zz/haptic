@@ -5,8 +5,10 @@ function Arduino (onLineReceived) {
 
   _self.writeSerial = function(str) {
     str += '\n';
-    if (_self.connectionId > -1);
-      chrome.serial.send(_self.connectionId, convertStringToArrayBuffer(str), function(){ });//console.log("write "+ str) });
+    if (_self.connectionId > -1) {
+      chrome.serial.send(_self.connectionId, convertStringToArrayBuffer(str), function(){ });
+      //console.log("write "+ str) });
+    } else console.log("Can't write without a connection");
   }
 
   _self.getPorts = function(callback) {
