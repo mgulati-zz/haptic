@@ -25,7 +25,6 @@ function Grid() {
     position = position || _self.buttons[id].position;
     desiredPosition = desiredPosition || _self.buttons[id].desiredPosition;
     _self.buttons[id].updateValues(touch,position,desiredPosition);
-    console.log(position);
   }
 
   _self.updateDesiredPos = function(i, desiredPos) {

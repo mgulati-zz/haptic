@@ -48,6 +48,8 @@ $(document).ready(function() {
       generator.setPos(coordinates[0], coordinates[1], button.position / 1000, true);
     });
   }
-
+  var navbar = generateNavHTML();
+  $("body").append(navbar);
+  bindButtons();
 });
 
