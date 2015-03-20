@@ -15,11 +15,11 @@ $(document).ready(function() {
 
   function resetAll() {
     //colors
-    for (var x = 0; x < 3; x++) {
-      for (var z = 0; z < 3; z++) {
+    for (var x = 0; x < 2; x++) {
+      for (var z = 0; z < 2; z++) {
         generator.setLEDColor(x,z,'white');
         generator.setDesiredPos(x,z,0,true);
-        grid.updateDesiredPos(x,z,0);
+        grid.updateDesiredPos(grid.coordinateLookup(x,z),0);
       }
     }
 
