@@ -61,6 +61,6 @@ function clickHandle(x,z) {
 
 $(function() {
   generator.makeHaptic(3,3,10,3,0.5,1, mouseDrag, mouseDragEnd, clickHandle, beforeDrag);
-  generator.setZoom(1.5);
+  generator.setZoom(1.75);
   initializeBoard();
 })

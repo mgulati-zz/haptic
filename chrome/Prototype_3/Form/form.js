@@ -120,4 +120,5 @@ function updateBirthDate (metric, percent) {
 $(function() {
   generator.makeHaptic(3,3,10,3,0.5,1, mouseDrag, mouseDragEnd, clickHandle, beforeDrag);
   generator.setZoom(1.5);
+  initializeForm();
 })

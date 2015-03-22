@@ -17,3 +17,7 @@
 .player {
   background-color: purple;
 }
+
+#grid {
+	margin: 100px auto;
+}
