@@ -95,7 +95,7 @@ const int PWM_LOW = 0;
 
 int index = 0;
 unsigned int serialTimer = 0;
-const int STIMER_THRESHOLD = 100;
+const int STIMER_THRESHOLD = 20;
 
 void setup() {
   Serial.begin(115200);
