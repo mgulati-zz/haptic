@@ -51,6 +51,7 @@ struct pixel {
   int ledG;
   int ledB;
   int motor;
+  int touchIn;
   
   int actualPos;
   int desiredPos;
@@ -66,6 +67,7 @@ struct pixel {
   
   int allowSlide;
   int touchState;
+  int touchCount;
   
   int red;
   int blue;
@@ -102,58 +104,41 @@ void setup() {
   Tlc.init();
   Tlc.clear();
   
+  //Common initializations 
+  for (int i = 0; i < numPixels; i++) {
+    pixels[i].desiredPos = 500;
+    pixels[i].integral = 0;
+    pixels[i].derivative = 0;
+    pixels[i].touchState = 0;
+    pixels[i].touchCount = 0;
+    pixels[i].kP = 0.6;
+    pixels[i].kD = 0.2;
+    pixels[i].kI = 0.02;
+  }
+
   //MOTOR 1 (pixels[0])
   pixels[0].motor = 1;
-  pixels[0].desiredPos = 500;
   pixels[0].dirDown = 3;
   pixels[0].dirUp = 2;
   pixels[0].analogPos = 2;
-  pixels[0].integral = 0;
-  pixels[0].derivative = 0;
-  pixels[0].kP = 0.6;
-  pixels[0].kD = 0.2;
-  pixels[0].kI = 0.02;
-  pixels[0].touchState = 0;
-
   
   //MOTOR 2 (pixels[1])
   pixels[1].motor = 6;
-  pixels[1].desiredPos = 500;
   pixels[1].dirDown = 5;
   pixels[1].dirUp = 4;
   pixels[1].analogPos = 1;
-  pixels[1].integral = 0;
-  pixels[1].derivative = 0;
-  pixels[1].kP = 0.6;
-  pixels[1].kD = 0.2;
-  pixels[1].kI = 0.02;
-  pixels[1].touchState = 0;
   
   //MOTOR 3
   pixels[2].motor = 9;
-  pixels[2].desiredPos = 500;
   pixels[2].dirDown = 7;
   pixels[2].dirUp = 8;
   pixels[2].analogPos = 7;
-  pixels[2].integral = 0;
-  pixels[2].derivative = 0;
-  pixels[2].kP = 0.6;
-  pixels[2].kD = 0.2;
-  pixels[2].kI = 0.02;
-  pixels[2].touchState = 0;
-  
+ 
   //MOTOR 4
   pixels[3].motor = 10;
-  pixels[3].desiredPos = 500;
   pixels[3].dirDown = 11;
   pixels[3].dirUp = 12;
   pixels[3].analogPos = 4;
-  pixels[3].integral = 0;
-  pixels[3].derivative = 0;
-  pixels[3].kP = 0.6;
-  pixels[3].kD = 0.2;
-  pixels[3].kI = 0.02;
-  pixels[3].touchState = 0;
   
   pinMode(analogMux, INPUT);
   pinMode(S0,OUTPUT);
@@ -171,9 +156,9 @@ void loop() {
     
     
     readPosition(i);
-    //padPrint(pixels[i].actualPos, 3);
+    readTouchState(i);
     
-    
+    if (pixels[i].touchState)
     int action = calculatePIDAction(i);
     //padPrint(action, 3);
     //Serial.print("     ");
@@ -215,6 +200,19 @@ int analogMuxRead(int channel) {
 void readPosition(int pixel) {
   pixels[pixel].actualPos = map(analogMuxRead(pixels[pixel].analogPos),0,1023,_posBottom,_posTop);
   pixels[pixel].actualPos = constrain(pixels[pixel].actualPos, _posBottom, _posTop);
+}
+
+void readTouchState(int pixel) {
+  //NOT TESTED, NEEDS FURTHER IMPLEMENTATION
+  if (digitalRead(pixels[pixel].touchIn == HIGH) {
+    pixels[pixel].touchCount += 1;
+    if (pixels[pixel].touchCount > 50) {
+      pixels[pixel].touchState = 1;
+    }
+  } else {
+    pixels[pixel].touchCount = 0;
+    pixels[pixel].touchState = 0;
+  }
 }
 
 //returns a motor speed, all pid controls
