@@ -62,6 +62,6 @@ $(document).ready(function() {
     })
   })
 
-  $('.nav button').attr('disabled',true)
+  // $('.nav button').attr('disabled',true)
 });
 

@@ -1,0 +1,54 @@
+<head>
+  <style>
+    .leftPane {
+      width:60%;
+      float: left;
+      cursor: move;
+    }
+    .rightPane {
+      width: 40%;
+      float: right;
+    }
+/*    .slide.desired {
+      opacity: 0.2;
+    }*/
+  </style>
+
+  <script src="../jquery.js"></script>
+
+  <script src="../hardware/arduino.js"></script>
+  <script src="../hardware/button.js"></script>
+  <script src="../hardware/grid.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../3D/haptic3D.css"/>
+  <script src="../3D/generator.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
+  <script src="../Nav/nav.js"></script>
+
+  <script src="soundBoard.js"></script>
+</head>
+<body>
+
+  <div class="leftPane" draggable="true">
+    <div id="model3D">
+      <div class="scene" style="transform:rotateX(325deg) rotateY(400deg);">
+      </div>
+    </div>
+  </div>
+
+  <div class="rightPane">
+    <div class="matrix position-matrix">
+      <audio id="audio-0" src="hitAmazing.mp3"></audio>
+      <audio id="audio-1" src="coolChord.mp3"></audio>
+      <audio id="audio-2" src="hit3.mp3"></audio>
+      <audio id="audio-3" src="introChordsBreak.mp3"></audio>
+      <audio id="audio-4" src="verse4.mp3"></audio>
+      <audio id="audio-5" src="verse4.mp3"></audio>
+      <audio id="audio-6" src="verse4.mp3"></audio>
+      <audio id="audio-7" src="verse4.mp3"></audio>
+      <audio id="audio-8" src="verse4.mp3"></audio>
+    </div>
+  </div>
+
+</body>
