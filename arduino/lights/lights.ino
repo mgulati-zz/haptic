@@ -1,63 +1,84 @@
-#ifndef prog_uint8_t
-#define prog_uint8_t const uint8_t
-#endif
 
-#include <Tlc5940.h>
-#include <tlc_animations.h>
-#include <tlc_config.h>
-#include <tlc_fades.h>
-#include <tlc_progmem_utils.h>
-#include <tlc_servos.h>
-#include <tlc_shifts.h>
 
-const int PWM_HIGH = 4095;
-const int PWM_LOW = 0;
+int red1 = 2;
+int red2 = 6;
+int red3 = 10;
 
-int red1 = 19;
-int red2 = 24;
-int red3 = 28;
+int ground1 = 3;
+int ground2 = 7;
+int ground3 = 11;
 
-int ground1 = 22;
-int ground2 = 25;
-int ground3 = 29;
+int green1 = 4;
+int green2 = 8;
+int green3 = 12;
 
-int green1 = 20;
-int green2 = 26;
-int green3 = 30;
+int blue1 = 5;
+int blue2 = 9;
+int blue3 = 13;
 
-int blue1 = 21;
-int blue2 = 27;
-int blue3 = 31;
-
+int index = 1;
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(2, OUTPUT);
-  Tlc.init();
-  Tlc.clear();
-  // put your setup code here, to run once:
-  
+  pinMode(red1, OUTPUT);
+  pinMode(red2, OUTPUT);
+  pinMode(red3, OUTPUT);
+  pinMode(ground1, OUTPUT);
+  pinMode(ground2, OUTPUT);
+  pinMode(ground3, OUTPUT);
+  pinMode(green1, OUTPUT);
+  pinMode(green2, OUTPUT);
+  pinMode(green3, OUTPUT);
+  pinMode(blue1, OUTPUT);
+  pinMode(blue2, OUTPUT);
+  pinMode(blue3, OUTPUT);
 }
+
 
 void loop() {
-// put your main code here, to run repeatedly:
-//  setPWMValue(ground1, PWM_HIGH);
-//  setPWMValue(ground2, PWM_HIGH);
-//  setPWMValue(ground3, PWM_LOW);
-//  setPWMValue(red1, PWM_HIGH);
-//  setPWMValue(green1, PWM_LOW);
+  if (index == 4) index = 1;
   
-  setPWMValue(14, 4095);
-  setPWMValue(13, 0);
-  digitalWrite(2, HIGH);
-  
-  delay(200);
-  
-  Tlc.update();
-}
-
-//set Tlc (pwm multiplexer) channel value. Note: changes won't take effect until Tlc.update() is called
-void setPWMValue(int channel, int value) {
-  //this thing is actually reverse
-  Tlc.set(channel, PWM_HIGH-value);
+  if (index == 1) {
+    digitalWrite(ground2, HIGH);
+    digitalWrite(ground3, HIGH);
+    digitalWrite(red2, LOW);
+    digitalWrite(red3, LOW);
+    digitalWrite(green1, LOW);
+    digitalWrite(green3, LOW);
+    digitalWrite(blue1, LOW);
+    digitalWrite(blue2, LOW);
+    digitalWrite(ground1, LOW);
+    analogWrite(red1, 100);
+    analogWrite(green2, 150);
+    analogWrite(blue3, 150);
+  }
+  if (index == 2) {
+    digitalWrite(ground1, HIGH);
+    digitalWrite(ground3, HIGH);
+    digitalWrite(red1, LOW);
+    digitalWrite(red3, LOW);
+    digitalWrite(green1, LOW);
+    digitalWrite(green2, LOW);
+    digitalWrite(blue3, LOW);
+    digitalWrite(blue2, LOW);
+    digitalWrite(ground2, LOW);
+    analogWrite(red2, 100);
+    analogWrite(green3, 150);
+    analogWrite(blue1, 150);
+  }
+  if (index == 3) {
+    digitalWrite(ground2, HIGH);
+    digitalWrite(ground1, HIGH);
+    digitalWrite(red2, LOW);
+    digitalWrite(red1, LOW);
+    digitalWrite(green2, LOW);
+    digitalWrite(green3, LOW);
+    digitalWrite(blue1, LOW);
+    digitalWrite(blue3, LOW);
+    digitalWrite(ground3, LOW);
+    analogWrite(red3, 100);
+    analogWrite(green1, 150);
+    analogWrite(blue2, 150);
+  }
+  delay(3);
+  index++;
 }
