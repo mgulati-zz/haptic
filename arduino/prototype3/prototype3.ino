@@ -31,18 +31,6 @@ S3 - 4
 */
 
 
-#ifndef prog_uint8_t
-#define prog_uint8_t const uint8_t
-#endif
-
-#include <Tlc5940.h>
-#include <tlc_animations.h>
-#include <tlc_config.h>
-#include <tlc_fades.h>
-#include <tlc_progmem_utils.h>
-#include <tlc_servos.h>
-#include <tlc_shifts.h>
-
 struct pixel {
   int dirDown;
   int dirUp;
@@ -90,8 +78,8 @@ char inData[BUFFER_SIZE];
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int BUZZ_THRESHOLD = 50;
-const int MOTOR_MIN = 50;
+const int BUZZ_THRESHOLD = 0;
+const int MOTOR_MIN = 0;
 //const int MOTOR_MIN = 50;
 
 const int PWM_HIGH = 255;
@@ -110,9 +98,11 @@ int ledCounter = 0;
 
 void setup() {
   Serial.begin(115200);
-  Tlc.init();
-  Tlc.clear();
-  
+  /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
+  TCCR2B = (TCCR2B & 0xF8) | 0x07;
+  TCCR3B = (TCCR3B & 0xF8) | 0x05;
+  TCCR4B = (TCCR4B & 0xF8) | 0x05;*/
+
   //Common initializations 
   for (int i = 0; i < numPixels; i++) {
     pixels[i].desiredPos = 500;
@@ -124,88 +114,58 @@ void setup() {
     pixels[i].kD = 0.2;
     pixels[i].kI = 0.02;
   }
-/*
-  //MOTOR 1 (pixels[0])
-  pixels[0].motor = 1;
-  pixels[0].dirDown = 3;
-  pixels[0].dirUp = 2;
-  pixels[0].analogPos = 2;
-  
-  //MOTOR 2 (pixels[1])
-  pixels[1].motor = 6;
-  pixels[1].dirDown = 5;
-  pixels[1].dirUp = 4;
-  pixels[1].analogPos = 1;
-  
-  //MOTOR 3
-  pixels[2].motor = 9;
-  pixels[2].dirDown = 7;
-  pixels[2].dirUp = 8;
-  pixels[2].analogPos = 7;
- 
-  //MOTOR 4
-  pixels[3].motor = 10;
-  pixels[3].dirDown = 11;
-  pixels[3].dirUp = 12;
-  pixels[3].analogPos = 4;
-  */
   
   pixels[0].motor = 12;
-  pixels[0].dirDown = 36;
   pixels[0].dirUp = 37;
+  pixels[0].dirDown = 36;
   pixels[0].analogPos = A1;
   
   pixels[1].motor = 3;
-  pixels[1].dirDown = 35;
-  pixels[1].dirUp = 34;
+  pixels[1].dirUp = 35;
+  pixels[1].dirDown = 34;
   pixels[1].analogPos = A0;
   
   pixels[2].motor = 11;
-  pixels[2].dirDown = 39;
-  pixels[2].dirUp = 38;
+  pixels[2].dirUp = 39;
+  pixels[2].dirDown = 38;
   pixels[2].analogPos = A2;
  
   pixels[3].motor = 8;
-  pixels[3].dirDown = 23;
   pixels[3].dirUp = 25;
+  pixels[3].dirDown = 23;
   pixels[3].analogPos = A3;
  
   pixels[4].motor = 7;
-  pixels[4].dirDown = 22;
   pixels[4].dirUp = 24;
+  pixels[4].dirDown = 22;
   pixels[4].analogPos = A6;
  
   pixels[5].motor = 6;
-  pixels[5].dirDown = 27;
-  pixels[5].dirUp = 26;
+  pixels[5].dirUp = 27;
+  pixels[5].dirDown = 26;
   pixels[5].analogPos = A4;
  
   pixels[6].motor = 2;
-  pixels[6].dirDown = 29;
-  pixels[6].dirUp = 28;
+  pixels[6].dirUp = 29;
+  pixels[6].dirDown = 28;
   pixels[6].analogPos = A5;
  
   pixels[7].motor = 10;
-  pixels[7].dirDown = 31;
   pixels[7].dirUp = 30;
+  pixels[7].dirDown = 31;
   pixels[7].analogPos = A7;
  
   pixels[8].motor = 5;
-  pixels[8].dirDown = 32;
   pixels[8].dirUp = 33;
+  pixels[8].dirDown = 32;
   pixels[8].analogPos = A8;
 
   for (int i = 0; i < numPixels; i++) {
+    pinMode(pixels[i].motor, OUTPUT);
     pinMode(pixels[i].dirDown, OUTPUT);
     pinMode(pixels[i].dirUp, OUTPUT);
     pinMode(pixels[i].analogPos, INPUT);
-
   }
-  //pinMode(analogMux, INPUT);
-  pinMode(S0,OUTPUT);
-  pinMode(S1,OUTPUT);
-  pinMode(S2,OUTPUT);
-  pinMode(S3,OUTPUT);
 
 }
 
@@ -237,7 +197,6 @@ void loop() {
   }
   */
   if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
-  Tlc.update();
 }
 
 void serialPrintPixel(int i) {
@@ -259,19 +218,9 @@ void setAnalogMux(int channel) {
   digitalWrite(S0, HIGH && (channel & B00000001));
 }
 
-//read value from certain channel of analog multiplexer
-//int analogMuxRead(int channel) {
-//  setAnalogMux(channel);
-//  return map(analogRead(analogMux),0,1023,0,1000);
-//}
-
-int analogMuxRead(int channel) {
-  return map(analogRead(pixels[channel].analogPos),0,1023,0,1000);
-}
-
 //read current position of slider and update its respective stored value
 void readPosition(int pixel) {
-  pixels[pixel].actualPos = map(analogMuxRead(pixels[pixel].analogPos),0,1023,_posBottom,_posTop);
+  pixels[pixel].actualPos = map(analogRead(pixels[pixel].analogPos),0,1023,_posBottom,_posTop);
   pixels[pixel].actualPos = constrain(pixels[pixel].actualPos, _posBottom, _posTop);
 }
 
@@ -309,7 +258,7 @@ int calculatePIDAction(int pixel) {
   //taken out integral acction for now )
   double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
   
-  int motorSpeed = constrain(map(drive,-500, 500, PWM_HIGH, -PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
+  int motorSpeed = constrain(map(drive,-500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
   if (abs(motorSpeed) < BUZZ_THRESHOLD) {
     motorSpeed = PWM_LOW;
   }
@@ -317,28 +266,9 @@ int calculatePIDAction(int pixel) {
   return motorSpeed;
 }
 
-//set Tlc (pwm multiplexer) channel value. Note: changes won't take effect until Tlc.update() is called
-//void setPWMValue(int channel, int value) {
-//  //this thing is actually reverse
-//  Tlc.set(channel, PWM_HIGH-value);
-//}
-
-
 void setPWMValue(int channel, int value) {
   analogWrite(channel, value);
 }
-
-
-//set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
-//void setDirection(int pixel, int action) {
-//  if (action > 0) {
-//     setPWMValue(pixels[pixel].dirUp, PWM_HIGH);    
-//     setPWMValue(pixels[pixel].dirDown, PWM_LOW);
-//  } else {
-//    setPWMValue(pixels[pixel].dirUp, PWM_LOW);
-//    setPWMValue(pixels[pixel].dirDown, PWM_HIGH); 
-//  }
-//}
 
 void setDirection(int pixel, int action) {
   if (action > 0) {
