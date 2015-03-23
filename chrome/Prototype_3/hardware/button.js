@@ -7,6 +7,7 @@ function Button (id, arduino, onUpdate) {
 	_self.desiredPosition = 0;
 	_self.arduino = arduino;
 	_self.id = id;
+	_self.pwmPreset = 0;
 
 	_self.updateValues = function(touch, position, desiredPosition) {
 		if ((_self.touch == touch || touch == null)
@@ -16,6 +17,13 @@ function Button (id, arduino, onUpdate) {
     _self.position = (position == null)? _self.position:position;
     _self.desiredPosition = (desiredPosition == null)? _self.desiredPosition : desiredPosition;
 		onUpdate(_self);
+	}
+
+	_self.updatePWMPreset = function(preset) {
+		if (preset != _self.pwmPreset) {
+			_self.arduino.writeSerial(_self.id + "S" + preset);
+		}
+		_self.pwmPreset = preset;
 	}
 
 	function hexToR(h) {return ('000' + parseInt((cutHex(h)).substring(0,2),16)).substr(-3)}

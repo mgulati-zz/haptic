@@ -2,13 +2,13 @@ var tiles = []
 var presetLevel = [
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,0,0,0,0,0,0,1,1,1,1,1,1,2,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1,0,
+0,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
 0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,
 0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
 0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,0,
 0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
@@ -44,6 +44,7 @@ function makeRandomGrid() {
   }
   setPlayerTile(gridSize / 2, gridSize / 2);
 }
+
 function makePresetGrid() {
   var gridSize = 20;
   setGridSize(gridSize, gridSize);
@@ -138,10 +139,15 @@ function tileFromID(id) {
 function updatePixels(available) {
   for (var i = 0; i < available.length; i++) {
     var index = (i > 3) ? i + 1 : i; //skip the middle slider (id 4)
-    if (available[i] > 0) {
-      grid.updateDesiredPos(i, 600);
+    if (available[index] > 0) {
+      grid.updateDesiredPos(index, 900);
+      if (available[index] == 2) {
+        grid.updatePWMPreset(i, 1);
+      } else {
+        grid.updatePWMPreset(i, 0);
+      }
     } else {
-      grid.updateDesiredPos(i, 300);
+      grid.updateDesiredPos(index, 100);
     }
   }
 }
@@ -180,9 +186,4 @@ $(document).ready(function() {
   for (var i = 0; i < 9; i++) {
     grid.newButton(i, pixelUpdated);
   }
-  setInterval(function() {
-    for (var i = 0; i < 9; i++) {
-      //grid.forceSend(i);
-    }
-  }, 1000);
 })

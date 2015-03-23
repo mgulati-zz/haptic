@@ -33,6 +33,10 @@ function Grid() {
     _self.buttons[i].sendTarget();
   }
 
+  _self.updatePWMPreset = function(i, preset) {
+    _self.buttons[i].updatePWMPreset(preset);
+  }
+
   _self.coordinateLookup = function(x,y) {
     for (var key in _self.coordinates) {
       if (_self.coordinates.hasOwnProperty(key) && _self.coordinates[key].join("") == [x, y].join("")) {

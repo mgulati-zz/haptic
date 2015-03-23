@@ -1,0 +1,45 @@
+pixels[0].motor = 12
+pixels[0].dirDown = 36
+pixels[0].dirUp = 37
+pixels[0].analogPos = A1
+
+pixels[0].motor = 3
+pixels[0].dirDown = 35
+pixels[0].dirUp = 34
+pixels[0].analogPos = A0
+
+pixels[0].motor = 11
+pixels[0].dirDown = 39
+pixels[0].dirUp = 38
+pixels[0].analogPos = A2
+
+pixels[0].motor = 8
+pixels[0].dirDown = 23
+pixels[0].dirUp = 25
+pixels[0].analogPos = A3
+
+pixels[0].motor = 7
+pixels[0].dirDown = 22
+pixels[0].dirUp = 24
+pixels[0].analogPos = A6
+
+pixels[0].motor = 6
+pixels[0].dirDown = 27
+pixels[0].dirUp = 26
+pixels[0].analogPos = A4
+
+pixels[0].motor = 2
+pixels[0].dirDown = 29
+pixels[0].dirUp = 28
+pixels[0].analogPos = A5
+
+pixels[0].motor = 10
+pixels[0].dirDown = 31
+pixels[0].dirUp = 30
+pixels[0].analogPos = A7
+
+pixels[0].motor = 5
+pixels[0].dirDown = 32
+pixels[0].dirUp = 33
+pixels[0].analogPos = A8
+

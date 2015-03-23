@@ -50,6 +50,7 @@ struct pixel {
   int ledR;
   int ledG;
   int ledB;
+  int ledGround;
   int motor;
   int touchIn;
   
@@ -74,7 +75,7 @@ struct pixel {
   int green;
 };
 
-const int numPixels = 4;
+const int numPixels = 9;
 struct pixel pixels[numPixels];
 
 int S0 = 7;
@@ -89,18 +90,23 @@ char inData[BUFFER_SIZE];
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int BUZZ_THRESHOLD = 150;
-const int MOTOR_MIN = 2700;
+const int BUZZ_THRESHOLD = 50;
+const int MOTOR_MIN = 50;
+//const int MOTOR_MIN = 50;
 
-const int PWM_HIGH = 4095;
+const int PWM_HIGH = 255;
+//const int PWM_HIGH = 4095;
 const int PWM_LOW = 0;
 
 int index = 0;
 unsigned int serialTimer = 0;
 const int STIMER_THRESHOLD = 20;
 
-const int NUM_PRESETS = 1;
-int presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}};
+const int NUM_PRESETS = 2;
+double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
+
+int ledPairs[5][2] = {{0,1}, {2,3}, {4,5}, {6,7}, {8,8}};
+int ledCounter = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -118,7 +124,7 @@ void setup() {
     pixels[i].kD = 0.2;
     pixels[i].kI = 0.02;
   }
-
+/*
   //MOTOR 1 (pixels[0])
   pixels[0].motor = 1;
   pixels[0].dirDown = 3;
@@ -142,8 +148,60 @@ void setup() {
   pixels[3].dirDown = 11;
   pixels[3].dirUp = 12;
   pixels[3].analogPos = 4;
+  */
   
-  pinMode(analogMux, INPUT);
+  pixels[0].motor = 12;
+  pixels[0].dirDown = 36;
+  pixels[0].dirUp = 37;
+  pixels[0].analogPos = A1;
+  
+  pixels[1].motor = 3;
+  pixels[1].dirDown = 35;
+  pixels[1].dirUp = 34;
+  pixels[1].analogPos = A0;
+  
+  pixels[2].motor = 11;
+  pixels[2].dirDown = 39;
+  pixels[2].dirUp = 38;
+  pixels[2].analogPos = A2;
+ 
+  pixels[3].motor = 8;
+  pixels[3].dirDown = 23;
+  pixels[3].dirUp = 25;
+  pixels[3].analogPos = A3;
+ 
+  pixels[4].motor = 7;
+  pixels[4].dirDown = 22;
+  pixels[4].dirUp = 24;
+  pixels[4].analogPos = A6;
+ 
+  pixels[5].motor = 6;
+  pixels[5].dirDown = 27;
+  pixels[5].dirUp = 26;
+  pixels[5].analogPos = A4;
+ 
+  pixels[6].motor = 2;
+  pixels[6].dirDown = 29;
+  pixels[6].dirUp = 28;
+  pixels[6].analogPos = A5;
+ 
+  pixels[7].motor = 10;
+  pixels[7].dirDown = 31;
+  pixels[7].dirUp = 30;
+  pixels[7].analogPos = A7;
+ 
+  pixels[8].motor = 5;
+  pixels[8].dirDown = 32;
+  pixels[8].dirUp = 33;
+  pixels[8].analogPos = A8;
+
+  for (int i = 0; i < numPixels; i++) {
+    pinMode(pixels[i].dirDown, OUTPUT);
+    pinMode(pixels[i].dirUp, OUTPUT);
+    pinMode(pixels[i].analogPos, INPUT);
+
+  }
+  //pinMode(analogMux, INPUT);
   pinMode(S0,OUTPUT);
   pinMode(S1,OUTPUT);
   pinMode(S2,OUTPUT);
@@ -169,6 +227,15 @@ void loop() {
     }
     moveMotor(i, action);
   }
+  /*
+  ledCounter++;
+  if (ledCounter > 20*5) {
+    ledCounter = 0;
+  }
+  if (ledCounter % 20 == 0) {
+    writeLED(ledCounter / 20); 
+  }
+  */
   if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
   Tlc.update();
 }
@@ -181,7 +248,7 @@ void serialPrintPixel(int i) {
     Serial.print(pixels[i].actualPos);
     Serial.print(",");
     Serial.print(pixels[i].desiredPos);
-   Serial.println("");
+    Serial.println("");
 }
 
 //set channel on analog mux to read from
@@ -193,9 +260,13 @@ void setAnalogMux(int channel) {
 }
 
 //read value from certain channel of analog multiplexer
+//int analogMuxRead(int channel) {
+//  setAnalogMux(channel);
+//  return map(analogRead(analogMux),0,1023,0,1000);
+//}
+
 int analogMuxRead(int channel) {
-  setAnalogMux(channel);
-  return map(analogRead(analogMux),0,1023,0,1000);
+  return map(analogRead(pixels[channel].analogPos),0,1023,0,1000);
 }
 
 //read current position of slider and update its respective stored value
@@ -240,29 +311,44 @@ int calculatePIDAction(int pixel) {
   
   int motorSpeed = constrain(map(drive,-500, 500, PWM_HIGH, -PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
   if (abs(motorSpeed) < BUZZ_THRESHOLD) {
-    motorSpeed = 0;
+    motorSpeed = PWM_LOW;
   }
  
   return motorSpeed;
 }
 
 //set Tlc (pwm multiplexer) channel value. Note: changes won't take effect until Tlc.update() is called
+//void setPWMValue(int channel, int value) {
+//  //this thing is actually reverse
+//  Tlc.set(channel, PWM_HIGH-value);
+//}
+
+
 void setPWMValue(int channel, int value) {
-  //this thing is actually reverse
-  Tlc.set(channel, PWM_HIGH-value);
+  analogWrite(channel, value);
 }
+
 
 //set the direction of the motor according to its dirUp and dirDown pins. dir=1 indicates upwards
+//void setDirection(int pixel, int action) {
+//  if (action > 0) {
+//     setPWMValue(pixels[pixel].dirUp, PWM_HIGH);    
+//     setPWMValue(pixels[pixel].dirDown, PWM_LOW);
+//  } else {
+//    setPWMValue(pixels[pixel].dirUp, PWM_LOW);
+//    setPWMValue(pixels[pixel].dirDown, PWM_HIGH); 
+//  }
+//}
+
 void setDirection(int pixel, int action) {
   if (action > 0) {
-     setPWMValue(pixels[pixel].dirUp, PWM_HIGH);    
-     setPWMValue(pixels[pixel].dirDown, PWM_LOW);
+     digitalWrite(pixels[pixel].dirUp, HIGH);    
+     digitalWrite(pixels[pixel].dirDown, LOW);
   } else {
-    setPWMValue(pixels[pixel].dirUp, PWM_LOW);
-    setPWMValue(pixels[pixel].dirDown, PWM_HIGH); 
+    digitalWrite(pixels[pixel].dirUp, LOW);
+    digitalWrite(pixels[pixel].dirDown, HIGH); 
   }
 }
-
 void setPWMPreset(int i, int preset) {
   pixels[i].kP = presets[preset][0];
   pixels[i].kD = presets[preset][1];
@@ -276,6 +362,18 @@ void moveMotor(int pixel, int action) {
   setPWMValue(pixels[pixel].motor, pwmWrite);
 }
 
+void writeLEDPair(int pair) {
+  for (int i = 0; i < 5; i++) {
+     digitalWrite(pixels[ledPairs[i][0]].ledGround, HIGH);
+  }
+  for (int i = 0; i < 2; i++) {
+    int id = ledPairs[pair][i];
+    analogWrite(pixels[id].ledR, pixels[id].red);
+    analogWrite(pixels[id].ledG, pixels[id].green);
+    analogWrite(pixels[id].ledB, pixels[id].blue);
+  }
+  digitalWrite(pixels[ledPairs[pair][0]].ledGround, LOW);
+}
 //read one command from serial interface and react accordingly
 void serialRead() {
   while (Serial.available() > 0 && Serial.peek() != 10)
@@ -288,26 +386,26 @@ void serialRead() {
   if (strlen(inData) != 0 && Serial.peek() == 10) {
     Serial.read();
     int id = String(inData).substring(0,1).toInt();
-    if (id > numPixels - 1) return;
-    
-    if (inData[1] == 'C') {
-      pixels[id].red = constrain(String(inData).substring(2,5).toInt(),0,255);
-      pixels[id].green = constrain(String(inData).substring(5,8).toInt(),0,255);
-      pixels[id].blue = constrain(String(inData).substring(8,11).toInt(),0,255);
+    if (id <= numPixels - 1) {
+      if (inData[1] == 'C') {
+        pixels[id].red = constrain(String(inData).substring(2,5).toInt(),0,255);
+        pixels[id].green = constrain(String(inData).substring(5,8).toInt(),0,255);
+        pixels[id].blue = constrain(String(inData).substring(8,11).toInt(),0,255);
+      }
+      
+      if (inData[1] == 'P') {
+        pixels[id].desiredPos = constrain(String(inData).substring(2,6).toInt(),0,1000);
+      }
+      
+      if (inData[1] == 'A') {
+        pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
+      }
+      
+      if (inData[1] == 'S') {
+        setPWMPreset(id, constrain(String(inData).substring(2,3).toInt(),0, NUM_PRESETS));
+      }
     }
     
-    if (inData[1] == 'P') {
-      pixels[id].desiredPos = constrain(String(inData).substring(2,6).toInt(),0,1000);
-    }
-    
-    if (inData[1] == 'A') {
-      pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
-    }
-    
-    if (inData[1] == 'S') {
-      setPWMPreset(id, constrain(String(inData).substring(2,3).toInt(),0, NUM_PRESETS));
-    }
-        
     for (int i=0;i<BUFFER_SIZE;i++) {
       inData[i]=0;
     }
