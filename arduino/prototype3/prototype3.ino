@@ -111,19 +111,19 @@ void setup() {
   
   pixels[0].motor = 12;
   pixels[0].dirUp = 37;
-  pixels[0].dirDown = 36;
-  pixels[0].analogPos = A1;
+  pixels[0].dirDown = 33;
+  pixels[0].analogPos = A7;
   
   pixels[1].motor = 3;
-  pixels[1].dirUp = 35;
-  pixels[1].dirDown = 34;
-  pixels[1].analogPos = A0;
+  pixels[1].dirDown = 31;
+  pixels[1].dirUp = 30;
+  pixels[1].analogPos = A9;
   
-  pixels[2].motor = 9;
-  pixels[2].dirUp = 39;
-  pixels[2].dirDown = 38;
-  pixels[2].analogPos = A2;
-  pixels[2].ledGround = A10;
+  pixels[2].motor = 11;
+  pixels[2].dirDown = 36;
+  pixels[2].dirUp = 34;
+  pixels[2].analogPos = A8;
+  pixels[2].ledGround = A0;
   pixels[2].ledR = 46;
   pixels[2].ledG = 44;
   pixels[2].ledB = 45;
@@ -132,44 +132,44 @@ void setup() {
   pixels[2].green = 255;
   
   pixels[3].motor = 8;
-  pixels[3].dirUp = 25;
-  pixels[3].dirDown = 23;
-  pixels[3].analogPos = A3;
+  pixels[3].dirUp = 24;
+  pixels[3].dirDown = 27;
+  pixels[3].analogPos = A15;
  
   pixels[4].motor = 7;
-  pixels[4].dirUp = 24;
-  pixels[4].dirDown = 22;
-  pixels[4].analogPos = A6;
+  pixels[4].dirDown = 25;
+  pixels[4].dirUp = 26;
+  pixels[4].analogPos = A14;
  
   pixels[5].motor = 6;
-  pixels[5].dirUp = 27;
-  pixels[5].dirDown = 26;
-  pixels[5].analogPos = A4;
+  pixels[5].dirUp = 22;
+  pixels[5].dirDown = 23;
+  pixels[5].analogPos = A12;
  
   pixels[6].motor = 2;
-  pixels[6].dirUp = 29;
-  pixels[6].dirDown = 28;
-  pixels[6].analogPos = A5;
+  pixels[6].dirDown = 29;
+  pixels[6].dirUp = 28;
+  pixels[6].analogPos = A13;
  
   pixels[7].motor = 10;
-  pixels[7].dirUp = 30;
-  pixels[7].dirDown = 31;
-  pixels[7].analogPos = A7;
+  pixels[7].dirDown = 38;
+  pixels[7].dirUp = 39;
+  pixels[7].analogPos = A11;
  
   pixels[8].motor = 5;
-  pixels[8].dirUp = 33;
-  pixels[8].dirDown = 32;
-  pixels[8].analogPos = A8;
+  pixels[8].dirDown = 35;
+  pixels[8].dirUp = 32;
+  pixels[8].analogPos = A10;
 
   for (int i = 0; i < numPixels; i++) {
     pinMode(pixels[i].motor, OUTPUT);
     pinMode(pixels[i].dirDown, OUTPUT);
     pinMode(pixels[i].dirUp, OUTPUT);
     pinMode(pixels[i].analogPos, INPUT);
-    pinMode(pixels[i].ledGround, OUTPUT);
-    pinMode(pixels[i].ledR, OUTPUT);
-    pinMode(pixels[i].ledG, OUTPUT);
-    pinMode(pixels[i].ledB, OUTPUT);
+//    pinMode(pixels[i].ledGround, OUTPUT);
+//    pinMode(pixels[i].ledR, OUTPUT);
+//    pinMode(pixels[i].ledG, OUTPUT);
+//    pinMode(pixels[i].ledB, OUTPUT);
   }
 
 }
@@ -177,21 +177,21 @@ void setup() {
 void loop() {
   serialRead();
   
-  ledCounter++;
-  if (ledCounter > 5*3) ledCounter = 0;
-  writeLEDPair();
+//  ledCounter++;
+//  if (ledCounter > 5*3) ledCounter = 0;
+//  writeLEDPair();
   
   readPosition(pixelCounter);
   readTouchState(pixelCounter);
   
   int action = calculatePIDAction(pixelCounter);
-  moveMotor(pixelCounter, 150);
+  moveMotor(pixelCounter, action);
   
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
 
   serialTimer++;
-  if (serialTimer > STIMER_THRESHOLD) serialPrintPixel(2);
+  if (serialTimer > STIMER_THRESHOLD) serialPrintPixel(pixelCounter);
   if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
 }
 
