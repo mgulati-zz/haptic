@@ -66,12 +66,6 @@ struct pixel {
 const int numPixels = 9;
 struct pixel pixels[numPixels];
 
-int S0 = 7;
-int S1 = 6;
-int S2 = 5;
-int S3 = 4;
-int analogMux = A0;
-
 const int BUFFER_SIZE = 20;
 char inData[BUFFER_SIZE];
 
@@ -80,7 +74,6 @@ const int _posBottom = 0;
 
 const int BUZZ_THRESHOLD = 20;
 const int MOTOR_MIN = 0;
-//const int MOTOR_MIN = 50;
 
 const int PWM_HIGH = 255;
 const int PWM_LOW = 0;
@@ -94,6 +87,8 @@ double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
 
 int ledPairs[5][2] = {{0,1}, {2,3}, {4,5}, {6,7}, {8,8}};
 int ledCounter = 0;
+
+int pixelCounter = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -132,9 +127,9 @@ void setup() {
   pixels[2].ledR = 46;
   pixels[2].ledG = 44;
   pixels[2].ledB = 45;
-  pixels[2].red = 0;
+  pixels[2].red = 200;
   pixels[2].blue = 255;
-  pixels[2].green = 0;
+  pixels[2].green = 255;
   
   pixels[3].motor = 8;
   pixels[3].dirUp = 25;
@@ -180,34 +175,23 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  ledCounter++;
-  if (ledCounter > 5*2) {
-    ledCounter = 0;
-  }
-  if (ledCounter % 2 == 0) {
-    writeLEDPair(ledCounter / 2); 
-  }
-  
   serialRead();
-  serialTimer++;
-  for (int i = 0; i < numPixels; i++) {
- 
-    readPosition(i);
-    readTouchState(i);
-    
-    int action = calculatePIDAction(i);
-    if (serialTimer > STIMER_THRESHOLD) {
-      serialPrintPixel(2);
-    }
-    moveMotor(i, 150);
-  }
   
+  ledCounter++;
+  if (ledCounter > 5*3) ledCounter = 0;
+  writeLEDPair();
+  
+  readPosition(pixelCounter);
+  readTouchState(pixelCounter);
+  
+  int action = calculatePIDAction(pixelCounter);
+  moveMotor(pixelCounter, 150);
+  
+  pixelCounter++;
+  if (pixelCounter == numPixels) pixelCounter = 0;
 
-//    writeLEDPair(ledCounter);
-//    delay(1);
-
-
+  serialTimer++;
+  if (serialTimer > STIMER_THRESHOLD) serialPrintPixel(2);
   if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
 }
 
@@ -220,14 +204,6 @@ void serialPrintPixel(int i) {
     Serial.print(",");
     Serial.print(pixels[i].desiredPos);
     Serial.println("");
-}
-
-//set channel on analog mux to read from
-void setAnalogMux(int channel) {
-  digitalWrite(S3, HIGH && (channel & B00001000));
-  digitalWrite(S2, HIGH && (channel & B00000100));
-  digitalWrite(S1, HIGH && (channel & B00000010));
-  digitalWrite(S0, HIGH && (channel & B00000001));
 }
 
 //read current position of slider and update its respective stored value
@@ -291,6 +267,7 @@ void setDirection(int pixel, int action) {
     digitalWrite(pixels[pixel].dirDown, HIGH); 
   }
 }
+
 void setPWMPreset(int i, int preset) {
   pixels[i].kP = presets[preset][0];
   pixels[i].kD = presets[preset][1];
@@ -304,9 +281,12 @@ void moveMotor(int pixel, int action) {
   setPWMValue(pixels[pixel].motor, pwmWrite);
 }
 
-void writeLEDPair(int pair) {
-  for (int i = 0; i < 5; i++) {
-     digitalWrite(pixels[ledPairs[i][0]].ledGround, HIGH);
+void writeLEDPair() {
+  int pair = ledCounter/3;
+  if (ledCounter % 3 == 0) {
+    for (int i = 0; i < 5; i++) {
+       digitalWrite(pixels[ledPairs[i][0]].ledGround, HIGH);
+    }
   }
   for (int i = 0; i < 2; i++) {
     int id = ledPairs[pair][i];
@@ -316,6 +296,7 @@ void writeLEDPair(int pair) {
   }
   digitalWrite(pixels[ledPairs[pair][0]].ledGround, LOW);
 }
+
 //read one command from serial interface and react accordingly
 void serialRead() {
   while (Serial.available() > 0 && Serial.peek() != 10)
