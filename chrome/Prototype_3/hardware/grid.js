@@ -27,6 +27,10 @@ function Grid() {
     _self.buttons[id].updateValues(touch,position,desiredPosition);
   }
 
+  _self.updateColor = function(id, hex) {
+    _self.buttons[id].changeColor(hex);
+  }
+
   _self.updateDesiredPos = function(i, desiredPos) {
     if (desiredPos == _self.buttons[i].desiredPosition) return;
     _self.updateValues(i, null, null, desiredPos);

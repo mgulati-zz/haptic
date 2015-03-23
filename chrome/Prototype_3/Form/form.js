@@ -29,7 +29,9 @@ for (var i = 0; i < 4; i++) {
 function initializeForm() {
   //buttons
   generator.setLEDColor(2,2,'rgb(128, 128, 128)');
+  // grid.updateColor(grid.coordinateLookup(2,2),'#808080');
   generator.setLEDColor(2,0,'rgb(128, 128, 128)');
+  // grid.updateColor(grid.coordinateLookup(2,0),'#808080');
   grid.updateDesiredPos(formLookup(2,2),200);
   grid.updateDesiredPos(formLookup(2,0),200);
 
@@ -102,18 +104,22 @@ function updateBirthDate (metric, percent) {
   }
 
   if (day != 0 || month != 0) {
-    generator.setLEDColor(2,2,'rgb(250, 6, 6)');
-    grid.updateDesiredPos(formLookup(2,2),500);
-  } else {
-    generator.setLEDColor(2,2,'rgb(128, 128, 128)');
-    grid.updateDesiredPos(formLookup(2,2),200);
-  }
-  if (year != 0 && day != 0 && month != 0) {
-    generator.setLEDColor(2,0,'rgb(0, 255, 127)');
+    generator.setLEDColor(2,0,'rgb(250, 6, 6)');
+    grid.updateColor(grid.coordinateLookup(2,0),'#ff0000');
     grid.updateDesiredPos(formLookup(2,0),500);
   } else {
     generator.setLEDColor(2,0,'rgb(128, 128, 128)');
+    grid.updateColor(grid.coordinateLookup(2,0),'#808080');
     grid.updateDesiredPos(formLookup(2,0),200);
+  }
+  if (year != 0 && day != 0 && month != 0) {
+    generator.setLEDColor(2,0,'rgb(0, 255, 127)');
+    grid.updateColor(grid.coordinateLookup(2,2),'#00FF7F');
+    grid.updateDesiredPos(formLookup(2,2),500);
+  } else {
+    generator.setLEDColor(2,2,'rgb(128, 128, 128)');
+    grid.updateColor(grid.coordinateLookup(2,2),'#808080');
+    grid.updateDesiredPos(formLookup(2,2),200);
   }
 }
   
