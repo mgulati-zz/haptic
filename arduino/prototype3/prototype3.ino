@@ -104,7 +104,7 @@ void setup() {
 
   //Common initializations 
   for (int i = 0; i < numPixels; i++) {
-    pixels[i].desiredPos = 500;
+    pixels[i].desiredPos = 600;
     pixels[i].integral = 0;
     pixels[i].derivative = 0;
     pixels[i].touchState = 0;
@@ -128,7 +128,14 @@ void setup() {
   pixels[2].dirUp = 39;
   pixels[2].dirDown = 38;
   pixels[2].analogPos = A2;
- 
+  pixels[2].ledGround = A10;
+  pixels[2].ledR = 46;
+  pixels[2].ledG = 44;
+  pixels[2].ledB = 45;
+  pixels[2].red = 0;
+  pixels[2].blue = 255;
+  pixels[2].green = 0;
+  
   pixels[3].motor = 8;
   pixels[3].dirUp = 25;
   pixels[3].dirDown = 23;
@@ -164,35 +171,43 @@ void setup() {
     pinMode(pixels[i].dirDown, OUTPUT);
     pinMode(pixels[i].dirUp, OUTPUT);
     pinMode(pixels[i].analogPos, INPUT);
+    pinMode(pixels[i].ledGround, OUTPUT);
+    pinMode(pixels[i].ledR, OUTPUT);
+    pinMode(pixels[i].ledG, OUTPUT);
+    pinMode(pixels[i].ledB, OUTPUT);
   }
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  ledCounter++;
+  if (ledCounter > 5*2) {
+    ledCounter = 0;
+  }
+  if (ledCounter % 2 == 0) {
+    writeLEDPair(ledCounter / 2); 
+  }
+  
   serialRead();
   serialTimer++;
   for (int i = 0; i < numPixels; i++) {
-    
-    
+ 
     readPosition(i);
-    //readTouchState(i);
+    readTouchState(i);
     
     int action = calculatePIDAction(i);
     if (serialTimer > STIMER_THRESHOLD) {
       serialPrintPixel(2);
     }
-    moveMotor(i, action);
+    moveMotor(i, 150);
   }
-  /*
-  ledCounter++;
-  if (ledCounter > 20*5) {
-    ledCounter = 0;
-  }
-  if (ledCounter % 20 == 0) {
-    writeLED(ledCounter / 20); 
-  }
-  */
+  
+
+//    writeLEDPair(ledCounter);
+//    delay(1);
+
+
   if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
 }
 
@@ -321,7 +336,7 @@ void serialRead() {
       }
       
       if (inData[1] == 'P') {
-        pixels[id].desiredPos = constrain(String(inData).substring(2,6).toInt(),0,1000);
+        pixels[id].desiredPos = constrain(map(String(inData).substring(2,6).toInt(), 0, 1000, 600, 1000),600,1000);
       }
       
       if (inData[1] == 'A') {
