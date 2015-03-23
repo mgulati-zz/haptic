@@ -3,7 +3,7 @@ function Grid() {
   var _self = this;
   _self.arduino = new Arduino(onLineReceived);
   _self.buttons = {};
-  _self.coordinates = {0: [0,0], 1:[0,1], 2:[1,1], 3:[1,0]};
+  _self.coordinates = {0: [0,0], 1:[0,1], 2:[0,2], 3:[1,0], 4:[1,1], 5:[1,2], 6:[2,0], 7:[2,1], 8:[2,2]};
 
   function onLineReceived(str) {
       var strs = str.split(",");
@@ -43,6 +43,10 @@ function Grid() {
           return key;
       }
     }
+  }
+
+  _self.indexLookup = function(i) {
+    return _self.coordinates[i];
   }
 
   _self.forceSend = function(i) {
