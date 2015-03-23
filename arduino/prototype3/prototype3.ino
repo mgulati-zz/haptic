@@ -78,12 +78,11 @@ char inData[BUFFER_SIZE];
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int BUZZ_THRESHOLD = 0;
+const int BUZZ_THRESHOLD = 20;
 const int MOTOR_MIN = 0;
 //const int MOTOR_MIN = 50;
 
 const int PWM_HIGH = 255;
-//const int PWM_HIGH = 4095;
 const int PWM_LOW = 0;
 
 int index = 0;
@@ -125,7 +124,7 @@ void setup() {
   pixels[1].dirDown = 34;
   pixels[1].analogPos = A0;
   
-  pixels[2].motor = 11;
+  pixels[2].motor = 9;
   pixels[2].dirUp = 39;
   pixels[2].dirDown = 38;
   pixels[2].analogPos = A2;
@@ -180,10 +179,8 @@ void loop() {
     //readTouchState(i);
     
     int action = calculatePIDAction(i);
-    //padPrint(action, 3);
-    //Serial.print("     ");
     if (serialTimer > STIMER_THRESHOLD) {
-      serialPrintPixel(i);
+      serialPrintPixel(2);
     }
     moveMotor(i, action);
   }

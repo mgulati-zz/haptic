@@ -1,4 +1,3 @@
-BACKWARDS
 pixels[0].motor = 12
 pixels[0].dirDown = 36
 pixels[0].dirUp = 37
@@ -9,18 +8,16 @@ pixels[1].dirDown = 35
 pixels[1].dirUp = 34
 pixels[1].analogPos = A0
 
-pixels[2].motor = 11
+pixels[2].motor = 9
 pixels[2].dirDown = 39
 pixels[2].dirUp = 38
 pixels[2].analogPos = A2
 
-BACKWARDS
 pixels[3].motor = 8
 pixels[3].dirDown = 23
 pixels[3].dirUp = 25
 pixels[3].analogPos = A3
 
-BACKWARDS
 pixels[4].motor = 7
 pixels[4].dirDown = 22
 pixels[4].dirUp = 24
@@ -36,15 +33,30 @@ pixels[6].dirDown = 29
 pixels[6].dirUp = 28
 pixels[6].analogPos = A5
 
-BACKWARDS
 pixels[7].motor = 10
 pixels[7].dirDown = 31
 pixels[7].dirUp = 30
 pixels[7].analogPos = A7
 
-BACKWARDS
 pixels[8].motor = 5
 pixels[8].dirDown = 32
 pixels[8].dirUp = 33
 pixels[8].analogPos = A8
 
+
+LEDS
+ground1 - A9
+ground2 - A10
+ground3 - A11
+ground4 - A12
+ground5 - A13
+
+R1 - 46
+G1 - 44
+B1 - 45
+
+R2 - 4
+G2 - 11
+B2 - 13 
+
+Capacitive Send - 41

@@ -153,12 +153,12 @@ function updatePixels(available) {
 }
 
 function pixelUpdated(pixel) {
-  // if (pixel.touch > 0 && false) {
-  //   var coords = IDToCoordinate(pixel.id);
-  //   moveDirection(coords[0] - 1, -(coords[1] - 1))
-  //   var actions = determineActions();
-  //   updatePixels(actions);
-  // }
+  if (pixel.touch > 0) {
+    var coords = IDToCoordinate(pixel.id);
+    moveDirection(coords[0] - 1, -(coords[1] - 1))
+    var actions = determineActions();
+    updatePixels(actions);
+  }
 }
 
 var grid = new Grid();
