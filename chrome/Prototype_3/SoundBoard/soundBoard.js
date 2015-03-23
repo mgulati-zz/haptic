@@ -29,8 +29,9 @@ function initializeBoard() {
   for (var x=0; x<3; x++) {
      for (var z=0; z<3; z++) {
         var color = colors[Math.floor(Math.random() * colors.length)];
-        console.log(color);
         generator.setLEDColor(x,z,color);
+        // generator.setPos(x,z, 700, true);
+        generator.setDesiredPos(x,z,700);
         // grid.updateColor(grid.coordinateLookup(x,z),color);
      }
   }
@@ -58,7 +59,7 @@ function clickHandle(x,z) {
   audio.play();
   $(audio).on('timeupdate', function(e) {
     var percentDone = audio.currentTime/audio.duration;
-    generator.setDesiredPos(x,z,1 - percentDone);
+    generator.setDesiredPos(x,z,percentDone);
   })  
 }
 
