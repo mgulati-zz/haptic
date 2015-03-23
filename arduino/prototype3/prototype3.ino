@@ -1,3 +1,5 @@
+#include <CapacitiveSensor.h>
+
 /*
 1 - speed
 2 - direction 
@@ -61,6 +63,8 @@ struct pixel {
   int red;
   int blue;
   int green;
+  
+  CapacitiveSensor touch;
 };
 
 const int numPixels = 9;
@@ -118,6 +122,7 @@ void setup() {
   pixels[1].dirDown = 31;
   pixels[1].dirUp = 30;
   pixels[1].analogPos = A9;
+
   
   pixels[2].motor = 11;
   pixels[2].dirDown = 36;
@@ -130,6 +135,9 @@ void setup() {
   pixels[2].red = 200;
   pixels[2].blue = 255;
   pixels[2].green = 255;
+  //pixels[2].touchRead = 88;
+  //pixels[2].touchSend = 88;
+  //pixels[2].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
   
   pixels[3].motor = 8;
   pixels[3].dirUp = 24;
@@ -170,6 +178,8 @@ void setup() {
 //    pinMode(pixels[i].ledR, OUTPUT);
 //    pinMode(pixels[i].ledG, OUTPUT);
 //    pinMode(pixels[i].ledB, OUTPUT);
+    //pinMode(pixels[i].touchRead, INPUT);
+    //pinMode(pixels[i].touchSend, OUTPUT)
   }
 
 }
@@ -223,6 +233,16 @@ void readTouchState(int pixel) {
     pixels[pixel].touchCount = 0;
     pixels[pixel].touchState = 0;
   }
+  
+ /* long total1 = pixels[pixel].touch.capacitiveSensor(30);
+  
+  if (total1 > calibratedThreshold){
+    touchState = 1;
+  }
+  else
+    touchState = 0;  
+  */
+  
 }
 
 //returns a motor speed, all pid controls
