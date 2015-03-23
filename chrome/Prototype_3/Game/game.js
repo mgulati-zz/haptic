@@ -102,10 +102,10 @@ function determineActions() {
   var actions = []
   var x = currentPosition[0];
   var y = currentPosition[1];
-  for (var i = x-1; i <= x + 1; i++) {
-    for (var a = y-1; a <= y + 1; a++) {
-      if (a != y || i != x) {
-        var type = getTileType(coordinateToID(i, a));
+  for (var i = y-1; i <= y + 1; i++) {
+    for (var a = x-1; a <= x + 1; a++) {
+      if (a != x || i != y) {
+        var type = getTileType(coordinateToID(a, i));
         if (type == 'wall') {
           actions.push(0);
         } else if (type == 'neutral') {
@@ -137,21 +137,22 @@ function tileFromID(id) {
 
 function updatePixels(available) {
   for (var i = 0; i < available.length; i++) {
+    var index = (i > 3) ? i + 1 : i; //skip the middle slider (id 4)
     if (available[i] > 0) {
-      grid.updateDesiredPos(i, 1000);
+      grid.updateDesiredPos(i, 600);
     } else {
-      grid.updateDesiredPos(i, 500);
+      grid.updateDesiredPos(i, 300);
     }
   }
 }
 
 function pixelUpdated(pixel) {
-  if (pixel.touch > 0) {
-    var coords = IDToCoordinate(pixel.id);
-    moveDirection(coords[0] - 1, -(coords[1] - 1))
-    var actions = determineActions();
-    updatePixels(actions);
-  }
+  // if (pixel.touch > 0 && false) {
+  //   var coords = IDToCoordinate(pixel.id);
+  //   moveDirection(coords[0] - 1, -(coords[1] - 1))
+  //   var actions = determineActions();
+  //   updatePixels(actions);
+  // }
 }
 
 var grid = new Grid();
@@ -165,11 +166,11 @@ $(document).ready(function() {
       if (e.which == 38) {
         moveDirection(0, 1);
       } else if (e.which == 39) {
-        moveDirection(1, 0)
+        moveDirection(1, 0);
       } else if (e.which == 40) {
-        moveDirection(0, -1)
+        moveDirection(0, -1);
       } else if (e.which == 37) {
-        moveDirection(-1, 0)
+        moveDirection(-1, 0);
       }
       var actions = determineActions();
       updatePixels(actions);
@@ -179,4 +180,9 @@ $(document).ready(function() {
   for (var i = 0; i < 9; i++) {
     grid.newButton(i, pixelUpdated);
   }
+  setInterval(function() {
+    for (var i = 0; i < 9; i++) {
+      //grid.forceSend(i);
+    }
+  }, 1000);
 })

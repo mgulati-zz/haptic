@@ -41,4 +41,8 @@ function Grid() {
     }
   }
 
+  _self.forceSend = function(i) {
+    _self.buttons[i].sendTarget();
+  }
+
 }

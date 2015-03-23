@@ -83,7 +83,7 @@ int S2 = 5;
 int S3 = 4;
 int analogMux = A0;
 
-const int BUFFER_SIZE = 100;
+const int BUFFER_SIZE = 20;
 char inData[BUFFER_SIZE];
 
 const int _posTop = 1000;
@@ -98,6 +98,9 @@ const int PWM_LOW = 0;
 int index = 0;
 unsigned int serialTimer = 0;
 const int STIMER_THRESHOLD = 20;
+
+const int NUM_PRESETS = 1;
+int presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}};
 
 void setup() {
   Serial.begin(115200);
@@ -156,9 +159,8 @@ void loop() {
     
     
     readPosition(i);
-    readTouchState(i);
+    //readTouchState(i);
     
-    if (pixels[i].touchState)
     int action = calculatePIDAction(i);
     //padPrint(action, 3);
     //Serial.print("     ");
@@ -204,7 +206,7 @@ void readPosition(int pixel) {
 
 void readTouchState(int pixel) {
   //NOT TESTED, NEEDS FURTHER IMPLEMENTATION
-  if (digitalRead(pixels[pixel].touchIn == HIGH) {
+  if (digitalRead(pixels[pixel].touchIn) == HIGH) {
     pixels[pixel].touchCount += 1;
     if (pixels[pixel].touchCount > 50) {
       pixels[pixel].touchState = 1;
@@ -261,6 +263,12 @@ void setDirection(int pixel, int action) {
   }
 }
 
+void setPWMPreset(int i, int preset) {
+  pixels[i].kP = presets[preset][0];
+  pixels[i].kD = presets[preset][1];
+  pixels[i].kI = presets[preset][2];
+}
+
 void moveMotor(int pixel, int action) {
   setDirection(pixel, action);
   int pwmWrite = map(abs(action),PWM_LOW, PWM_HIGH, MOTOR_MIN, PWM_HIGH);
@@ -280,7 +288,7 @@ void serialRead() {
   if (strlen(inData) != 0 && Serial.peek() == 10) {
     Serial.read();
     int id = String(inData).substring(0,1).toInt();
-    if (sizeof(pixels) / sizeof(pixels[0]) <= id) return;
+    if (id > numPixels - 1) return;
     
     if (inData[1] == 'C') {
       pixels[id].red = constrain(String(inData).substring(2,5).toInt(),0,255);
@@ -294,6 +302,10 @@ void serialRead() {
     
     if (inData[1] == 'A') {
       pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
+    }
+    
+    if (inData[1] == 'S') {
+      setPWMPreset(id, constrain(String(inData).substring(2,3).toInt(),0, NUM_PRESETS));
     }
         
     for (int i=0;i<BUFFER_SIZE;i++) {
