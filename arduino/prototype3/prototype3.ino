@@ -1,3 +1,5 @@
+#include <CapacitiveSensor.h>
+
 /*
 1 - speed
 2 - direction 
@@ -61,6 +63,8 @@ struct pixel {
   int red;
   int blue;
   int green;
+  
+  CapacitiveSensor touch;
 };
 
 const int numPixels = 9;
@@ -113,11 +117,17 @@ void setup() {
   pixels[0].dirUp = 37;
   pixels[0].dirDown = 36;
   pixels[0].analogPos = A1;
+  //pixels[0].touchRead = 88;
+  //pixels[0].touchSend = 88;
+  //pixels[0].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
   
   pixels[1].motor = 3;
   pixels[1].dirUp = 35;
   pixels[1].dirDown = 34;
   pixels[1].analogPos = A0;
+  //pixels[1].touchRead = 88;
+  //pixels[1].touchSend = 88;
+  //pixels[1].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
   
   pixels[2].motor = 9;
   pixels[2].dirUp = 39;
@@ -130,36 +140,57 @@ void setup() {
   pixels[2].red = 200;
   pixels[2].blue = 255;
   pixels[2].green = 255;
+  //pixels[2].touchRead = 88;
+  //pixels[2].touchSend = 88;
+  //pixels[2].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
   
   pixels[3].motor = 8;
   pixels[3].dirUp = 25;
   pixels[3].dirDown = 23;
   pixels[3].analogPos = A3;
+  //pixels[3].touchRead = 88;
+  //pixels[3].touchSend = 88;
+  //pixels[3].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
  
   pixels[4].motor = 7;
   pixels[4].dirUp = 24;
   pixels[4].dirDown = 22;
   pixels[4].analogPos = A6;
+  //pixels[4].touchRead = 88;
+  //pixels[4].touchSend = 88;
+  //pixels[4].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
  
   pixels[5].motor = 6;
   pixels[5].dirUp = 27;
   pixels[5].dirDown = 26;
   pixels[5].analogPos = A4;
+  //pixels[5].touchRead = 88;
+  //pixels[5].touchSend = 88;
+  //pixels[5].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
  
   pixels[6].motor = 2;
   pixels[6].dirUp = 29;
   pixels[6].dirDown = 28;
   pixels[6].analogPos = A5;
+  //pixels[6].touchRead = 88;
+  //pixels[6].touchSend = 88;
+  //pixels[6].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
  
   pixels[7].motor = 10;
   pixels[7].dirUp = 30;
   pixels[7].dirDown = 31;
   pixels[7].analogPos = A7;
+  //pixels[7].touchRead = 88;
+  //pixels[7].touchSend = 88;
+  //pixels[7].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
  
   pixels[8].motor = 5;
   pixels[8].dirUp = 33;
   pixels[8].dirDown = 32;
   pixels[8].analogPos = A8;
+  //pixels[8].touchRead = 88;
+  //pixels[8].touchSend = 88;
+  //pixels[8].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
 
   for (int i = 0; i < numPixels; i++) {
     pinMode(pixels[i].motor, OUTPUT);
@@ -167,6 +198,8 @@ void setup() {
     pinMode(pixels[i].dirUp, OUTPUT);
     pinMode(pixels[i].analogPos, INPUT);
     pinMode(pixels[i].ledGround, OUTPUT);
+    //pinMode(pixels[i].touchRead, INPUT);
+    //pinMode(pixels[i].touchSend, OUTPUT);
     pinMode(pixels[i].ledR, OUTPUT);
     pinMode(pixels[i].ledG, OUTPUT);
     pinMode(pixels[i].ledB, OUTPUT);
@@ -223,6 +256,16 @@ void readTouchState(int pixel) {
     pixels[pixel].touchCount = 0;
     pixels[pixel].touchState = 0;
   }
+  
+ /* long total1 = pixels[pixel].touch.capacitiveSensor(30);
+  
+  if (total1 > calibratedThreshold){
+    touchState = 1;
+  }
+  else
+    touchState = 0;  
+  */
+  
 }
 
 //returns a motor speed, all pid controls
