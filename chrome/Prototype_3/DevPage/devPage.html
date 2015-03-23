@@ -14,8 +14,8 @@
       width: 150px;
       padding: 15px;
       font-size: 20px;
-      background: #776693;
-      border: 1px solid rgb(178, 168, 205);
+      background: #4BBEDB;
+      border: none;
       cursor: pointer;
       position: absolute;
     }
@@ -29,7 +29,7 @@
     .nav button:disabled {opacity: 0.2;}
     
     button:hover, button.hovered {
-      background: #524567;
+      background: #3096B0;
     }
     .nav button:hover, .nav button.hovered {
       background: none;
@@ -38,20 +38,20 @@
       outline: 0;
     }
     button:focus:active, button.clicking {
-      box-shadow: inset 1px -4px 13px #3D324F;
+      box-shadow: inset 1px -4px 13px #0F4C5C;
     }
     .nav button:focus:active, .nav button.clicking {
       box-shadow: none;
     }
 
-    #reset {top: 90px;}
-    #a_connect {top: 160px;}
-    #a_reset {top: 250px;}
+    #reset {top: 330px;}
+    #a_connect {top: 400px;}
+    #a_reset {top: 490px;}
 
     #a_select {
       position: absolute;
-      top: 215px;
-      background-color:#776693;
+      top: 455px;
+      background-color:#59ABE3;
       color:white;
       padding: 12px;
       width: 150px;
@@ -65,6 +65,11 @@
       border:0;
       outline:0;
       opacity: 0.5;
+      margin-left: 100px;
+    }
+
+    button.main-button {
+      margin-left: 100px;
     }
 
   </style>
@@ -93,10 +98,10 @@
   </div>
 
   <div class="rightPane">
-    <button id="reset">RESET</button>
-    <button id="a_connect" href="">CONNECT</button>
-    <select id="a_select"></select>
-    <button id="a_reset" href="">REFRESH</button>
+    <button class="main-button" id="reset">RESET</button>
+    <button class="main-button" id="a_connect" href="">CONNECT</button>
+    <select class="main-button" id="a_select"></select>
+    <button class="main-button" id="a_reset" href="">REFRESH</button>
   </div>
 
 </body>

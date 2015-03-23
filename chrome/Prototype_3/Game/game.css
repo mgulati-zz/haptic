@@ -7,7 +7,7 @@
   background-color: white;
 }
 .wall {
-  background-color: brown;
+  background-color: rgb(11, 82, 113);
 }
 
 .rough {
@@ -15,5 +15,9 @@
 }
 
 .player {
-  background-color: purple;
+  background-color: #4BBEDB;
+}
+
+#grid {
+	margin: 100px auto;
 }
