@@ -1,62 +1,74 @@
-pixels[0].motor = 12
-pixels[0].dirDown = 36
-pixels[0].dirUp = 37
-pixels[0].analogPos = A1
+pixels[0].motor = 12;
+pixels[0].dirUp = 37;
+pixels[0].dirDown = 33;
+pixels[0].analogPos = A7;
 
-pixels[1].motor = 3
-pixels[1].dirDown = 35
-pixels[1].dirUp = 34
-pixels[1].analogPos = A0
+pixels[1].motor = 3;
+pixels[1].dirDown = 31;
+pixels[1].dirUp = 30;
+pixels[1].analogPos = A9;
 
-pixels[2].motor = 9
-pixels[2].dirDown = 39
-pixels[2].dirUp = 38
-pixels[2].analogPos = A2
+pixels[2].motor = 11;
+pixels[2].dirDown = 36;
+pixels[2].dirUp = 34;
+pixels[2].analogPos = A8;
 
-pixels[3].motor = 8
-pixels[3].dirDown = 23
-pixels[3].dirUp = 25
-pixels[3].analogPos = A3
+pixels[3].motor = 8;
+pixels[3].dirUp = 27;
+pixels[3].dirDown = 24;
+pixels[3].analogPos = A15;
+pixels[3].ledGround = A2;
+pixels[3].ledR = 45;
+pixels[3].ledG = 44;
+pixels[3].ledB = 46;
 
-pixels[4].motor = 7
-pixels[4].dirDown = 22
-pixels[4].dirUp = 24
-pixels[4].analogPos = A6
+pixels[4].motor = 7;
+pixels[4].dirDown = 26;
+pixels[4].dirUp = 27;
+pixels[4].analogPos = A14;
+pixels[4].ledGround = A0;
+pixels[4].ledR = 45;
+pixels[4].ledG = 44;
+pixels[4].ledB = 46;
 
-pixels[5].motor = 6
-pixels[5].dirDown = 27
-pixels[5].dirUp = 26
-pixels[5].analogPos = A4
+pixels[5].motor = 6;
+pixels[5].dirUp = 23;
+pixels[5].dirDown = 22;
+pixels[5].analogPos = A12;
 
-pixels[6].motor = 2
-pixels[6].dirDown = 29
-pixels[6].dirUp = 28
-pixels[6].analogPos = A5
+pixels[6].motor = 2;
+pixels[6].dirDown = 28;
+pixels[6].dirUp = 29;
+pixels[6].analogPos = A13;
+pixels[6].ledGround = A1;
+pixels[6].ledR = 45;
+pixels[6].ledG = 44;
+pixels[6].ledB = 46;
 
-pixels[7].motor = 10
-pixels[7].dirDown = 31
-pixels[7].dirUp = 30
-pixels[7].analogPos = A7
+pixels[7].motor = 10;
+pixels[7].dirDown = 39;
+pixels[7].dirUp = 38;
+pixels[7].analogPos = A11;
 
-pixels[8].motor = 5
-pixels[8].dirDown = 32
-pixels[8].dirUp = 33
-pixels[8].analogPos = A8
+pixels[8].motor = 5;
+pixels[8].dirDown = 35;
+pixels[8].dirUp = 32;
+pixels[8].analogPos = A10;
 
 
 LEDS
-ground1 - A9
-ground2 - A10
-ground3 - A11
-ground4 - A12
-ground5 - A13
+ground1 - A0
+ground2 - A1
+ground3 - A2
+ground4 - A3
+ground5 - A4
 
-R1 - 46
+R1 - 45
 G1 - 44
-B1 - 45
+B1 - 46
 
 R2 - 4
-G2 - 11
+G2 - 9
 B2 - 13 
 
 Capacitive Send - 41

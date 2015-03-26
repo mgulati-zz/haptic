@@ -1,38 +1,5 @@
 //#include <CapacitiveSensor.h>
 
-/*
-1 - speed
-2 - direction 
-3 - direction
-
-4 - direction 
-5 - direction
-6 - speed
-
-7 - direction
-8 - direction
-9 - speed
-
-10 - speed
-11 - direction
-12 - direction
-
-analog channels
-touch - potentiometer
-01 - 1 (456)
-23 - 2 (123)
-45 - 4 (10 11 12)
-67 - 7 (789)
-
-selector pins:
-S0 - 7
-S1 - 6
-S2 - 5
-S3 - 4
-
-*/
-
-
 struct pixel {
   int dirDown;
   int dirUp;
