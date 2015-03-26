@@ -76,8 +76,8 @@ char inData[BUFFER_SIZE];
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int BUZZ_THRESHOLD = 20;
-const int MOTOR_MIN = 0;
+const int BUZZ_THRESHOLD = 10;
+const int MOTOR_MIN = 180;
 
 const int PWM_HIGH = 255;
 const int PWM_LOW = 0;
@@ -89,7 +89,7 @@ const int STIMER_THRESHOLD = 20;
 const int NUM_PRESETS = 2;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
 
-int ledPairs[5][2] = {{0,1}, {2,3}, {4,5}, {6,7}, {8,8}};
+int ledPairs[5][2] = {{0,4}, {2,3}, {1,7}, {6,8}, {5,5}};
 int ledCounter = 0;
 
 int pixelCounter = 0;
@@ -111,6 +111,9 @@ void setup() {
     pixels[i].kP = 1.5;
     pixels[i].kD = 0.2;
     pixels[i].kI = 0.02;
+    pixels[i].red = 0;
+    pixels[i].blue = 0;
+    pixels[i].green = 255;
   }
   
   pixels[0].motor = 12;
@@ -123,18 +126,11 @@ void setup() {
   pixels[1].dirUp = 30;
   pixels[1].analogPos = A9;
 
-  
   pixels[2].motor = 11;
   pixels[2].dirDown = 36;
   pixels[2].dirUp = 34;
   pixels[2].analogPos = A8;
-  pixels[2].ledGround = A0;
-  pixels[2].ledR = 46;
-  pixels[2].ledG = 44;
-  pixels[2].ledB = 45;
-  pixels[2].red = 200;
-  pixels[2].blue = 255;
-  pixels[2].green = 255;
+  
   //pixels[2].touchRead = 88;
   //pixels[2].touchSend = 88;
   //pixels[2].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
@@ -143,11 +139,19 @@ void setup() {
   pixels[3].dirUp = 27;
   pixels[3].dirDown = 24;
   pixels[3].analogPos = A15;
+  pixels[3].ledGround = A2;
+  pixels[3].ledR = 45;
+  pixels[3].ledG = 44;
+  pixels[3].ledB = 46;
  
   pixels[4].motor = 7;
   pixels[4].dirDown = 26;
   pixels[4].dirUp = 27;
   pixels[4].analogPos = A14;
+  pixels[4].ledGround = A0;
+  pixels[4].ledR = 45;
+  pixels[4].ledG = 44;
+  pixels[4].ledB = 46;
  
   pixels[5].motor = 6;
   pixels[5].dirUp = 23;
@@ -158,6 +162,10 @@ void setup() {
   pixels[6].dirDown = 28;
   pixels[6].dirUp = 29;
   pixels[6].analogPos = A13;
+  pixels[6].ledGround = A1;
+  pixels[6].ledR = 45;
+  pixels[6].ledG = 44;
+  pixels[6].ledB = 46;
  
   pixels[7].motor = 10;
   pixels[7].dirDown = 39;
@@ -174,10 +182,10 @@ void setup() {
     pinMode(pixels[i].dirDown, OUTPUT);
     pinMode(pixels[i].dirUp, OUTPUT);
     pinMode(pixels[i].analogPos, INPUT);
-//    pinMode(pixels[i].ledGround, OUTPUT);
-//    pinMode(pixels[i].ledR, OUTPUT);
-//    pinMode(pixels[i].ledG, OUTPUT);
-//    pinMode(pixels[i].ledB, OUTPUT);
+    pinMode(pixels[i].ledGround, OUTPUT);
+    pinMode(pixels[i].ledR, OUTPUT);
+    pinMode(pixels[i].ledG, OUTPUT);
+    pinMode(pixels[i].ledB, OUTPUT);
     //pinMode(pixels[i].touchRead, INPUT);
     //pinMode(pixels[i].touchSend, OUTPUT)
   }
@@ -187,9 +195,9 @@ void setup() {
 void loop() {
   serialRead();
   
-//  ledCounter++;
-//  if (ledCounter > 5*3) ledCounter = 0;
-//  writeLEDPair();
+  ledCounter++;
+  if (ledCounter > 5*3) ledCounter = 0;
+  writeLEDPair();
   
   readPosition(pixelCounter);
   readTouchState(pixelCounter);
