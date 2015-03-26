@@ -1,4 +1,4 @@
-#include <CapacitiveSensor.h>
+//#include <CapacitiveSensor.h>
 
 /*
 1 - speed
@@ -64,7 +64,7 @@ struct pixel {
   int blue;
   int green;
   
-  CapacitiveSensor touch;
+//  CapacitiveSensor touch;
 };
 
 const int numPixels = 9;
@@ -108,7 +108,7 @@ void setup() {
     pixels[i].derivative = 0;
     pixels[i].touchState = 0;
     pixels[i].touchCount = 0;
-    pixels[i].kP = 0.6;
+    pixels[i].kP = 1.5;
     pixels[i].kD = 0.2;
     pixels[i].kI = 0.02;
   }
@@ -140,28 +140,28 @@ void setup() {
   //pixels[2].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
   
   pixels[3].motor = 8;
-  pixels[3].dirUp = 24;
-  pixels[3].dirDown = 27;
+  pixels[3].dirUp = 27;
+  pixels[3].dirDown = 24;
   pixels[3].analogPos = A15;
  
   pixels[4].motor = 7;
-  pixels[4].dirDown = 25;
-  pixels[4].dirUp = 26;
+  pixels[4].dirDown = 26;
+  pixels[4].dirUp = 27;
   pixels[4].analogPos = A14;
  
   pixels[5].motor = 6;
-  pixels[5].dirUp = 22;
-  pixels[5].dirDown = 23;
+  pixels[5].dirUp = 23;
+  pixels[5].dirDown = 22;
   pixels[5].analogPos = A12;
  
   pixels[6].motor = 2;
-  pixels[6].dirDown = 29;
-  pixels[6].dirUp = 28;
+  pixels[6].dirDown = 28;
+  pixels[6].dirUp = 29;
   pixels[6].analogPos = A13;
  
   pixels[7].motor = 10;
-  pixels[7].dirDown = 38;
-  pixels[7].dirUp = 39;
+  pixels[7].dirDown = 39;
+  pixels[7].dirUp = 38;
   pixels[7].analogPos = A11;
  
   pixels[8].motor = 5;
@@ -201,8 +201,12 @@ void loop() {
   if (pixelCounter == numPixels) pixelCounter = 0;
 
   serialTimer++;
-  if (serialTimer > STIMER_THRESHOLD) serialPrintPixel(pixelCounter);
-  if (serialTimer > STIMER_THRESHOLD) serialTimer = 0;
+  if (serialTimer > STIMER_THRESHOLD) {
+//    Serial.print(action);
+//    Serial.print(",");
+    serialPrintPixel(pixelCounter);
+    serialTimer = 0;
+  }
 }
 
 void serialPrintPixel(int i) {
