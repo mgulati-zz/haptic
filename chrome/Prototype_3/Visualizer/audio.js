@@ -12,7 +12,6 @@ for (var i = 0; i < 9; i++) {
     //console.log(button.desiredPosition);
   });
 }
-var skips =[0, 0, 0, 0];
 
 $(document).ready(function() {
   $('#audio_box').append(audio);
@@ -27,6 +26,21 @@ $(document).ready(function() {
   analyser.connect(context.destination);
   frameLooper();
 });
+
+function updatePixels(i, bar_height) {
+  var pos = Math.round((-bar_height*10)/10)*10;
+  pos = (pos - 500) * 10
+  if (pos > 1000) pos = 1000; 
+  grid.updateDesiredPos(i, pos);
+  var R = pos;
+  var G = pos - 300;
+  var B = pos - 600;
+  G = G < 0 ? 0 : G;
+  G = Math.round(G * (255/300));
+  B = B < 0 ? 0 : B;
+  B = Math.round(B * (255/400));
+  grid.updateColorRGB(i, R, G, B);
+}
 
 function frameLooper(){
   window.requestAnimationFrame(frameLooper);
@@ -49,14 +63,7 @@ function frameLooper(){
     bar_width = 10;
     bar_height = -(average / 2);
     //console.log(i, Math.round((-bar_height*10)/100)*100);
-    skips[i] += 1;
-    if (i < 4) {
-      var pos = Math.round((-bar_height*10)/10)*10;
-      pos = (pos - 500) * 10
-      if (pos > 1000) pos = 1000; 
-      grid.updateDesiredPos(i, pos);
-      skips[i] = 0;
-    }
+    updatePixels(i, bar_height);
     //  fillRect( x, y, width, height ) // Explanation of the parameters below
     ctx.fillRect(bar_x, canvas.height, bar_width, bar_height);
   }

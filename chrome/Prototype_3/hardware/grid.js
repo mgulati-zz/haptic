@@ -30,6 +30,9 @@ function Grid() {
   _self.updateColor = function(id, hex) {
     _self.buttons[id].changeColor(hex);
   }
+  _self.updateColorRGB = function(id, R, G, B) {
+    _self.buttons[id].changeColorRGB(R,G,B);
+  }
 
   _self.updateDesiredPos = function(i, desiredPos) {
     if (desiredPos == _self.buttons[i].desiredPosition) return;

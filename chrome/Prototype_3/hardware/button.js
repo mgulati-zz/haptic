@@ -39,6 +39,10 @@ function Button (id, arduino, onUpdate) {
 		G = hexToG(_self.currentColor);
 		B = hexToB(_self.currentColor);
 
+		_self.changeColorRGB(R,G,B);
+	}
+
+	_self.changeColorRGB = function(R,G,B) {
 		_self.arduino.writeSerial(_self.id + "C" + R + G + B);
 	}
 
