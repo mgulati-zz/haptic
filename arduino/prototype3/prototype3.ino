@@ -59,7 +59,8 @@ double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
 
 int ledPairs[5][2] = {{0,4}, {2,3}, {1,7}, {6,8}, {5,5}};
 int ledCounter = 0;
-const int ledDelay = 400;
+const int ledDelay = 3;
+int currentPair = 0;
 
 int pixelCounter = 0;
 int debugPixel = 0;
@@ -183,11 +184,14 @@ void setup() {
     //pinMode(pixels[i].touchRead, INPUT);
     //pinMode(pixels[i].touchSend, OUTPUT)
   }
-
 }
 
 void loop() {
   serialRead();
+  
+  ledCounter++;
+  if (ledCounter > (5*ledDelay - 1)) ledCounter = 0;
+  if (ledCounter % ledDelay == 0) writeLEDPair();
   
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
@@ -197,10 +201,6 @@ void loop() {
   
   calculatePIDAction(pixelCounter);
   moveMotor(pixelCounter);
-
-  ledCounter++;
-  if (ledCounter > (5*ledDelay - 1)) ledCounter = 0;
-  if (ledCounter % ledDelay == 0) writeLEDPair();
   
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
@@ -301,17 +301,15 @@ void moveMotor(int pixel) {
 }
 
 void writeLEDPair() {
-  int pair = ledCounter/ledDelay;
-  for (int i = 0; i < 5; i++) {
-     digitalWrite(pixels[ledPairs[i][0]].ledGround, HIGH);
-  }
+  digitalWrite(pixels[ledPairs[currentPair][0]].ledGround, HIGH);
+  currentPair = ledCounter/ledDelay;
   for (int i = 0; i < 2; i++) {
-    int id = ledPairs[pair][i];
+    int id = ledPairs[currentPair][i];
     analogWrite(pixels[id].ledR, pixels[id].red);
     analogWrite(pixels[id].ledG, pixels[id].green);
     analogWrite(pixels[id].ledB, pixels[id].blue);
   }
-  digitalWrite(pixels[ledPairs[pair][0]].ledGround, LOW);
+  digitalWrite(pixels[ledPairs[currentPair][0]].ledGround, LOW);
 }
 
 //read one command from serial interface and react accordingly
