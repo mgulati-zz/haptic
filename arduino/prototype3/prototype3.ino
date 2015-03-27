@@ -204,7 +204,8 @@ void loop() {
   
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
-    serialPrintPixel(debugPixel);
+    // serialPrintPixel(debugPixel); //for debugging
+    serialPrintPixel(pixelCounter); //for operation
     serialTimer = 0;
   }
 }
