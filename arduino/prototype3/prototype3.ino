@@ -187,7 +187,7 @@ void loop() {
   serialRead();
   
   ledCounter++;
-  if (ledCounter > 5*3) ledCounter = 0;
+  if (ledCounter > (5*3 - 1)) ledCounter = 0;
   writeLEDPair();
   
   readPosition(pixelCounter);
