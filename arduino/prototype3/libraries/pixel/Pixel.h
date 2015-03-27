@@ -8,31 +8,37 @@
 class Pixel
 {
   public:
-    Pixel(int pin);
-    ~Pixel();
-  
+    Pixel(int analogPos,  int touchRead, int touchSend, int motor, int dirUp, int dirDown, int ledR, int ledGround, int ledG, int ledB);
+    
+    void moveMotor(int action);
+
+    void setColor(int red, int green, int blue);
+    void setPID(int p, int i, int d);
+    void setTarget(int target);
+
+    int readAnalogPos();
+    int getPIDAction();
+
+    const int _ledR;
+    const int _ledG;
+    const int _ledB;
+    const int _ledGround;
+
   private:
-    int dirDown;
-    int dirUp;
-    
-    int ledR;
-    int ledG;
-    int ledB;
-    int motor;
-    
-    int actualPos;
+    const int _dirDown;
+    const int _dirUp;
+    const int _motor;
+    const int _analogPos;
+
     int desiredPos;
+    int currentPos;
     int lastPos;
-    int analogPos;
+    int integral;
     
     double kI;
     double kP;
     double kD;
-    
-    int integral;
-    int derivative;
-    
-    int allowSlide;
+
     int touchState;
     
     int red;
