@@ -58,6 +58,7 @@ double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
 
 int ledPairs[5][2] = {{0,4}, {2,3}, {1,7}, {6,8}, {5,5}};
 int ledCounter = 0;
+const int ledDelay = 400;
 
 int pixelCounter = 0;
 int debugPixel = 0;
@@ -186,23 +187,21 @@ void setup() {
 void loop() {
   serialRead();
   
-  ledCounter++;
-  if (ledCounter > (5*3 - 1)) ledCounter = 0;
-  writeLEDPair();
+  pixelCounter++;
+  if (pixelCounter == numPixels) pixelCounter = 0;
   
   readPosition(pixelCounter);
   readTouchState(pixelCounter);
   
   int action = calculatePIDAction(pixelCounter);
   moveMotor(pixelCounter, action);
-  
-  pixelCounter++;
-  if (pixelCounter == numPixels) pixelCounter = 0;
 
+  ledCounter++;
+  if (ledCounter > (5*ledDelay - 1)) ledCounter = 0;
+  if (ledCounter % ledDelay == 0) writeLEDPair();
+  
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
-//    Serial.print(action);
-//    Serial.print(",");
     serialPrintPixel(debugPixel);
     serialTimer = 0;
   }
@@ -305,11 +304,9 @@ void moveMotor(int pixel, int action) {
 }
 
 void writeLEDPair() {
-  int pair = ledCounter/3;
-  if (ledCounter % 3 == 0) {
-    for (int i = 0; i < 5; i++) {
-       digitalWrite(pixels[ledPairs[i][0]].ledGround, HIGH);
-    }
+  int pair = ledCounter/ledDelay;
+  for (int i = 0; i < 5; i++) {
+     digitalWrite(pixels[ledPairs[i][0]].ledGround, HIGH);
   }
   for (int i = 0; i < 2; i++) {
     int id = ledPairs[pair][i];
