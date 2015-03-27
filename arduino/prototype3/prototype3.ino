@@ -22,6 +22,7 @@ struct pixel {
   
   int integral;
   int derivative;
+  int action;
   
   int allowSlide;
   int touchState;
@@ -83,6 +84,7 @@ void setup() {
     pixels[i].red = 0;
     pixels[i].blue = 0;
     pixels[i].green = 255;
+    pixels[i].action = 0;
   }
   pixels[0].motor = 12;
   pixels[0].dirUp = 37;
@@ -193,8 +195,8 @@ void loop() {
   readPosition(pixelCounter);
   readTouchState(pixelCounter);
   
-  int action = calculatePIDAction(pixelCounter);
-  moveMotor(pixelCounter, action);
+  calculatePIDAction(pixelCounter);
+  moveMotor(pixelCounter);
 
   ledCounter++;
   if (ledCounter > (5*ledDelay - 1)) ledCounter = 0;
@@ -248,7 +250,7 @@ void readTouchState(int pixel) {
 }
 
 //returns a motor speed, all pid controls
-int calculatePIDAction(int pixel) {
+void calculatePIDAction(int pixel) {
   //if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
  
   int error = pixels[pixel].desiredPos - pixels[pixel].actualPos;
@@ -258,22 +260,17 @@ int calculatePIDAction(int pixel) {
   if (pixels[pixel].derivative == 0 && error == 0) {
     pixels[pixel].integral = 0;
   }
-    
-//  if (pixels[pixel].integral > PWM_HIGH) pixels[pixel].integral = PWM_HIGH;
-//  if (pixels[pixel].integral < -PWM_HIGH) pixels[pixel].integral = -PWM_HIGH;
 
   pixels[pixel].derivative = pixels[pixel].lastPos - pixels[pixel].actualPos;
   pixels[pixel].lastPos = pixels[pixel].actualPos;
   
-  //taken out integral acction for now )
-  double drive = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
   
-  int motorSpeed = constrain(map(drive,-500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
-  if (abs(motorSpeed) < BUZZ_THRESHOLD) {
-    motorSpeed = PWM_LOW;
+  pixels[pixel].action = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
+  
+  pixels[pixel].action = constrain(map(pixels[pixel].action,-500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
+  if (abs(pixels[pixel].action) < BUZZ_THRESHOLD) {
+    pixels[pixel].action = PWM_LOW;
   }
- 
-  return motorSpeed;
 }
 
 void setPWMValue(int channel, int value) {
@@ -296,10 +293,10 @@ void setPWMPreset(int i, int preset) {
   pixels[i].kI = presets[preset][2];
 }
 
-void moveMotor(int pixel, int action) {
-  setDirection(pixel, action);
-  int pwmWrite = map(abs(action),PWM_LOW, PWM_HIGH, MOTOR_MIN, PWM_HIGH);
-  if (action == PWM_LOW) pwmWrite = PWM_LOW;
+void moveMotor(int pixel) {
+  setDirection(pixel, pixels[pixel].action);
+  int pwmWrite = map(abs(pixels[pixel].action),PWM_LOW, PWM_HIGH, MOTOR_MIN, PWM_HIGH);
+  if (pixels[pixel].action == PWM_LOW) pwmWrite = PWM_LOW;
   setPWMValue(pixels[pixel].motor, pwmWrite);
 }
 
