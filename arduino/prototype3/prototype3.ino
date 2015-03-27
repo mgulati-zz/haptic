@@ -354,17 +354,3 @@ void serialRead() {
     index = 0;
   }
 }
-
-void padPrint(int value, int width)
-{
-  // pads values with leading zeros to make the given width
-  char valueStr[6]; // large enough to hold an int
-  itoa (value, valueStr, 10);
-  int len = strlen(valueStr);
-  if(len < width){
-    len = width-len;
-    while(len--)
-     Serial.print(' ');
-  }
- Serial.print(valueStr);   
-}
