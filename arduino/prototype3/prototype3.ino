@@ -44,8 +44,8 @@ char inData[BUFFER_SIZE];
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int BUZZ_THRESHOLD = 10;
-const int MOTOR_MIN = 180;
+const int BUZZ_THRESHOLD = 50;
+const int MOTOR_MIN = 0;
 
 const int PWM_HIGH = 255;
 const int PWM_LOW = 0;
