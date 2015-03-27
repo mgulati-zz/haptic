@@ -60,6 +60,7 @@ int ledPairs[5][2] = {{0,4}, {2,3}, {1,7}, {6,8}, {5,5}};
 int ledCounter = 0;
 
 int pixelCounter = 0;
+int debugPixel = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -179,7 +180,7 @@ void loop() {
   if (serialTimer > STIMER_THRESHOLD) {
 //    Serial.print(action);
 //    Serial.print(",");
-    serialPrintPixel(pixelCounter);
+    serialPrintPixel(debugPixel);
     serialTimer = 0;
   }
 }
@@ -325,6 +326,10 @@ void serialRead() {
       
       if (inData[1] == 'S') {
         setPWMPreset(id, constrain(String(inData).substring(2,3).toInt(),0, NUM_PRESETS));
+      }
+      
+      if (inData[1] == 'D') {
+        debugPixel = id;
       }
     }
     
