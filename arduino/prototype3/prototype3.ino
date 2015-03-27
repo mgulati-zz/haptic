@@ -95,7 +95,7 @@ void setup() {
   pixels[1].motor = 3;
   pixels[1].dirDown = 31;
   pixels[1].dirUp = 30;
-  pixels[1].analogPos = A6;
+  pixels[1].analogPos = A9;
   pixels[1].ledGround = A3;
   pixels[1].ledR = 4;
   pixels[1].ledG = 9;
@@ -168,19 +168,18 @@ void setup() {
   pixels[8].ledG = 9;
   pixels[8].ledB = 13;
   
-  pinMode(A9, INPUT);
-//  for (int i = 0; i < numPixels; i++) {
-//    pinMode(pixels[i].motor, OUTPUT);
-//    pinMode(pixels[i].dirDown, OUTPUT);
-//    pinMode(pixels[i].dirUp, OUTPUT);
-//    pinMode(pixels[i].analogPos, INPUT);
-//    pinMode(pixels[i].ledGround, OUTPUT);
-//    pinMode(pixels[i].ledR, OUTPUT);
-//    pinMode(pixels[i].ledG, OUTPUT);
-//    pinMode(pixels[i].ledB, OUTPUT);
-//    //pinMode(pixels[i].touchRead, INPUT);
-//    //pinMode(pixels[i].touchSend, OUTPUT)
-//  }
+  for (int i = 0; i < numPixels; i++) {
+    pinMode(pixels[i].motor, OUTPUT);
+    pinMode(pixels[i].dirDown, OUTPUT);
+    pinMode(pixels[i].dirUp, OUTPUT);
+    pinMode(pixels[i].analogPos, INPUT);
+    pinMode(pixels[i].ledGround, OUTPUT);
+    pinMode(pixels[i].ledR, OUTPUT);
+    pinMode(pixels[i].ledG, OUTPUT);
+    pinMode(pixels[i].ledB, OUTPUT);
+    //pinMode(pixels[i].touchRead, INPUT);
+    //pinMode(pixels[i].touchSend, OUTPUT)
+  }
 
 }
 
@@ -204,9 +203,7 @@ void loop() {
   if (serialTimer > STIMER_THRESHOLD) {
 //    Serial.print(action);
 //    Serial.print(",");
-    //serialPrintPixel(debugPixel);
-    //Serial.println(analogRead(A9));
-    
+    serialPrintPixel(debugPixel);
     serialTimer = 0;
   }
 }
