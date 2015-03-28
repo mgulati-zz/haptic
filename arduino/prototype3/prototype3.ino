@@ -4,7 +4,7 @@
 const int _posTop = 1000;
 const int _posBottom = 0;
 
-const int BUZZ_THRESHOLD = 50;
+const int BUZZ_THRESHOLD = 0;
 const int MOTOR_MIN = 0;
 
 const int PWM_HIGH = 255;
