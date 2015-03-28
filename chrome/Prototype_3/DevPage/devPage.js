@@ -12,9 +12,10 @@ $(document).ready(function() {
   generator.setZoom(2.5);
 
   grid = new Grid();
-  for (var i = 0; i < x*z; i++) {
+  for (var i = 0; i < 9; i++) {
     grid.newButton(i, function(button) {
-      var coordinates = grid.coordinates[button.id];
+      var coordinates = grid.indexLookup(button.id);
+      if (coordinates[0] > 1 || coordinates[1] > 1) return; //for 2x2 grid right now
       generator.setPos(coordinates[0], coordinates[1], button.position / 1000, false);
       generator.setDesiredPos(coordinates[0], coordinates[1], button.desiredPosition / 1000, false);
       if (connected == false) {
