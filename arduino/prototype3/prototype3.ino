@@ -63,6 +63,7 @@ const int ledDelay = 3;
 int currentPair = 0;
 
 int pixelCounter = 0;
+int pixelPrintCounter = 0;
 int debugPixel = 0;
 
 void setup() {
@@ -187,7 +188,9 @@ void setup() {
 }
 
 void loop() {
-  serialRead();
+  for (int i = 0; i < 5; i++) {
+    serialRead();
+  }
   
   ledCounter++;
   if (ledCounter > (5*ledDelay - 1)) ledCounter = 0;
@@ -205,7 +208,9 @@ void loop() {
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
     // serialPrintPixel(debugPixel); //for debugging
-    serialPrintPixel(pixelCounter); //for operation
+    pixelPrintCounter++;
+    if (pixelPrintCounter > numPixels) pixelPrintCounter = 0;
+    //serialPrintPixel(pixelPrintCounter); //for operation
     serialTimer = 0;
   }
 }
@@ -333,7 +338,7 @@ void serialRead() {
       }
       
       if (inData[1] == 'P') {
-        pixels[id].desiredPos = constrain(map(String(inData).substring(2,6).toInt(), 0, 1000, 600, 1000),600,1000);
+        pixels[id].desiredPos = constrain(map(String(inData).substring(2,6).toInt(), 0, 1000, 300, 1000),300,1000);
       }
       
       if (inData[1] == 'A') {

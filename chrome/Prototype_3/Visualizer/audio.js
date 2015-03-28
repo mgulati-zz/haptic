@@ -13,6 +13,8 @@ for (var i = 0; i < 9; i++) {
   });
 }
 
+var serialTimer = 0;
+
 $(document).ready(function() {
   $('#audio_box').append(audio);
   context = new AudioContext(); // AudioContext object instance
@@ -50,6 +52,7 @@ function frameLooper(){
   ctx.fillStyle = '#00CCFF'; // Color of the bars
   bars = 9;
   var length = Math.round(fbc_array.length - fbc_array.length / 2)
+  serialTimer++
   for (var i = 0; i < bars; i++) {
     var average = 0;
     var max = 0;
@@ -63,9 +66,14 @@ function frameLooper(){
     bar_width = 10;
     bar_height = -(average / 2);
     //console.log(i, Math.round((-bar_height*10)/100)*100);
-    updatePixels(i, bar_height);
+    if (serialTimer > 1) {
+      updatePixels(i, bar_height);
+    }
     //  fillRect( x, y, width, height ) // Explanation of the parameters below
     ctx.fillRect(bar_x, canvas.height, bar_width, bar_height);
+  }
+  if (serialTimer > 1) {
+    serialTimer = 0;
   }
 
 }
