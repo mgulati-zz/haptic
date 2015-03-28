@@ -50,7 +50,7 @@ struct pixel {
     , touchState(0), touchCount(0)
   {
     setPIDPreset(0);
-    setColor(0,255,0);
+    setColor(255, 250, 205);
     setTarget(1000);
 
     pinMode(_motor, OUTPUT);
@@ -191,27 +191,27 @@ void loop() {
   ledCounter++;
   if (ledCounter > (5*ledDelay - 1)) ledCounter = 0;
   if (ledCounter % ledDelay == 0) writeLEDPair();
+//  
+//  pixelCounter++;
+//  if (pixelCounter == numPixels) pixelCounter = 0;
+//  
+//  pixels[pixelCounter].readPosition();
+//  pixels[pixelCounter].readTouchState();
+//  
+//  pixels[pixelCounter].calculatePIDAction();
+//  pixels[pixelCounter].moveMotor();
   
-  pixelCounter++;
-  if (pixelCounter == numPixels) pixelCounter = 0;
-  
-  pixels[pixelCounter].readPosition();
-  pixels[pixelCounter].readTouchState();
-  
-  pixels[pixelCounter].calculatePIDAction();
-  pixels[pixelCounter].moveMotor();
-  
-  serialTimer++;
-  if (serialTimer > STIMER_THRESHOLD) {
-    Serial.print(pixelPrintCounter);
-    Serial.print(',');
-//  pixels[debugPixel].serialPrintPixel(); //for debugging
-    pixels[pixelPrintCounter].serialPrintPixel(); //for operation
-    Serial.println("");
-    serialTimer = 0;
-    pixelPrintCounter++;
-    if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
-  }
+//  serialTimer++;
+//  if (serialTimer > STIMER_THRESHOLD) {
+//    Serial.print(pixelPrintCounter);
+//    Serial.print(',');
+////  pixels[debugPixel].serialPrintPixel(); //for debugging
+//    pixels[pixelPrintCounter].serialPrintPixel(); //for operation
+//    Serial.println("");
+//    serialTimer = 0;
+//    pixelPrintCounter++;
+//    if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
+//  }
 }
 
 void writeLEDPair() {
