@@ -31,8 +31,8 @@ function Button (id, arduino, onUpdate) {
 	function hexToB(h) {return parseInt(cutHex(h).substring(4,6),16)}
 	function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 
-	zeroPad = function(num) {
-		return ('000' + num).substr(-3);
+	zeroPad = function(num, digits) {
+		return ('000000' + num).substr(-1*digits);
 	}
 
 	_self.changeColor = function(hex) {
@@ -47,14 +47,14 @@ function Button (id, arduino, onUpdate) {
 	}
 
 	_self.changeColorRGB = function(R,G,B) {
-		_self.arduino.writeSerial(_self.id + "C" + zeroPad(R) + zeroPad(G) + zeroPad(B));
+		_self.arduino.writeSerial(_self.id + "C" + zeroPad(R,3) + zeroPad(G,3) + zeroPad(B,3));
 	}
 
 	_self.sendTarget = function() {
 		//if (parseInt(target) == _self.desiredPosition) return;
   	//if (target <= 1000 && target >= 20) {
   		//_self.desiredPosition = parseInt(target);
-		_self.arduino.writeSerial(_self.id + "P" + _self.desiredPosition);
+		_self.arduino.writeSerial(_self.id + "P" + zeroPad(_self.desiredPosition,4));
   	//}
 	}
 
