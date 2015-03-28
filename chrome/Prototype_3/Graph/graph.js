@@ -29,7 +29,7 @@ $(function() {
   Chart.defaults.global.showTooltips = false;
 
   var ctx = $("#pidChart").get(0).getContext("2d");
-  myNewChart = new Chart(ctx).Line(data, {
+  posChart = new Chart(ctx).Line(data, {
     scaleOverride: true,
     scaleSteps: 10,
     scaleStepWidth: 100,
@@ -41,8 +41,8 @@ $(function() {
   for (var i = 0; i < 9; i++) {
     grid.newButton(i, function(button) {
       if (button.id == 5) {
-        if (dataCounter > 50) myNewChart.removeData();
-        myNewChart.addData([button.position, button.desiredPosition],'');
+        if (dataCounter > 50) posChart.removeData();
+        posChart.addData([button.position, button.desiredPosition],'');
         dataCounter++
       }
     });
