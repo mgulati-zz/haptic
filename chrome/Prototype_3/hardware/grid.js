@@ -18,9 +18,9 @@ function Grid() {
            && _self.buttons[id].pwmAction == parseInt(strs[5])) return;
       var touch = parseInt(strs[1]);
       var position = parseInt(strs[2]);
-      var lastPosition == parseInt(strs[3]);
-      var desiredPosition == parseInt(strs[4]);
-      var pwmAction == parseInt(strs[5]);
+      var lastPosition = parseInt(strs[3]);
+      var desiredPosition = parseInt(strs[4]);
+      var pwmAction = parseInt(strs[5]);
       _self.updateValues(id,touch, position, lastPosition, desiredPosition, pwmAction);
   }
 

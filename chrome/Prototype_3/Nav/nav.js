@@ -9,6 +9,7 @@ function bindButtons() {
   $('.nav').on('click', 'button.form', function() {changeDemo('Form/form.html','form');});
   $('.nav').on('click', 'button.soundBoard', function() {changeDemo('SoundBoard/soundBoard.html','soundBoard');});
   $('.nav').on('click', 'button.game', function() {changeDemo('Game/game.html','game');});
+  $('.nav').on('click', 'button.graph', function() {changeDemo('Graph/graph.html','graph');});
 }
 
 function changeDemo(url, id) {
@@ -30,5 +31,6 @@ function generateNavHTML() {
   nav.append($('<button>', {'class': 'form', 'text': 'FORM'}));
   nav.append($('<button>', {'class': 'soundBoard', 'text': 'SOUND BOARD'}));
   nav.append($('<button>', {'class': 'game', 'text': 'GAME'}));
+  nav.append($('<button>', {'class': 'graph', 'text': 'CHARTS'}));
   $('body').prepend(nav);
 }
