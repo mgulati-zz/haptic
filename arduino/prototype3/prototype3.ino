@@ -91,17 +91,17 @@ struct pixel {
     actualPos = constrain(actualPos, _posBottom, _posTop);
   }
 
-  void readTouchState() {
-    //NOT TESTED, NEEDS FURTHER IMPLEMENTATION
-    if (digitalRead(_touchIn) == HIGH) {
-      touchCount += 1;
-      if (touchCount > 50) {
-        touchState = 1;
-      }
-    } else {
-      touchCount = 0;
-      touchState = 0;
-    }
+  void readTouchState() {  
+    touchState = digitalRead(_touchIn);
+//    if (digitalRead(_touchIn) == HIGH) {
+//      touchCount += 1;
+//      if (touchCount > 50) {
+//        touchState = 1;
+//      }
+//    } else {
+//      touchCount = 0;
+//      touchState = 0;
+//    }
   }
 
   void calculatePIDAction() {
@@ -225,8 +225,13 @@ int pixelCounter = 0;
 int pixelPrintCounter = 0;
 String debugPixels = "111111111";
 
+int touchCounter = 0;
+int touchSwap = 1000;
+
 void setup() {
   Serial.begin(115200);
+  
+  pinMode(touchOut, OUTPUT);
 
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
@@ -243,6 +248,14 @@ void loop() {
   ledCounter++;
   if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
   if (ledCounter % ledDelay == 0) writeLEDPair();
+  
+  touchCounter++;
+  if (touchCounter == touchSwap/2) 
+    digitalWrite(touchOut, HIGH);
+  else if (touchCounter == touchSwap) {
+    digitalWrite(touchOut, LOW);
+    touchCounter = 0;
+  }
 
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
