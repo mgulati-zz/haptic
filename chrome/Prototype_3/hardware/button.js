@@ -32,7 +32,7 @@ function Button (id, arduino, onUpdate) {
 	function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 
 	zeroPad = function(num, digits) {
-		return ('000000' + num).substr(-1*digits);
+		return ('000000' + parseInt(num)).substr(-1*digits);
 	}
 
 	_self.changeColor = function(hex) {
