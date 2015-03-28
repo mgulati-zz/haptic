@@ -2,20 +2,26 @@ function Button (id, arduino, onUpdate) {
 
 	var _self = this;
 	_self.currentColor = '#000000';
-	_self.position = 0;
 	_self.touch = 0;
+	_self.position = 0;
+	_self.lastPosition = 0;
 	_self.desiredPosition = 0;
+	_self.pwmAction = 0;
 	_self.arduino = arduino;
 	_self.id = id;
 	_self.pwmPreset = 0;
 
-	_self.updateValues = function(touch, position, desiredPosition) {
+	_self.updateValues = function(touch, position, lastPosition, desiredPosition, pwmAction) {
 		if ((_self.touch == touch || touch == null)
 			&& (_self.position == position || position == null)
-			&& (_self.desiredPosition == desiredPosition || desiredPosition == null)) return;
+			&& (_self.lastPosition == lastPosition || lastPosition == null)
+			&& (_self.desiredPosition == desiredPosition || desiredPosition == null)
+			&& (_self.pwmAction == pwmAction || pwmAction == null)) return;
 		_self.touch = (touch == null)? _self.touch:touch;
     _self.position = (position == null)? _self.position:position;
+    _self.lastPosition = (lastPosition == null)? _self.lastPosition : lastPosition;
     _self.desiredPosition = (desiredPosition == null)? _self.desiredPosition : desiredPosition;
+    _self.pwmAction = (pwmAction == null)? _self.pwmAction : pwmAction;
 		onUpdate(_self);
 	}
 

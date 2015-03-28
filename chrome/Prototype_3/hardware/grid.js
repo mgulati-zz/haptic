@@ -8,24 +8,28 @@ function Grid() {
 
   function onLineReceived(str) {
       var strs = str.split(",");
-      if (strs.length != 4) return;
+      if (strs.length != 6) return;
       var id = parseInt(strs[0]);
       if (id > coordinates.length || id < 0) return;
       if ( _self.buttons[id].touch == parseInt(strs[1]) 
            && _self.buttons[id].position == parseInt(strs[2])
-           && _self.buttons[id].desiredPosition == parseInt(strs[2])) return;
+           && _self.buttons[id].lastPosition == parseInt(strs[3])
+           && _self.buttons[id].desiredPosition == parseInt(strs[4])
+           && _self.buttons[id].pwmAction == parseInt(strs[5])) return;
       var touch = parseInt(strs[1]);
       var position = parseInt(strs[2]);
-      var desiredPosition = parseInt(strs[3]);
-      _self.updateValues(id,position,touch,desiredPosition);
+      var lastPosition == parseInt(strs[3]);
+      var desiredPosition == parseInt(strs[4]);
+      var pwmAction == parseInt(strs[5]);
+      _self.updateValues(id,touch, position, lastPosition, desiredPosition, pwmAction);
   }
 
   _self.newButton = function(id, onUpdate) {
     _self.buttons[id] = new Button(id, _self.arduino, onUpdate);
   }
 
-  _self.updateValues = function(id, position, touch, desiredPosition) {
-    _self.buttons[id].updateValues(touch,position,desiredPosition);
+  _self.updateValues = function(id, touch, position, lastPosition, desiredPosition, pwmAction) {
+    _self.buttons[id].updateValues(touch, position, lastPosition, desiredPosition, pwmAction);
   }
 
   _self.updateColor = function(id, hex) {
@@ -37,7 +41,7 @@ function Grid() {
 
   _self.updateDesiredPos = function(i, desiredPos) {
     if (desiredPos == _self.buttons[i].desiredPosition) return;
-    _self.updateValues(i, null, null, desiredPos);
+    _self.updateValues(i, null, null, null, desiredPos, null);
     _self.buttons[i].sendTarget();
   }
 
