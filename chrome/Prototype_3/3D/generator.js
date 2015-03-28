@@ -189,12 +189,12 @@ function Generator () {
 
     function makePixel (height, sideLength, x, z, x_tot, z_tot) {
       makeCuboid(sideLength, height, sideLength, 
-                 z*sideLength - sideLength*(z_tot-1)/2, 0, x*sideLength - sideLength*(x_tot-1)/2,
+                sideLength*(z_tot-1)/2 - z*sideLength, 0, x*sideLength - sideLength*(x_tot-1)/2,
                  true, 'slide ' + x + '_' + z);
 
       // only desired one is draggable
       makeCuboid(sideLength, height, sideLength, 
-                 z*sideLength - sideLength*(z_tot-1)/2, 0, x*sideLength - sideLength*(x_tot-1)/2,
+                 sideLength*(z_tot-1)/2 - z*sideLength, 0, x*sideLength - sideLength*(x_tot-1)/2,
                  true, 'slide desired ' + x + '_' + z);
     }
 
