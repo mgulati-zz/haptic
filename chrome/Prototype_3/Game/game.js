@@ -139,12 +139,12 @@ function tileFromID(id) {
 function updatePixels(available) {
   for (var i = 0; i < available.length; i++) {
     var index = (i > 3) ? i + 1 : i; //skip the middle slider (id 4)
-    if (available[index] > 0) {
+    if (available[i] > 0) {
       grid.updateDesiredPos(index, 900);
-      if (available[index] == 2) {
-        grid.updatePWMPreset(i, 1);
+      if (available[i] == 2) {
+        grid.updatePWMPreset(index, 1);
       } else {
-        grid.updatePWMPreset(i, 0);
+        grid.updatePWMPreset(index, 0);
       }
     } else {
       grid.updateDesiredPos(index, 100);
