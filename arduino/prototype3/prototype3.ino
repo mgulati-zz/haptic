@@ -13,6 +13,8 @@ const int PWM_LOW = 0;
 const int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
+const int touchOut = 52;
+
 struct pixel {
   const int _ledR;
   const int _ledG;
@@ -196,15 +198,15 @@ struct pixel {
 const int numPixels = 9;
 // {analogPos, touchIn, motor, dirUp, dirDown, ledR, ledGround, ledG, ledB}
 pixel pixels[numPixels] = {
-  {A10, 52, 5, 32, 35, 4, A1, 9, 13},
-  {A7, 52, 12, 37, 33, 4, A0, 9, 13},
-  {A15, 52, 8, 27, 24, 45, A2, 44, 46},
-  {A9, 52, 3, 30, 31, 4, A3, 9, 13},
-  {A8, 52, 11, 34, 36, 4, A2, 9, 13},
-  {A12, 52, 6, 23, 22, 45, A4, 44, 46},
-  {A13, 52, 2, 29, 28, 45, A1, 44, 46},
-  {A11, 52, 10, 38, 39, 45, A3, 44, 46},
-  {A14, 52, 7, 27, 26, 45, A0, 44, 46}
+  {A10, 48, 5, 32, 35, 4, A1, 9, 13},
+  {A7, 50, 12, 37, 33, 4, A0, 9, 13},
+  {A15, 41, 8, 27, 24, 45, A2, 44, 46},
+  {A9, 49, 3, 30, 31, 4, A3, 9, 13},
+  {A8, 51, 11, 34, 36, 4, A2, 9, 13},
+  {A12, 40, 6, 23, 22, 45, A4, 44, 46},
+  {A13, 43, 2, 29, 28, 45, A1, 44, 46},
+  {A11, 47, 10, 38, 39, 45, A3, 44, 46},
+  {A14, 42, 7, 27, 26, 45, A0, 44, 46}
 };
 
 const int BUFFER_SIZE = 20;
