@@ -84,6 +84,7 @@ struct pixel {
   }
 
   void readPosition() {
+    lastPos = actualPos;
     actualPos = map(analogRead(_analogPos),0,1023,_posBottom,_posTop);
     actualPos = constrain(actualPos, _posBottom, _posTop);
   }
@@ -112,8 +113,6 @@ struct pixel {
     action = (error*kP) + (integral*kI) + (derivative*kD);
     action = constrain(map(action,-500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
     if (abs(action) < BUZZ_THRESHOLD) action = PWM_LOW;
-    
-    lastPos = actualPos;
   }
 
   void setDirection() {
