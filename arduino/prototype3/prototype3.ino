@@ -1,46 +1,6 @@
 //#include <CapacitiveSensor.h>
 
-struct pixel {
-  int dirDown;
-  int dirUp;
-  
-  int ledR;
-  int ledG;
-  int ledB;
-  int ledGround;
-  int motor;
-  int touchIn;
-  
-  int actualPos;
-  int desiredPos;
-  int lastPos;
-  int analogPos;
-  
-  double kI;
-  double kP;
-  double kD;
-  
-  int integral;
-  int derivative;
-  int action;
-  
-  int allowSlide;
-  int touchState;
-  int touchCount;
-  
-  int red;
-  int blue;
-  int green;
-  
-//  CapacitiveSensor touch;
-};
-
-const int numPixels = 9;
-struct pixel pixels[numPixels];
-
-const int BUFFER_SIZE = 20;
-char inData[BUFFER_SIZE];
-
+//variables used inside pixel
 const int _posTop = 1000;
 const int _posBottom = 0;
 
@@ -50,12 +10,159 @@ const int MOTOR_MIN = 0;
 const int PWM_HIGH = 255;
 const int PWM_LOW = 0;
 
+const int NUM_PRESETS = 2;
+double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
+
+struct pixel {
+  const int _ledR;
+  const int _ledG;
+  const int _ledB;
+  const int _ledGround;
+  const int _dirDown;
+  const int _dirUp;
+  const int _motor;
+  const int _touchIn;
+  const int _analogPos;
+  
+  int actualPos;
+  int desiredPos;
+  int lastPos;
+  double kI;
+  double kP;
+  double kD;
+  int integral;
+  int allowSlide;
+  int action;
+
+  int touchState;
+  int touchCount;
+  
+  int red;
+  int green;
+  int blue;
+
+  pixel(int analogPos, int touchIn, int motor, int dirUp, int dirDown, int ledR, int ledGround, int ledG, int ledB)
+    : _ledR(ledR), _ledG(ledG), _ledB(ledB), _ledGround(ledGround)
+    , _dirDown(dirDown), _dirUp(dirUp), _motor(motor)
+    , _touchIn(touchIn), _analogPos(analogPos)
+    , actualPos(0), lastPos(0), action(0)
+    , integral(0), allowSlide(0)
+    , touchState(0), touchCount(0)
+  {
+    setPIDPreset(0);
+    setColor(0,255,0);
+    setTarget(1000);
+
+    pinMode(_motor, OUTPUT);
+    pinMode(_dirDown, OUTPUT);
+    pinMode(_dirUp, OUTPUT);
+    pinMode(_analogPos, INPUT);
+    pinMode(_ledGround, OUTPUT);
+    pinMode(_ledR, OUTPUT);
+    pinMode(_ledG, OUTPUT);
+    pinMode(_ledB, OUTPUT);
+  }
+
+  void setPIDPreset(int preset) {
+    setPIDValues(presets[preset][0],presets[preset][1],presets[preset][2]);
+  }
+
+  void setPIDValues(double p, double i, double d) {
+    kP = p;
+    kI = i;
+    kD = d;
+  }
+
+  void setColor(int R, int G, int B) {
+    red = R;
+    green = G;
+    blue = B;
+  }
+
+  void setTarget(int target) {
+    desiredPos = target;
+  }
+
+  void readPosition() {
+    actualPos = map(analogRead(_analogPos),0,1023,_posBottom,_posTop);
+    actualPos = constrain(actualPos, _posBottom, _posTop);
+  }
+
+  void readTouchState() {
+  //NOT TESTED, NEEDS FURTHER IMPLEMENTATION
+    if (digitalRead(_touchIn) == HIGH) {
+      touchCount += 1;
+      if (touchCount > 50) {
+        touchState = 1;
+      }
+    } else {
+      touchCount = 0;
+      touchState = 0;
+    }
+  }
+
+  void calculatePIDAction() {
+    //if (touchState == 1 && allowSlide == 1) desiredPos = actualPos;
+    int error = desiredPos - actualPos;
+    int derivative = lastPos - actualPos;
+    
+    integral = constrain((integral + error), -20000, 20000);
+    if (derivative == 0 && error == 0) integral = 0;
+    
+    action = (error*kP) + (integral*kI) + (derivative*kD);
+    action = constrain(map(action,-500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
+    if (abs(action) < BUZZ_THRESHOLD) action = PWM_LOW;
+    
+    lastPos = actualPos;
+  }
+
+  void setDirection() {
+    if (action > 0) {
+       digitalWrite(_dirUp, HIGH);    
+       digitalWrite(_dirDown, LOW);
+    } else {
+      digitalWrite(_dirUp, LOW);
+      digitalWrite(_dirDown, HIGH); 
+    }
+  }
+
+  void moveMotor() {
+    setDirection();
+    int pwmWrite = map(abs(action),PWM_LOW, PWM_HIGH, MOTOR_MIN, PWM_HIGH);
+    if (action == PWM_LOW) pwmWrite = PWM_LOW;
+    analogWrite(_motor, pwmWrite);
+  }
+
+  void serialPrintPixel() {
+    Serial.print(touchState);
+    Serial.print(",");
+    Serial.print(actualPos);
+    Serial.print(",");
+    Serial.print(desiredPos);
+  }
+  
+};
+
+const int numPixels = 9;
+// {analogPos, touchIn, motor, dirUp, dirDown, ledR, ledGround, ledG, ledB}
+pixel pixels[numPixels] = {
+  {A7,0,12,37,33,4,A0,9,13},  
+  {A9,0,3,30,31,4,A3,9,13},  
+  {A8,0,11,34,36,4,A2,9,13},
+  {A15,0,8,27,24,45,A2,44,46}, 
+  {A14,0,7,27,26,45,A0,44,46}, 
+  {A12,0,6,23,22,45,A4,44,46},  
+  {A13,0,2,29,28,45,A1,44,46},
+  {A11,0,10,38,39,45,A3,44,46},
+  {A10,0,5,32,35,4,A1,9,13}
+};
+
+const int BUFFER_SIZE = 20;
+char inData[BUFFER_SIZE];
+
 int index = 0;
 unsigned int serialTimer = 0;
 const int STIMER_THRESHOLD = 20;
-
-const int NUM_PRESETS = 2;
-double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}};
 
 int ledPairs[5][2] = {{0,4}, {2,3}, {1,7}, {6,8}, {5,5}};
 int ledCounter = 0;
@@ -68,123 +175,12 @@ int debugPixel = 0;
 
 void setup() {
   Serial.begin(115200);
+
+  //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
   TCCR2B = (TCCR2B & 0xF8) | 0x07;
   TCCR3B = (TCCR3B & 0xF8) | 0x05;
   TCCR4B = (TCCR4B & 0xF8) | 0x05;*/
-
-  //Common initializations 
-  for (int i = 0; i < numPixels; i++) {
-    pixels[i].desiredPos = 600;
-    pixels[i].integral = 0;
-    pixels[i].derivative = 0;
-    pixels[i].touchState = 0;
-    pixels[i].touchCount = 0;
-    pixels[i].kP = 1.5;
-    pixels[i].kD = 0.2;
-    pixels[i].kI = 0.02;
-    pixels[i].red = 0;
-    pixels[i].blue = 0;
-    pixels[i].green = 255;
-    pixels[i].action = 0;
-  }
-  pixels[0].motor = 12;
-  pixels[0].dirUp = 37;
-  pixels[0].dirDown = 33;
-  pixels[0].analogPos = A7;
-  pixels[0].ledGround = A0;
-  pixels[0].ledR = 4;
-  pixels[0].ledG = 9;
-  pixels[0].ledB = 13;
-  
-  pixels[1].motor = 3;
-  pixels[1].dirDown = 31;
-  pixels[1].dirUp = 30;
-  pixels[1].analogPos = A9;
-  pixels[1].ledGround = A3;
-  pixels[1].ledR = 4;
-  pixels[1].ledG = 9;
-  pixels[1].ledB = 13;
-  
-  pixels[2].motor = 11;
-  pixels[2].dirDown = 36;
-  pixels[2].dirUp = 34;
-  pixels[2].analogPos = A8;
-  pixels[2].ledGround = A2;
-  pixels[2].ledR = 4;
-  pixels[2].ledG = 9;
-  pixels[2].ledB = 13;
-
-  //pixels[2].touchRead = 88;
-  //pixels[2].touchSend = 88;
-  //pixels[2].touch = CapacitiveSensor(pixel[0].touchRead,pixel[0].touchSend);
-  
-  pixels[3].motor = 8;
-  pixels[3].dirUp = 27;
-  pixels[3].dirDown = 24;
-  pixels[3].analogPos = A15;
-  pixels[3].ledGround = A2;
-  pixels[3].ledR = 45;
-  pixels[3].ledG = 44;
-  pixels[3].ledB = 46;
- 
-  pixels[4].motor = 7;
-  pixels[4].dirDown = 26;
-  pixels[4].dirUp = 27;
-  pixels[4].analogPos = A14;
-  pixels[4].ledGround = A0;
-  pixels[4].ledR = 45;
-  pixels[4].ledG = 44;
-  pixels[4].ledB = 46;
- 
-  pixels[5].motor = 6;
-  pixels[5].dirUp = 23;
-  pixels[5].dirDown = 22;
-  pixels[5].analogPos = A12;
-  pixels[5].ledGround = A4;
-  pixels[5].ledR = 45;
-  pixels[5].ledG = 44;
-  pixels[5].ledB = 46;
-  
-  pixels[6].motor = 2;
-  pixels[6].dirDown = 28;
-  pixels[6].dirUp = 29;
-  pixels[6].analogPos = A13;
-  pixels[6].ledGround = A1;
-  pixels[6].ledR = 45;
-  pixels[6].ledG = 44;
-  pixels[6].ledB = 46;
- 
-  pixels[7].motor = 10;
-  pixels[7].dirDown = 39;
-  pixels[7].dirUp = 38;
-  pixels[7].analogPos = A11;
-  pixels[7].ledGround = A3;
-  pixels[7].ledR = 45;
-  pixels[7].ledG = 44;
-  pixels[7].ledB = 46;
-  
-  pixels[8].motor = 5;
-  pixels[8].dirDown = 35;
-  pixels[8].dirUp = 32;
-  pixels[8].analogPos = A10;
-  pixels[8].ledGround = A1;
-  pixels[8].ledR = 4;
-  pixels[8].ledG = 9;
-  pixels[8].ledB = 13;
-  
-  for (int i = 0; i < numPixels; i++) {
-    pinMode(pixels[i].motor, OUTPUT);
-    pinMode(pixels[i].dirDown, OUTPUT);
-    pinMode(pixels[i].dirUp, OUTPUT);
-    pinMode(pixels[i].analogPos, INPUT);
-    pinMode(pixels[i].ledGround, OUTPUT);
-    pinMode(pixels[i].ledR, OUTPUT);
-    pinMode(pixels[i].ledG, OUTPUT);
-    pinMode(pixels[i].ledB, OUTPUT);
-    //pinMode(pixels[i].touchRead, INPUT);
-    //pinMode(pixels[i].touchSend, OUTPUT)
-  }
 }
 
 void loop() {
@@ -199,123 +195,35 @@ void loop() {
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
   
-  readPosition(pixelCounter);
-  readTouchState(pixelCounter);
+  pixels[pixelCounter].readPosition();
+  pixels[pixelCounter].readTouchState();
   
-  calculatePIDAction(pixelCounter);
-  moveMotor(pixelCounter);
+  pixels[pixelCounter].calculatePIDAction();
+  pixels[pixelCounter].moveMotor();
   
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
-    // serialPrintPixel(debugPixel); //for debugging
-    pixelPrintCounter++;
-    if (pixelPrintCounter > numPixels) pixelPrintCounter = 0;
-    //serialPrintPixel(pixelPrintCounter); //for operation
-    serialTimer = 0;
-  }
-}
-
-void serialPrintPixel(int i) {
-    Serial.print(i);
-    Serial.print(",");
-    Serial.print(pixels[i].touchState);
-    Serial.print(",");
-    Serial.print(pixels[i].actualPos);
-    Serial.print(",");
-    Serial.print(pixels[i].desiredPos);
+    Serial.print(pixelPrintCounter);
+    Serial.print(',');
+//  pixels[debugPixel].serialPrintPixel(); //for debugging
+    pixels[pixelPrintCounter].serialPrintPixel(); //for operation
     Serial.println("");
-}
-
-//read current position of slider and update its respective stored value
-void readPosition(int pixel) {
-  pixels[pixel].actualPos = map(analogRead(pixels[pixel].analogPos),0,1023,_posBottom,_posTop);
-  pixels[pixel].actualPos = constrain(pixels[pixel].actualPos, _posBottom, _posTop);
-}
-
-void readTouchState(int pixel) {
-  //NOT TESTED, NEEDS FURTHER IMPLEMENTATION
-  if (digitalRead(pixels[pixel].touchIn) == HIGH) {
-    pixels[pixel].touchCount += 1;
-    if (pixels[pixel].touchCount > 50) {
-      pixels[pixel].touchState = 1;
-    }
-  } else {
-    pixels[pixel].touchCount = 0;
-    pixels[pixel].touchState = 0;
+    serialTimer = 0;
+    pixelPrintCounter++;
+    if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
   }
-  
- /* long total1 = pixels[pixel].touch.capacitiveSensor(30);
-  
-  if (total1 > calibratedThreshold){
-    touchState = 1;
-  }
-  else
-    touchState = 0;  
-  */
-  
-}
-
-//returns a motor speed, all pid controls
-void calculatePIDAction(int pixel) {
-  //if (pixels[channel].touchState == 1 && pixels[channel].allowSlide == 1) pixels[channel].desiredPos = pixels[channel].actualPos;
- 
-  int error = pixels[pixel].desiredPos - pixels[pixel].actualPos;
-  
-  pixels[pixel].integral = constrain((pixels[pixel].integral + error), -20000, 20000);
-  
-  if (pixels[pixel].derivative == 0 && error == 0) {
-    pixels[pixel].integral = 0;
-  }
-
-  pixels[pixel].derivative = pixels[pixel].lastPos - pixels[pixel].actualPos;
-  pixels[pixel].lastPos = pixels[pixel].actualPos;
-  
-  
-  pixels[pixel].action = (error*pixels[pixel].kP) + (pixels[pixel].integral*pixels[pixel].kI) + (pixels[pixel].derivative*pixels[pixel].kD);
-  
-  pixels[pixel].action = constrain(map(pixels[pixel].action,-500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
-  if (abs(pixels[pixel].action) < BUZZ_THRESHOLD) {
-    pixels[pixel].action = PWM_LOW;
-  }
-}
-
-void setPWMValue(int channel, int value) {
-  analogWrite(channel, value);
-}
-
-void setDirection(int pixel, int action) {
-  if (action > 0) {
-     digitalWrite(pixels[pixel].dirUp, HIGH);    
-     digitalWrite(pixels[pixel].dirDown, LOW);
-  } else {
-    digitalWrite(pixels[pixel].dirUp, LOW);
-    digitalWrite(pixels[pixel].dirDown, HIGH); 
-  }
-}
-
-void setPWMPreset(int i, int preset) {
-  pixels[i].kP = presets[preset][0];
-  pixels[i].kD = presets[preset][1];
-  pixels[i].kI = presets[preset][2];
-}
-
-void moveMotor(int pixel) {
-  setDirection(pixel, pixels[pixel].action);
-  int pwmWrite = map(abs(pixels[pixel].action),PWM_LOW, PWM_HIGH, MOTOR_MIN, PWM_HIGH);
-  if (pixels[pixel].action == PWM_LOW) pwmWrite = PWM_LOW;
-  setPWMValue(pixels[pixel].motor, pwmWrite);
 }
 
 void writeLEDPair() {
-  digitalWrite(pixels[ledPairs[currentPair][0]].ledGround, HIGH);
+  digitalWrite(pixels[ledPairs[currentPair][0]]._ledGround, HIGH);
   currentPair = ledCounter/ledDelay;
   for (int i = 0; i < 2; i++) {
     int id = ledPairs[currentPair][i];
-    analogWrite(pixels[id].ledR, pixels[id].red);
-    analogWrite(pixels[id].ledG, pixels[id].green);
-    analogWrite(pixels[id].ledB, pixels[id].blue);
+    analogWrite(pixels[id]._ledR, pixels[id].red);
+    analogWrite(pixels[id]._ledG, pixels[id].green);
+    analogWrite(pixels[id]._ledB, pixels[id].blue);
   }
-  digitalWrite(pixels[ledPairs[currentPair][0]].ledGround, LOW);
+  digitalWrite(pixels[ledPairs[currentPair][0]]._ledGround, LOW);
 }
 
 //read one command from serial interface and react accordingly
@@ -336,22 +244,10 @@ void serialRead() {
         pixels[id].green = constrain(String(inData).substring(5,8).toInt(),0,255);
         pixels[id].blue = constrain(String(inData).substring(8,11).toInt(),0,255);
       }
-      
-      if (inData[1] == 'P') {
-        pixels[id].desiredPos = constrain(map(String(inData).substring(2,6).toInt(), 0, 1000, 300, 1000),300,1000);
-      }
-      
-      if (inData[1] == 'A') {
-        pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
-      }
-      
-      if (inData[1] == 'S') {
-        setPWMPreset(id, constrain(String(inData).substring(2,3).toInt(),0, NUM_PRESETS));
-      }
-      
-      if (inData[1] == 'D') {
-        debugPixel = id;
-      }
+      if (inData[1] == 'P') pixels[id].setTarget(map(constrain(String(inData).substring(2,6).toInt(), 0, 1000), 0, 1000, 300, 1000));
+      if (inData[1] == 'A') pixels[id].allowSlide = constrain(String(inData).substring(2,3).toInt(),0,1);
+      if (inData[1] == 'S') pixels[id].setPIDPreset(constrain(String(inData).substring(2,3).toInt(),0, NUM_PRESETS));
+      if (inData[1] == 'D') debugPixel = id;
     }
     
     for (int i=0;i<BUFFER_SIZE;i++) {
