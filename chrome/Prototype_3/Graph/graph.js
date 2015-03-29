@@ -5,28 +5,47 @@ $(function() {
     labels: [],
     datasets: [
       {
-        fillColor: "rgba(220,220,220,0.2)",
-        strokeColor: "rgba(220,220,220,1)",
-        pointColor: "rgba(220,220,220,1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(220,220,220,1)",
+        strokeColor: "rgba(0,250,50,1)",
         data: []
       },
       {
-        fillColor: "rgba(151,187,205,0.2)",
-        strokeColor: "rgba(151,187,205,1)",
-        pointColor: "rgba(151,187,205,1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(151,187,205,1)",
+        strokeColor: "rgba(0,225,75,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,200,100,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,175,125,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,150,150,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,125,175,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,100,200,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,75,225,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(0,50,250,1)",
+        data: []
+      },
+      {
+        strokeColor: "rgba(255,255,000,1)",
         data: []
       }
     ]
   };
-
-  Chart.defaults.global.animation = false;
-  Chart.defaults.global.showTooltips = false;
 
   var ctx = $("#pidChart").get(0).getContext("2d");
   posChart = new Chart(ctx).Line(data, {
@@ -35,15 +54,20 @@ $(function() {
     scaleStepWidth: 100,
     scaleStartValue: 0,
     pointDot : false,
+    datasetFill : false,
+    animation: false,
+    showTooltips: false
   });
 
   grid = new Grid();
+  var newData = [0,0,0,0,0,0,0,0,0];
   for (var i = 0; i < 9; i++) {
     grid.newButton(i, function(button) {
-      if (button.id == 5) {
+      newData[button.id] = button.position;
+      if (button.id == 8) {
         if (dataCounter > 50) posChart.removeData();
-        posChart.addData([button.position, button.desiredPosition],'');
-        dataCounter++
+        posChart.addData(newData.concat(button.desiredPosition),'');
+        dataCounter++;
       }
     });
   }
