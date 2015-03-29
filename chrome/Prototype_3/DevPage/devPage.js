@@ -22,10 +22,14 @@ $(document).ready(function() {
       }
     });
   }
+
   grid.arduino.getPorts(function(ports) {
     ports.forEach(function (port) {
       $('#a_select').append($('<option>',{'text': port.path}))
-    })
+    });
+    if (ports[ports.length-1].path.indexOf('tty.usbmodem') > -1) {
+      connectSerial(ports[ports.length - 1].path);
+    }
   })
 
   function randomColor(x,z) {
@@ -53,8 +57,18 @@ $(document).ready(function() {
     setTimeout(function() {$('.scene').css('transition','')},500);
   }
 
+  function connectSerial(port) {
+    grid.arduino.connect(port,{bitrate: 115200});
+    var timeout = 0;
+    while (grid.arduino.connectionId < 0 && timeout++ < 10000);
+    $("#a_select option").removeAttr('selected');
+    if (timeout < 10000) {
+      $("#a_select option:contains('" + port + "')").attr('selected', true);
+    }
+  }
+
   $('#reset').on('click',function() {resetAll()});
-  $('#a_connect').on('click', function() {grid.arduino.connect($('#a_select').val(),{bitrate: 115200})})
+  $('#a_connect').on('click', function() {connectSerial($('#a_select').val())});
   $('#a_reset').on('click', function() {
     grid.arduino.getPorts(function(ports) {
       $('#a_select').html('');

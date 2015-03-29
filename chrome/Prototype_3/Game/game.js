@@ -160,7 +160,7 @@ function updatePixels(available) {
 var touchStates = [0,0,0,0,0,0,0,0,0];
 
 function pixelUpdated(pixel) {
-  if (pixel.touch > 0 && touchStates[pixel.id] == 0) {
+  if (pixel.touch > 0 && touchStates[pixel.id] == 0 && pixel.position < 800) {
     var coords = IDToCoordinate(pixel.id);
     moveDirection(coords[0] - 1, -(coords[1] - 1))
     var actions = determineActions();
