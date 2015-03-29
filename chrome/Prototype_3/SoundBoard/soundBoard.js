@@ -3,17 +3,11 @@ var connected = false;
 generator = new Generator();
 
 grid = new Grid();
-var soundBoardCoordinates = {0: [0,0], 1:[0,2], 2:[2,0], 3:[2,2]};
-function formLookup (x,y) {
-  for (var key in soundBoardCoordinates) {
-    if (soundBoardCoordinates.hasOwnProperty(key) && soundBoardCoordinates[key].join("") == [x, y].join("")) {
-        return key;
-    }
-  }
-}
-for (var i = 0; i < 4; i++) {
+
+
+for (var i = 0; i < 9; i++) {
   grid.newButton(i, function(button) {
-    var coordinates = soundBoardCoordinates[button.id];
+    var coordinates = grid.indexLookup(button.id);
     generator.setPos(coordinates[0], coordinates[1], button.position / 1000, false);
     physicalSlideHandle(coordinates[0],coordinates[1],button.position / 1000);
     if (connected == false) {
