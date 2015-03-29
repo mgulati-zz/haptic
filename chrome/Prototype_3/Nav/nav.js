@@ -32,5 +32,6 @@ function generateNavHTML() {
   nav.append($('<button>', {'class': 'form', 'text': 'FORM'}));
   nav.append($('<button>', {'class': 'soundBoard', 'text': 'SOUND BOARD'}));
   nav.append($('<button>', {'class': 'game', 'text': 'GAME'}));
+  nav.append($('<div>', {'class': 'connection'}));
   $('body').prepend(nav);
 }

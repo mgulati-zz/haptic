@@ -12,6 +12,18 @@
   font-size: 20px;
   cursor: pointer;
 }
+
+.nav .connection {
+  background: none;
+  position: relative;
+  border: none;
+  width: 5px;
+  top:5px;
+  padding: 15px;
+  font-size: 20px;
+  display: inline-block;
+}
+
 .nav button:disabled {
   cursor: not-allowed;
 }

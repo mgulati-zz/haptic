@@ -2,7 +2,8 @@ function Arduino (onLineReceived) {
 
   var _self = this;
   _self.connectionId = -1;
-
+  _self.connected = false;
+  pollTime = currentTime();
   chrome.serial.getConnections(function(connections) {
     if (connections.length > 0) _self.connectionId = connections[0].connectionId;
   });
@@ -24,14 +25,14 @@ function Arduino (onLineReceived) {
     });
   }
 
-  _self.connect = function(port, bitrate) {
+  _self.connect = function(port, options) {
     if (_self.connectionId != -1) chrome.serial.disconnect(_self.connectionId, function(success) {
       if (success) {
         console.log('disconnected from connection ' + _self.connectionId);
         _self.connectionId = -1
       }
     })
-    chrome.serial.connect(port, bitrate, onConnect);
+    chrome.serial.connect(port, options, onConnect);
   }
 
   function onConnect(connectionInfo) {
@@ -41,6 +42,7 @@ function Arduino (onLineReceived) {
       console.log(chrome.runtime.lastError);
       return
     };
+    _self.connected = true;
     _self.connectionId = connectionInfo.connectionId;
   }
 
@@ -63,6 +65,7 @@ function Arduino (onLineReceived) {
 
   var stringReceived = '';
   function onReceiveCallback(info) {
+    pollTime = currentTime();
     if (info.data) {
       var str = convertArrayBufferToString(info.data);
       if (str.charAt(str.length-1) === '\n') {
@@ -77,6 +80,31 @@ function Arduino (onLineReceived) {
       }
     }
   };
+
+  function connectionPoll() {
+    if (currentTime() - pollTime > 1000) {
+      _self.connected = false;
+      _self.getPorts(function(ports) {
+        if (ports[ports.length-1].path.indexOf('tty.usbmodem') > -1) {
+          _self.connect(ports[ports.length - 1].path,{'bitrate': 115200});
+        }
+      });
+    } else {
+      _self.connected = true;
+    }
+    updateConnectionDisp();
+  }
+
+  function updateConnectionDisp() {
+    console.log(_self.connected);
+    $(".connection").css("background-color", _self.connected ? "#00FF00" : "#FF0000");
+  }
+
+  function currentTime() {
+    return new Date().getTime();
+  }
+
+  setInterval(connectionPoll, 1000);
 
   chrome.serial.onReceive.addListener(onReceiveCallback);
 }
