@@ -12,6 +12,7 @@
 .scene, .shape, .face, .face-wrapper, .cr {
   position: absolute;
   transform-style: preserve-3d;
+  margin-top: 25px;
 }
 .scene {
   width: 100%;
