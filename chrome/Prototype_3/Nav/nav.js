@@ -26,11 +26,11 @@ function changeDemo(url, id) {
 
 function generateNavHTML() {
   var nav = $('<div>', {'class': 'nav'});
-  nav.append($('<button>', {'class': '3d', 'text': 'START'}));
-  nav.append($('<button>', {'class': 'audio', 'text': 'AUDIO'}));
+  nav.append($('<button>', {'class': '3d', 'text': 'SETUP'}));
+  nav.append($('<button>', {'class': 'graph', 'text': 'GRAPHS'}));
+  nav.append($('<button>', {'class': 'audio', 'text': 'MUSIC'}));
   nav.append($('<button>', {'class': 'form', 'text': 'FORM'}));
   nav.append($('<button>', {'class': 'soundBoard', 'text': 'SOUND BOARD'}));
   nav.append($('<button>', {'class': 'game', 'text': 'GAME'}));
-  nav.append($('<button>', {'class': 'graph', 'text': 'CHARTS'}));
   $('body').prepend(nav);
 }
