@@ -64,7 +64,11 @@ $(document).ready(function() {
       })
     })
   })
-
+  $('#a_pid').on('click', function() {
+    for (var i = 0; i < 9; i++) {
+      grid.updatePIDPreset(i, parseInt($("#pid_select").val()));
+    }
+  });
   // $('.nav button').attr('disabled',true)
 });
 

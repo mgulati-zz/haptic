@@ -25,7 +25,7 @@ function Button (id, arduino, onUpdate) {
 		onUpdate(_self);
 	}
 
-	_self.updatePWMPreset = function(preset) {
+	_self.updatePIDPreset = function(preset) {
 		if (preset != _self.pwmPreset) {
 			_self.arduino.writeSerial(_self.id + "S" + preset);
 		}

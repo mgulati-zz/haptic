@@ -29,7 +29,7 @@ $(document).ready(function() {
   frameLooper();
 });
 
-function updatePixels(i, bar_height) {
+function updatePixel(i, bar_height) {
   var pos = Math.round((-bar_height*10)/10)*10;
   pos = (pos - 500) * 10
   if (pos > 1000) pos = 1000; 
@@ -67,7 +67,7 @@ function frameLooper(){
     bar_height = -(average / 2);
     //console.log(i, Math.round((-bar_height*10)/100)*100);
     if (serialTimer > 1) {
-      updatePixels(i, bar_height);
+      updatePixel(i, bar_height);
     }
     //  fillRect( x, y, width, height ) // Explanation of the parameters below
     ctx.fillRect(bar_x, canvas.height, bar_width, bar_height);

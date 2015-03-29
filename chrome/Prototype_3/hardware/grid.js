@@ -45,8 +45,8 @@ function Grid() {
     _self.buttons[i].sendTarget();
   }
 
-  _self.updatePWMPreset = function(i, preset) {
-    _self.buttons[i].updatePWMPreset(preset);
+  _self.updatePIDPreset = function(i, preset) {
+    _self.buttons[i].updatePIDPreset(preset);
   }
 
   _self.coordinateLookup = function(x,y) {

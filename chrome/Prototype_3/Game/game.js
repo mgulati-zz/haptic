@@ -18,7 +18,7 @@ var presetLevel = [
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
 0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ]
 
@@ -142,22 +142,32 @@ function updatePixels(available) {
     if (available[i] > 0) {
       grid.updateDesiredPos(index, 900);
       if (available[i] == 2) {
-        grid.updatePWMPreset(index, 1);
+        //action for button entering rough patch
+        grid.updatePIDPreset(index, 1);
+        grid.updateColor(index, "#0000ff")
       } else {
-        grid.updatePWMPreset(index, 0);
+        //action for button entering clear patch
+        grid.updatePIDPreset(index, 0);
+        grid.updateColor(index, "#00ff00");
       }
     } else {
       grid.updateDesiredPos(index, 100);
+      grid.updateColor(index, "#ff0000");
     }
   }
 }
 
+var touchStates = [0,0,0,0,0,0,0,0,0];
+
 function pixelUpdated(pixel) {
-  if (pixel.touch > 0) {
+  if (pixel.touch > 0 && touchStates[pixel.id] == 0) {
     var coords = IDToCoordinate(pixel.id);
     moveDirection(coords[0] - 1, -(coords[1] - 1))
     var actions = determineActions();
+    touchStates[pixel.id] = 1;
     updatePixels(actions);
+  } else if (pixel.touch == 0) {
+    touchStates[pixel.id] = 0;
   }
 }
 
@@ -185,5 +195,7 @@ $(document).ready(function() {
 
   for (var i = 0; i < 9; i++) {
     grid.newButton(i, pixelUpdated);
+    var colour = i != 4 ? "#00ff00" : "#000000"
+    grid.updateColor(i, colour);
   }
 })

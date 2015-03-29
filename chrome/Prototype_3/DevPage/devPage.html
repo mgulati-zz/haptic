@@ -48,9 +48,8 @@
     #a_connect {top: 400px;}
     #a_reset {top: 490px;}
 
-    #a_select {
+    .main-select {
       position: absolute;
-      top: 455px;
       background-color:#59ABE3;
       color:white;
       padding: 12px;
@@ -67,10 +66,21 @@
       opacity: 0.5;
       margin-left: 100px;
     }
+    #a_select {
+      top: 455px;      
+    }
+    #pid_select {
+      top:615px;
+    }
 
     button.main-button {
       margin-left: 100px;
     }
+
+    #a_pid {
+      top: 560px;
+    }
+
 
   </style>
 
@@ -100,8 +110,14 @@
   <div class="rightPane">
     <button class="main-button" id="reset">RESET</button>
     <button class="main-button" id="a_connect" href="">CONNECT</button>
-    <select class="main-button" id="a_select"></select>
+    <select class="main-button main-select" id="a_select"></select>
     <button class="main-button" id="a_reset" href="">REFRESH</button>
+    <button class="main-button" id="a_pid">Set PID</button>
+    <select class="main-button main-select" id="pid_select">
+      <option value='0'>Normal</option>
+      <option value='1'>Hard</option>
+      <option value='2'>Etc</option>
+    </select>
   </div>
 
 </body>
