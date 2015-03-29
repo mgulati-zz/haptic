@@ -96,7 +96,6 @@ function Arduino (onLineReceived) {
   }
 
   function updateConnectionDisp() {
-    console.log(_self.connected);
     $(".connection").css("background-color", _self.connected ? "#00FF00" : "#FF0000");
   }
 

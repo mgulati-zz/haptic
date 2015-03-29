@@ -27,9 +27,6 @@ $(document).ready(function() {
     ports.forEach(function (port) {
       $('#a_select').append($('<option>',{'text': port.path}))
     });
-    // if (ports[ports.length-1].path.indexOf('tty.usbmodem') > -1) {
-    //   connectSerial(ports[ports.length - 1].path);
-    // }
   })
 
   function randomColor(x,z) {
