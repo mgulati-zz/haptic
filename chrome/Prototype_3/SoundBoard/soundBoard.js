@@ -30,23 +30,15 @@ function initializeBoard() {
      for (var z=0; z<3; z++) {
         var color = colors[Math.floor(Math.random() * colors.length)];
         generator.setLEDColor(x,z,color);
-        // generator.setPos(x,z, 700, true);
+        grid.updateColor(grid.coordinateLookup(x,z),color);
         generator.setDesiredPos(x,z,700);
-        // grid.updateColor(grid.coordinateLookup(x,z),color);
+        grid.updateDesiredPos(grid.coordinateLookup(x,z),700);
      }
   }
 }
 
 function beforeDrag(x,z) {
-  return true;
-}
-
-function mouseDrag(x,z,pos) {
-
-}
-
-function mouseDragEnd(x,z,pos) {
-
+ return false;
 }
 
 function physicalSlideHandle(x,z,pos) {
@@ -64,7 +56,7 @@ function clickHandle(x,z) {
 }
 
 $(function() {
-  generator.makeHaptic(3,3,10,3,0.5,1, mouseDrag, mouseDragEnd, clickHandle, beforeDrag);
+  generator.makeHaptic(3,3,10,3,0.5,1, null, null, clickHandle, beforeDrag);
   generator.setZoom(1.75);
   initializeBoard();
 })
