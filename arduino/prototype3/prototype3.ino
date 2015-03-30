@@ -17,6 +17,9 @@ double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
 const int touchOut = 52;
 const int touchMax = 100;
+int touchOutState = LOW;
+int touchCounter = 0;
+int touchSwap = 1000;
 
 struct pixel {
   const int _ledR;
@@ -42,8 +45,7 @@ struct pixel {
   int touchState;
   int touchCount;
   int touchTemp;
-  int touchOutState;
-  bool touchAwait;
+  int touchAwait;
 
   int red;
   int green;
@@ -58,7 +60,7 @@ struct pixel {
     , touchState(0), touchCount(0)
   {
     setPIDPreset(0);
-    setColor(0, 0, 0);
+    setColor(255, 0, 0);
     setTarget(1000);
 
     pinMode(_analogPos, INPUT);
@@ -98,24 +100,23 @@ struct pixel {
     actualPos = constrain(actualPos, _posBottom, _posTop);
   }
 
-  void flushTouchPin(bool state) {
-    touchOutState = !state ;
+  void flushTouchPin() {
     touchCount = 0;
-    pinMode(_touchIn,OUTPUT);
-    digitalWrite(_touchIn, LOW);
-    pinMode(_touchIn,INPUT);
-    touchAwait = true;
+    pinMode(_touchIn, OUTPUT);
+    digitalWrite(_touchIn, HIGH && (touchOutState == 0));
+    pinMode(_touchIn, INPUT);
   }
 
   void readTouchState() {
-    touchState = digitalRead(_touchIn);
-//    if (digitalRead(_touchIn) == touchOutState && touchAwait == true){
-//      touchState = touchCount;
-//      touchAwait = false;
-//    }
-
-    touchCount++;
-
+    if (digitalRead(_touchIn) != touchOutState) {
+      touchCount++;
+    }
+    if (touchCounter > touchSwap/2) {
+      touchState = (touchCount*1000/touchCounter);
+    }
+    Serial.print(touchCount);
+    Serial.print(" ");
+    Serial.println(touchCounter);
   }
 
   void calculatePIDAction() {
@@ -149,16 +150,16 @@ struct pixel {
   }
 
   void serialPrintPixel(int prependId) {
-    Serial.print(prependId);
-    Serial.print(",");
-    Serial.print(touchState);
-    Serial.print(",");
-    Serial.print(actualPos);
-    Serial.print(",");
-    Serial.print(desiredPos);
-    Serial.print(",");
-    Serial.print(action);
-    Serial.println("");
+//    Serial.print(prependId);
+//    Serial.print(",");
+//    Serial.print(touchState);
+//    Serial.print(",");
+//    Serial.print(actualPos);
+//    Serial.print(",");
+//    Serial.print(desiredPos);
+//    Serial.print(",");
+//    Serial.print(action);
+//    Serial.println("");
   }
 
   double speedAtPWM(int testAction) {
@@ -226,29 +227,26 @@ char inData[BUFFER_SIZE];
 
 int index = 0;
 unsigned int serialTimer = 0;
-int STIMER_THRESHOLD = 100;
+int STIMER_THRESHOLD = 5;
 
 int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
-unsigned int ledCounter = 0; 
+unsigned int ledCounter = 0;
 int ledDelay = 8;
 int currentPair = 0;
 
 int pixelCounter = 0;
 int pixelPrintCounter = 0;
 String debugPixels = "111111111";
- 
-int touchCounter = 0;
-int touchSwap = 1000;
 
 int stepCounter = 0;
 int stepLimit = 100;
 
 void setup() {
   Serial.begin(115200);
-  
+
   pinMode(touchOut, OUTPUT);
 
-//  startupAnimation();
+  //  startupAnimation();
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
   TCCR2B = (TCCR2B & 0xF8) | 0x07;
@@ -257,16 +255,39 @@ void setup() {
 }
 
 void loop() {
-  
+
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
   if (debugPixels[pixelCounter] == '0') return;
-  
+
+  touchCounter++;
+  if (touchCounter == touchSwap) {
+    touchOutState = 1 - touchOutState;
+    for (int i = 0; i < numPixels; i++) {
+      if (debugPixels[i] == '1') {
+        pixels[i].flushTouchPin();
+      }
+    }
+    digitalWrite(touchOut, HIGH && (touchOutState == 1));
+    touchCounter = 0;
+    Serial.println("");
+    Serial.println("");
+  };
+
+
+  ledCounter++;
+  if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
+  if (ledCounter % ledDelay == 0) writeLEDPair();
+
   //  for (int i = 0; i < 5; i++) {
   serialRead();
   //  }
-  
-  updatePixel();
+
+  pixels[pixelCounter].readPosition();
+  pixels[pixelCounter].readTouchState();
+
+  pixels[pixelCounter].calculatePIDAction();
+  pixels[pixelCounter].moveMotor();
 
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
@@ -279,26 +300,6 @@ void loop() {
     pixelPrintCounter++;
     if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
   }
-}
-
-void updatePixel() {
-  ledCounter++;
-  if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
-  if (ledCounter % ledDelay == 0) writeLEDPair();
-  
-  /*touchCounter++;
-  if (touchCounter == touchSwap/2) 
-    digitalWrite(touchOut, HIGH);
-  else if (touchCounter == touchSwap) {
-    digitalWrite(touchOut, LOW);
-    touchCounter = 0;
-  }*/
-
-  pixels[pixelCounter].readPosition();
-  pixels[pixelCounter].readTouchState();
-
-  pixels[pixelCounter].calculatePIDAction();
-  pixels[pixelCounter].moveMotor();
 }
 
 void writeLEDPair() {
@@ -361,7 +362,7 @@ void serialRead() {
         for (int i = 0; i < numPixels; i++) {
           if (debugPixels[i] == 0) {
             pixels[i].setTarget(_posStop);
-            while(abs(pixels[i].actualPos - _posStop) > 50) {
+            while (abs(pixels[i].actualPos - _posStop) > 50) {
               pixels[i].readPosition();
               pixels[i].calculatePIDAction();
               pixels[i].moveMotor();
@@ -371,10 +372,10 @@ void serialRead() {
           }
         }
       }
-      
+
       //change led Delay
       if (inData[1] == 'L') ledDelay = (constrain(String(inData).substring(2, 6).toInt(), 1, 9999));
-      
+
       //change serial treshold
       if (inData[1] == 'S') STIMER_THRESHOLD = (constrain(String(inData).substring(2, 6).toInt(), 1, 9999));
     }
@@ -384,12 +385,6 @@ void serialRead() {
     }
 
     index = 0;
-  }
-}
-
-void updateAllPixels() {
-  for (int i = 0; i < 9; i++) {
-    updatePixel();
   }
 }
 
@@ -404,24 +399,24 @@ void startupAnimation() {
   pixels[7].desiredPos = 400;
   pixels[8].desiredPos = 200;
 
-  pixels[0].setColor(0,0,255);
-  pixels[1].setColor(0,255,0);
-  pixels[2].setColor(0,0,255);
-  pixels[3].setColor(0,255,0);
-  pixels[4].setColor(255,0,0);
-  pixels[5].setColor(0,255,0);
-  pixels[6].setColor(0,0,255);
-  pixels[7].setColor(0,255,0);
-  pixels[8].setColor(0,0,255);
+  pixels[0].setColor(0, 0, 255);
+  pixels[1].setColor(0, 255, 0);
+  pixels[2].setColor(0, 0, 255);
+  pixels[3].setColor(0, 255, 0);
+  pixels[4].setColor(255, 0, 0);
+  pixels[5].setColor(0, 255, 0);
+  pixels[6].setColor(0, 0, 255);
+  pixels[7].setColor(0, 255, 0);
+  pixels[8].setColor(0, 0, 255);
 
   delay(1000);
 
-  for (int a=0; a<4; a++) {
+  for (int a = 0; a < 4; a++) {
     pixels[4].desiredPos += 100;
     delay(400);
   }
 
-  for (int a=0; a<6; a++) {
+  for (int a = 0; a < 6; a++) {
     pixels[1].desiredPos += 100;
     pixels[3].desiredPos += 100;
     pixels[5].desiredPos += 100;
@@ -429,7 +424,7 @@ void startupAnimation() {
     delay(300);
   }
 
-  for (int a=0; a<8; a++) {
+  for (int a = 0; a < 8; a++) {
     pixels[0].desiredPos += 100;
     pixels[2].desiredPos += 100;
     pixels[6].desiredPos += 100;
@@ -439,22 +434,22 @@ void startupAnimation() {
 
   delay(1000);
 
-  pixels[0].setColor(255,0,0);
-  pixels[1].setColor(0,0,255);
-  pixels[2].setColor(255,0,0);
-  pixels[3].setColor(0,0,255);
-  pixels[4].setColor(0,255,0);
-  pixels[5].setColor(0,0,255);
-  pixels[6].setColor(255,0,0);
-  pixels[7].setColor(0,0,255);
-  pixels[8].setColor(255,0,0);
+  pixels[0].setColor(255, 0, 0);
+  pixels[1].setColor(0, 0, 255);
+  pixels[2].setColor(255, 0, 0);
+  pixels[3].setColor(0, 0, 255);
+  pixels[4].setColor(0, 255, 0);
+  pixels[5].setColor(0, 0, 255);
+  pixels[6].setColor(255, 0, 0);
+  pixels[7].setColor(0, 0, 255);
+  pixels[8].setColor(255, 0, 0);
 
-  while(pixels[4].desiredPos > _posFlush) {
+  while (pixels[4].desiredPos > _posFlush) {
     pixels[4].desiredPos -= 100;
     delay(400);
   }
 
-  while(pixels[1].desiredPos > _posFlush) {
+  while (pixels[1].desiredPos > _posFlush) {
     pixels[1].desiredPos -= 100;
     pixels[3].desiredPos -= 100;
     pixels[5].desiredPos -= 100;
@@ -462,7 +457,7 @@ void startupAnimation() {
     delay(300);
   }
 
-  while(pixels[0].desiredPos > _posFlush) {
+  while (pixels[0].desiredPos > _posFlush) {
     pixels[0].desiredPos -= 100;
     pixels[2].desiredPos -= 100;
     pixels[6].desiredPos -= 100;
