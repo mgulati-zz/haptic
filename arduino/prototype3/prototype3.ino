@@ -417,7 +417,7 @@ void startupAnimation() {
 
   for (int a=0; a<4; a++) {
     pixels[4].desiredPos += 100;
-    delay(500);
+    delay(400);
   }
 
   for (int a=0; a<6; a++) {
@@ -425,7 +425,7 @@ void startupAnimation() {
     pixels[3].desiredPos += 100;
     pixels[5].desiredPos += 100;
     pixels[7].desiredPos += 100;
-    delay(400);
+    delay(300);
   }
 
   for (int a=0; a<8; a++) {
@@ -433,7 +433,7 @@ void startupAnimation() {
     pixels[2].desiredPos += 100;
     pixels[6].desiredPos += 100;
     pixels[8].desiredPos += 100;
-    delay(300);
+    delay(200);
   }
 
   delay(1000);
@@ -450,7 +450,7 @@ void startupAnimation() {
 
   for (int a=0; a<10; a++) {
     pixels[4].desiredPos -= 100;
-    delay(500);
+    delay(400);
   }
 
   for (int a=0; a<10; a++) {
@@ -458,7 +458,7 @@ void startupAnimation() {
     pixels[3].desiredPos -= 100;
     pixels[5].desiredPos -= 100;
     pixels[7].desiredPos -= 100;
-    delay(400);
+    delay(300);
   }
 
   for (int a=0; a<10; a++) {
@@ -466,7 +466,7 @@ void startupAnimation() {
     pixels[2].desiredPos -= 100;
     pixels[6].desiredPos -= 100;
     pixels[8].desiredPos -= 100;
-    delay(300);
+    delay(200);
   }
 
 }
