@@ -1,47 +1,50 @@
 $(function() {
+  
   var dataCounter = 0;
+  var colors = ["#800000","#FF0A00","#9400D3","#483D8B","#7FFF00","#008B8B","#4682B4","#00BFFF","#0000CD"];
+  var connected = false;
 
   var data = {
     labels: [],
     datasets: [
       {
-        strokeColor: "rgba(0,250,50,1)",
+        strokeColor: colors[0],
         data: []
       },
       {
-        strokeColor: "rgba(0,225,75,1)",
+        strokeColor: colors[1],
         data: []
       },
       {
-        strokeColor: "rgba(0,200,100,1)",
+        strokeColor: colors[2],
         data: []
       },
       {
-        strokeColor: "rgba(0,175,125,1)",
+        strokeColor: colors[3],
         data: []
       },
       {
-        strokeColor: "rgba(0,150,150,1)",
+        strokeColor: colors[4],
         data: []
       },
       {
-        strokeColor: "rgba(0,125,175,1)",
+        strokeColor: colors[5],
         data: []
       },
       {
-        strokeColor: "rgba(0,100,200,1)",
+        strokeColor: colors[6],
         data: []
       },
       {
-        strokeColor: "rgba(0,75,225,1)",
+        strokeColor: colors[7],
         data: []
       },
       {
-        strokeColor: "rgba(0,50,250,1)",
+        strokeColor: colors[8],
         data: []
       },
       {
-        strokeColor: "rgba(255,255,000,1)",
+        strokeColor: "#FFFFFF",
         data: []
       }
     ]
@@ -68,7 +71,17 @@ $(function() {
         if (dataCounter > 50) posChart.removeData();
         posChart.addData(newData.concat(button.desiredPosition),'');
         dataCounter++;
+        if (connected == false) {
+          connected = true;
+          initialize();
+        }
       }
-    });
+    })
+  }
+
+  function initialize() {
+    for (color in colors) {
+      grid.updateColor(color, colors[color]);
+    }
   }
 })

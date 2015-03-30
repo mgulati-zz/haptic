@@ -13,6 +13,7 @@ function Generator () {
 
     function emptyFunction() {};
     var draggingListener = emptyFunction;
+    var dragXListener = emptyFunction;
     var clickListener = emptyFunction;
     var dragEndListener = emptyFunction;
     var beforeDragListener = function() {return true};
@@ -41,9 +42,13 @@ function Generator () {
       $('.scene')[0].style.transform = newRotate;
     }
 
-    function setColor(slider, color) {
+    function setColor(slider, color, stopAnimate) {
       $(slider).each(function(slider_i) {
+        if (stopAnimate) $($(slider)[slider_i]).children().css('transition', 'none')
         $($(slider)[slider_i]).children().css('background-color',color);
+        if (stopAnimate) setTimeout(function() {
+          $($(slider)[slider_i]).children().css('transition', 'background-color 0.5s ease-in-out')
+        }, 500)
       })
     }
 
@@ -119,11 +124,13 @@ function Generator () {
           var dragX = e2.pageX;
           var dragY = e2.pageY;
           var diffY = Yi - dragY;
+          var diffX = Xi - dragX;
           newY = starterY + diffY/(slider.height()*2);
           if (newY < 0) newY = 0;
           if (newY > 1) newY = 1;
           setY(slider,newY,false);
           draggingListener(xzArr[0], xzArr[1], newY);
+          dragXListener(xzArr[0], xzArr[1], diffX);
         }
       });
       $("body").on('mouseup',function(e3){
@@ -207,7 +214,7 @@ function Generator () {
     }
 
     //functions to interface with this thing
-    _self.makeHaptic = function (x_pixels, z_pixels, height, sideLength, thickness, slideRange, onDragging, onDragEnd, onSlideClick, beforeDrag) {
+    _self.makeHaptic = function (x_pixels, z_pixels, height, sideLength, thickness, slideRange, onDragging, onDragEnd, onSlideClick, beforeDrag, onDragX) {
       clearCanvas();
       makeGrid(x_pixels, z_pixels, height, sideLength);
       makeCasing(height, x_pixels*sideLength, z_pixels*sideLength, thickness);
@@ -215,6 +222,7 @@ function Generator () {
       draggingListener = onDragging || emptyFunction;
       clickListener = onSlideClick || emptyFunction;
       dragEndListener = onDragEnd || emptyFunction;
+      dragXListener = onDragX || emptyFunction;
       beforeDragListener = beforeDrag || (function() {return true});
       attachListeners();
     }
@@ -231,9 +239,13 @@ function Generator () {
       setY(true_slider, percentage, animate);
     }
 
-    _self.setLEDColor = function (x,z,color) {
+    _self.setLEDColor = function (x,z,color, stopAnimate) {
       var id_class = x + '_' + z;
-      setColor($('.' + id_class),color);
+      setColor($('.' + id_class),color, stopAnimate);
+    }
+
+    _self.getColor = function(x, z) {
+      return $('.' + x + '_' + z + ' .face.tp').css('background-color')
     }
 
     _self.setRotate = function(X,Y) {

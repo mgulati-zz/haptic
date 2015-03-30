@@ -1,7 +1,7 @@
 function Button (id, arduino, onUpdate) {
 
 	var _self = this;
-	_self.currentColor = '#000000';
+	_self.currentColor = '000000000';
 	_self.touch = 0;
 	_self.position = 0;
 	_self.lastPosition = 0;
@@ -42,18 +42,18 @@ function Button (id, arduino, onUpdate) {
 	}
 
 	_self.changeColor = function(hex) {
-		if (_self.currentColor == hex.toLowerCase()) return;
-		_self.currentColor = hex.toLowerCase()
-
-		R = hexToR(_self.currentColor);
-		G = hexToG(_self.currentColor);
-		B = hexToB(_self.currentColor);
+		R = hexToR(hex);
+		G = hexToG(hex);
+		B = hexToB(hex);
 
 		_self.changeColorRGB(R,G,B);
 	}
 
 	_self.changeColorRGB = function(R,G,B) {
-		_self.arduino.writeSerial(_self.id + "C" + zeroPad(R,3) + zeroPad(G,3) + zeroPad(B,3));
+		var colorString = zeroPad(R,3) + zeroPad(G,3) + zeroPad(B,3);
+		if (_self.currentColor == colorString) return;
+		_self.currentColor = colorString;
+		_self.arduino.writeSerial(_self.id + "C" + colorString);
 	}
 
 	_self.sendTarget = function() {

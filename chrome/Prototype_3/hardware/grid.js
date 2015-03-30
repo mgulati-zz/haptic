@@ -10,7 +10,7 @@ function Grid() {
       var strs = str.split(",");
       if (strs.length != 6) return;
       var id = parseInt(strs[0]);
-      if (id > coordinates.length || id < 0) return;
+      if (id > _self.buttons.length || id < 0) return;
       if ( _self.buttons[id].touch == parseInt(strs[1]) 
            && _self.buttons[id].position == parseInt(strs[2])
            && _self.buttons[id].lastPosition == parseInt(strs[3])

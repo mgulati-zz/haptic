@@ -1,13 +1,15 @@
 $(document).ready(function() {
   
   var colors = ["#800000","FF281E","#FF0000","#FF0A00","#FF8C00","#FFA500","#FFD700","FFE600","#FFFF00","#9400D3","#8B008B","#4B0082","#483D8B","#6A5ACD","#7B68EE","#7FFF00","#008000","#006400","#008B8B","#008080","#00CED1","#4682B4","#87CEEB","#87CEFA","#00BFFF","#1E90FF","#6495ED","#4169E1","#0000FF","#0000CD"]
+  var currentColors = [0,0,0,0,0,0,0,0,0];
+  var tempColors = [0,0,0,0,0,0,0,0,0];
   var x = 3;
   var z = 3;
   var connected = false;
 
   //debuggable gnerator and grid
   generator = new Generator();
-  generator.makeHaptic(x,z,10,3.5,0.3,0.75, updateDesired, null, randomColor);
+  generator.makeHaptic(x,z,10,3.5,0.3,0.75, updateDesired, colorUpdate, null, null, colorSelector);
   generator.setZoom(1.5);
 
   grid = new Grid();
@@ -29,10 +31,20 @@ $(document).ready(function() {
     });
   })
 
-  function randomColor(x,z) {
-    var color = colors[Math.floor(Math.random() * colors.length)];
-    generator.setLEDColor(x,z,color);
-    grid.updateColor(grid.coordinateLookup(x,z),color);
+  function colorSelector(x, z, diffX) {
+    if (Math.abs(diffX) < 60) return;  
+    var index = x*3 + z*1;
+    var setColor = currentColors[index] + Math.round(diffX/75);
+    if (setColor < 0) setColor += colors.length;
+    if (setColor >= colors.length) setColor -= colors.length;
+    tempColors[index] = setColor;
+    generator.setLEDColor(x,z,colors[setColor], true);
+    grid.updateColor(grid.coordinateLookup(x,z),colors[setColor]);
+  }
+
+  function colorUpdate(x, z) {
+    var index = x*3 + z*1;
+    currentColors[index] = tempColors[index];
   }
 
   function updateDesired(x, z, newY) {
