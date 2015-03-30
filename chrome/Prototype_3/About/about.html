@@ -7,11 +7,55 @@
 			width: 100%;
 		}
 		.tile {
+			position: absolute;
 			width: 30%;
 			margin: 20px;
 			cursor: pointer;
 			display: inline-block;
+			overflow: hidden;
+			height: 285px;
+			transition: bottom 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out;
+			top: 0;
+			left: 0;
+			bottom: 0;
 		}
+		#tile-1 {
+		  left: 8px;
+		  top: 75px;
+		}
+		#tile-2 {
+			left: 458px;
+			top: 75px;
+		}
+		#tile-3 {
+			left: 908px;
+			top: 75px;
+		}
+		#tile-4 {
+			left: 8px;
+			top: 430px;
+		}
+		#tile-5 {
+			left: 458px;
+			top: 430px;
+		}
+		#tile-6 {
+			left: 908px;
+			top: 430px;
+		}
+
+	/*	.tile:nth-of-type(3n+2) {
+			left: 450px;
+		}
+		.tile:nth-of-type(3n+3) {
+			left: 900px;
+		}
+		.tile:nth-of-type(-n+6) {
+			top:00px;
+		}
+		.tile:nth-of-type(-n+3) {
+			top:100px;
+		}*/
 		.caption {
 			display: none;
 		  color: white;
@@ -21,22 +65,29 @@
 		  text-align: center;
 		  padding: 20px 0;
 		  width: 100%;
-		  bottom: 54px;
+		  bottom: 0px;
 		  position: relative;
 		  font-size: 18px;
+		  transition: bottom 1s;
 		}
 	</style>
 
-	<script src="../jquery.js"></script>
-	<link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
+	<script src="../hardware/arduino.js"></script>
+	<script src="../hardware/button.js"></script>
+	<script src="../hardware/grid.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../3D/haptic3D.css"/>
+  <script src="../3D/generator.js"></script>
+  <script src="../jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
   <script src="../Nav/nav.js"></script>
   <script src="about.js"></script>
 
 </head>
 
 <body>
-	<div class="tile"><img src="circuit4.JPG"><div class="caption">Circuit</div></div>
-	<div class="tile"><img src="base.JPG"><div class="caption">3D Printed Base</div></div>
-	<div class="tile"><img src="slider.JPG"><div class="caption">Motorized Linear Potentiometer</div></div>
-	<div class="tile"><img src="capacitive.JPG"><div class="caption">Capacitive Touch Pixels</div></div>
+	<div class="tile" id="tile-1"><img src="circuit4.JPG"><div class="caption">Circuit</div></div>
+	<div class="tile" id="tile-2"><img src="base.JPG"><div class="caption">3D Printed Base</div></div>
+	<div class="tile" id="tile-3"><img src="slider.JPG"><div class="caption">Motorized Linear Potentiometer</div></div>
+	<div class="tile" id="tile-4"><img src="capacitive.JPG"><div class="caption">Capacitive Touch Pixels</div></div>
 </body>
