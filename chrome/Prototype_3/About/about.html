@@ -19,10 +19,32 @@
 			left: 0;
 			bottom: 0;
 		}
-		.tile:nth-of-type(3n+1) {
+		#tile-1 {
 			left: 0px;
+			top: 100px;
 		}
-		.tile:nth-of-type(3n+2) {
+		#tile-2 {
+			left: 450px;
+			top: 100px;
+		}
+		#tile-3 {
+			left: 900px;
+			top: 100px;
+		}
+		#tile-4 {
+			left: 0px;
+			top: 430px;
+		}
+		#tile-5 {
+			left: 450px;
+			top: 430px;
+		}
+		#tile-6 {
+			left: 900px;
+			top: 430px;
+		}
+
+	/*	.tile:nth-of-type(3n+2) {
 			left: 450px;
 		}
 		.tile:nth-of-type(3n+3) {
@@ -33,7 +55,7 @@
 		}
 		.tile:nth-of-type(-n+3) {
 			top:100px;
-		}
+		}*/
 		.caption {
 			display: none;
 		  color: white;
@@ -64,8 +86,8 @@
 </head>
 
 <body>
-	<div class="tile"><img src="circuit4.JPG"><div class="caption">Circuit</div></div>
-	<div class="tile"><img src="base.JPG"><div class="caption">3D Printed Base</div></div>
-	<div class="tile"><img src="slider.JPG"><div class="caption">Motorized Linear Potentiometer</div></div>
-	<div class="tile"><img src="capacitive.JPG"><div class="caption">Capacitive Touch Pixels</div></div>
+	<div class="tile" id="tile-1"><img src="circuit4.JPG"><div class="caption">Circuit</div></div>
+	<div class="tile" id="tile-2"><img src="base.JPG"><div class="caption">3D Printed Base</div></div>
+	<div class="tile" id="tile-3"><img src="slider.JPG"><div class="caption">Motorized Linear Potentiometer</div></div>
+	<div class="tile" id="tile-4"><img src="capacitive.JPG"><div class="caption">Capacitive Touch Pixels</div></div>
 </body>
