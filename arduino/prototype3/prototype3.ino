@@ -15,12 +15,6 @@ const int PWM_LOW = 0;
 const int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
-const int touchOut = 52;
-const int touchMax = 100;
-int touchOutState = LOW;
-int touchCounter = 0;
-int touchSwap = 1000;
-
 struct pixel {
   const int _ledR;
   const int _ledG;
@@ -101,22 +95,15 @@ struct pixel {
   }
 
   void flushTouchPin() {
+    touchState = touchCount;
     touchCount = 0;
     pinMode(_touchIn, OUTPUT);
-    digitalWrite(_touchIn, HIGH && (touchOutState == 0));
+    digitalWrite(_touchIn, LOW);
     pinMode(_touchIn, INPUT);
   }
 
   void readTouchState() {
-    if (digitalRead(_touchIn) != touchOutState) {
-      touchCount++;
-    }
-    if (touchCounter > touchSwap/2) {
-      touchState = (touchCount*1000/touchCounter);
-    }
-    Serial.print(touchCount);
-    Serial.print(" ");
-    Serial.println(touchCounter);
+    if (digitalRead(_touchIn) == LOW) touchCount++;
   }
 
   void calculatePIDAction() {
@@ -150,16 +137,16 @@ struct pixel {
   }
 
   void serialPrintPixel(int prependId) {
-//    Serial.print(prependId);
-//    Serial.print(",");
-//    Serial.print(touchState);
-//    Serial.print(",");
-//    Serial.print(actualPos);
-//    Serial.print(",");
-//    Serial.print(desiredPos);
-//    Serial.print(",");
-//    Serial.print(action);
-//    Serial.println("");
+    Serial.print(prependId);
+    Serial.print(",");
+    Serial.print(touchState);
+    Serial.print(",");
+    Serial.print(actualPos);
+    Serial.print(",");
+    Serial.print(desiredPos);
+    Serial.print(",");
+    Serial.print(action);
+    Serial.println("");
   }
 
   double speedAtPWM(int testAction) {
@@ -227,7 +214,7 @@ char inData[BUFFER_SIZE];
 
 int index = 0;
 unsigned int serialTimer = 0;
-int STIMER_THRESHOLD = 5;
+int STIMER_THRESHOLD = 100;
 
 int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
 unsigned int ledCounter = 0;
@@ -236,15 +223,18 @@ int currentPair = 0;
 
 int pixelCounter = 0;
 int pixelPrintCounter = 0;
-String debugPixels = "111111111";
+String debugPixels = "000010000";
 
-int stepCounter = 0;
-int stepLimit = 100;
+const int touchOut = 52;
+const int touchMax = 100;
+int touchCounter = 0;
+int touchSwap = 100;
 
 void setup() {
   Serial.begin(115200);
 
   pinMode(touchOut, OUTPUT);
+  digitalWrite(touchOut, HIGH);
 
   //  startupAnimation();
   //timers for pwm
@@ -262,26 +252,18 @@ void loop() {
 
   touchCounter++;
   if (touchCounter == touchSwap) {
-    touchOutState = 1 - touchOutState;
-    for (int i = 0; i < numPixels; i++) {
-      if (debugPixels[i] == '1') {
-        pixels[i].flushTouchPin();
-      }
-    }
-    digitalWrite(touchOut, HIGH && (touchOutState == 1));
+    for (int i = 0; i < numPixels; i++)
+      if (debugPixels[i] == '1') pixels[i].flushTouchPin();
     touchCounter = 0;
-    Serial.println("");
-    Serial.println("");
   };
-
 
   ledCounter++;
   if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
   if (ledCounter % ledDelay == 0) writeLEDPair();
 
-  //  for (int i = 0; i < 5; i++) {
-  serialRead();
-  //  }
+  for (int i = 0; i < 5; i++) {
+    serialRead();
+  }
 
   pixels[pixelCounter].readPosition();
   pixels[pixelCounter].readTouchState();
