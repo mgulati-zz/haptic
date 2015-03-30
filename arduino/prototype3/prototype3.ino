@@ -200,15 +200,15 @@ struct pixel {
 const int numPixels = 9;
 // {analogPos, touchIn, motor, dirUp, dirDown, ledR, ledGround, ledG, ledB}
 pixel pixels[numPixels] = {
-  {A10, 48, 5, 32, 35, 4, A1, 9, 13}, //0
-  {A7, 50, 12, 37, 33, 4, A0, 9, 13}, //1
-  {A15, 41, 8, 27, 24, 45, A2, 44, 46}, //2
-  {A9, 49, 3, 30, 31, 4, A3, 9, 13}, //3
-  {A8, 51, 11, 34, 36, 4, A2, 9, 13}, //4
-  {A12, 40, 6, 23, 22, 45, A4, 44, 46}, //5
-  {A13, 43, 2, 29, 28, 45, A1, 44, 46}, //6
-  {A11, 47, 10, 38, 39, 45, A3, 44, 46}, //7
-  {A14, 42, 7, 27, 26, 45, A0, 44, 46} //8
+  {A14, 42, 7, 27, 26, 45, A0, 44, 46}, //new 0
+  {A13, 53, 2, 29, 28, 45, A1, 44, 46}, //new 1
+  {A10, 48, 5, 32, 35, 4, A1, 9, 13}, //new 2
+  {A15, 41, 8, 27, 24, 45, A2, 44, 46}, //new 3
+  {A9, 49, 3, 30, 31, 4, A3, 9, 13}, //new 4
+  {A7, 50, 12, 37, 33, 4, A0, 9, 13}, //new 5
+  {A11, 47, 10, 38, 39, 45, A3, 44, 46}, //new 6
+  {A12, 40, 6, 23, 22, 45, A4, 44, 46}, //new 7
+  {A8, 51, 11, 34, 36, 4, A2, 9, 13} //new 8 *broken*
 };
 
 const unsigned int BUFFER_SIZE = 20;
@@ -225,7 +225,7 @@ unsigned int currentPair = 0;
 
 unsigned int pixelCounter = 0;
 unsigned int pixelPrintCounter = 0;
-String debugPixels = "111011111";
+String debugPixels = "010000000";
 
 const unsigned int touchOut = 52;
 unsigned int touchCounter = 0;
@@ -451,8 +451,17 @@ void startupAnimation() {
 void assignmentTest() {
   for (int i = 0; i < 9; i++ ) {
     pixels[i].desiredPos = i*100;
-    pixels[i].red = (i == 0 || i == 3 || i == 6) ? 255 : 0;
-    pixels[i].green = (i == 1 || i == 4 || i == 7) ? 255 : 0;
-    pixels[i].blue = (i == 2 || i == 5 || i == 8) ? 255 : 0;
+    pixels[i].red = 0;//(i == 0 || i == 3 || i == 6) ? 255 : 0;
+    pixels[i].green = 255;//(i == 1 || i == 4 || i == 7) ? 255 : 0;
+    pixels[i].blue = 0;//(i == 2 || i == 5 || i == 8) ? 255 : 0;
   }
+}
+
+void singleTest(int i) {
+  for (int a = 0; a < 9; a++) {
+    pixels[a].desiredPos = 0;
+    pixels[a].setColor(0,0,0);
+  }
+  pixels[i].desiredPos = 1000;
+  pixels[i].setColor(255,255,255);
 }
