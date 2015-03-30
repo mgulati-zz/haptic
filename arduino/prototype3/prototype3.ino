@@ -57,7 +57,7 @@ struct pixel {
   {
     setPIDPreset(0);
     setColor(255, 0, 0);
-    setTarget(1000);
+    setTarget(700);
   
     pinMode(_analogPos, INPUT);
     pinMode(_touchIn, INPUT);
@@ -171,7 +171,9 @@ struct pixel {
     //starting values
     readPosition();
     int startPoint = actualPos;
+    action = testAction;
     long startTime = millis();
+    moveMotor();
 
     if (testAction > 0) {
       while (actualPos < 850 && ((millis() - startTime) < 2000)) {
@@ -186,6 +188,9 @@ struct pixel {
 
     long endTime = millis();
     int endPoint = actualPos;
+    
+    action = 0;
+    moveMotor();
 
     long duration = endTime - startTime;
     int distance = endPoint - startPoint;
@@ -342,14 +347,13 @@ void serialRead() {
       if (inData[1] == 'D') {
         debugPixels = String(inData).substring(2, 11);
         for (int i = 0; i < numPixels; i++) {
-          if (debugPixels[i] == 0) {
-            pixels[i].setTarget(_posStop);
+          if (debugPixels[i] == '0') {
             pixels[i].setColor(0,0,0);
-            while (abs(pixels[i].actualPos - _posStop) > 50) {
-              pixels[i].readPosition();
-              pixels[i].calculatePIDAction();
-              pixels[i].moveMotor();
-            }
+            pixels[i].setTarget(_posStop);
+            pixels[i].readPosition();
+            pixels[i].calculatePIDAction();
+            pixels[i].moveMotor();
+            delay(200);
             pixels[i].action = 0;
             pixels[i].moveMotor();
           }
