@@ -51,7 +51,7 @@ $(document).ready(function() {
         data: []
       },
       {
-        strokeColor: "#fff",
+        strokeColor: "rgba(0,0,0,0)",
         data: []
       }
     ]
@@ -127,7 +127,6 @@ $(document).ready(function() {
       }
     }
     for (dataset in posChart.datasets) posChart.datasets[dataset].strokeColor = 'rgba(0,0,0,0)';
-    posChart.datasets[posChart.datasets.length - 1].strokeColor = 'white';
     $('.scene').css('transition','transform 0.5s ease-in-out');
     generator.setRotate(325, 400);
     setTimeout(function() {$('.scene').css('transition','')},500);

@@ -5,7 +5,7 @@
       width: 500px;
       float: left;
       cursor: move;
-      height: calc(100% - 75px);
+      height: calc(100% - 100px);
     }
     .bottom {
       bottom: 0px;
@@ -17,7 +17,7 @@
     .rightPane {
       float: right;
       width: calc(100% - 500px);
-      height: calc(100% - 75px);
+      height: calc(100% - 100px);
     }
     button {
       width: auto;
@@ -77,14 +77,14 @@
       margin-left: 100px;
     }
     #a_select {
-      bottom: 3px;
+      bottom: 25px;
       left: 53px;
       width: 128px;   
     }
     #pid_select {
       left: 369px;
       width: 98px;
-      bottom: 3px;
+      bottom: 25px;
     }
 
     #a_pid {
@@ -107,7 +107,7 @@
   <script src="../Nav/nav.js"></script>
   
   <script src="../Graph/Chart.js"></script>
-  
+
   <script src="devPage.js"></script>
 
 </head>
@@ -119,7 +119,7 @@
     </div>
   </div>
   <div class="rightPane">
-    <canvas id="pidChart" style="width: 100%; height: 100%;"></canvas>
+    <canvas id="pidChart" style="width: 100%; height: 50%; margin-top: 25%"></canvas>
   </div>
   <div class="bottom">
       <button class="main-button" id="reset">RESET</button>
