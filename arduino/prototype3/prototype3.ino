@@ -3,7 +3,8 @@
 //variables used inside pixel
 const int _posTop = 1000;
 const int _posBottom = 0;
-const int _posFlush = 200;
+const int _posStop = 300;
+const int _posFlush = 400;
 
 const int BUZZ_THRESHOLD = 0;
 const int MOTOR_MIN = 0;
@@ -41,6 +42,8 @@ struct pixel {
   int touchState;
   int touchCount;
   int touchTemp;
+  int touchOutState;
+  bool touchAwait;
 
   int red;
   int green;
@@ -58,10 +61,11 @@ struct pixel {
     setColor(0, 0, 0);
     setTarget(1000);
 
+    pinMode(_analogPos, INPUT);
+    pinMode(_touchIn, INPUT);
     pinMode(_motor, OUTPUT);
     pinMode(_dirDown, OUTPUT);
     pinMode(_dirUp, OUTPUT);
-    pinMode(_analogPos, INPUT);
     pinMode(_ledGround, OUTPUT);
     pinMode(_ledR, OUTPUT);
     pinMode(_ledG, OUTPUT);
@@ -94,32 +98,23 @@ struct pixel {
     actualPos = constrain(actualPos, _posBottom, _posTop);
   }
 
-  void readTouchState() {  
-    //touchState = digitalRead(_touchIn);
-//    if (digitalRead(_touchIn) == HIGH) {
-//      touchCount += 1;
-//      if (touchCount > 50) {
-//        touchState = 1;
-//      }
-//    } else {
-//      touchCount = 0;
-//      touchState = 0;
-//    }
-    if (touchCount > touchMax){
-      touchCount = 0;
-      pinMode(_touchIn,OUTPUT);
-      digitalWrite(_touchIn, LOW);
-    }
-
+  void flushTouchPin(bool state) {
+    touchOutState = !state ;
+    touchCount = 0;
+    pinMode(_touchIn,OUTPUT);
+    digitalWrite(_touchIn, LOW);
     pinMode(_touchIn,INPUT);
-    touchTemp = digitalRead(_touchIn);
+    touchAwait = true;
+  }
 
-    if (touchTemp == 1){
-      touchState = touchCount; 
-    }
+  void readTouchState() {
+    touchState = digitalRead(_touchIn);
+//    if (digitalRead(_touchIn) == touchOutState && touchAwait == true){
+//      touchState = touchCount;
+//      touchAwait = false;
+//    }
 
     touchCount++;
-
 
   }
 
@@ -215,15 +210,15 @@ struct pixel {
 const int numPixels = 9;
 // {analogPos, touchIn, motor, dirUp, dirDown, ledR, ledGround, ledG, ledB}
 pixel pixels[numPixels] = {
-  {A10, 48, 5, 32, 35, 4, A1, 9, 13},
-  {A7, 50, 12, 37, 33, 4, A0, 9, 13},
-  {A15, 41, 8, 27, 24, 45, A2, 44, 46},
-  {A9, 49, 3, 30, 31, 4, A3, 9, 13},
-  {A8, 51, 11, 34, 36, 4, A2, 9, 13},
-  {A12, 40, 6, 23, 22, 45, A4, 44, 46},
-  {A13, 43, 2, 29, 28, 45, A1, 44, 46},
-  {A11, 47, 10, 38, 39, 45, A3, 44, 46},
-  {A14, 42, 7, 27, 26, 45, A0, 44, 46}
+  {A10, 48, 5, 32, 35, 4, A1, 9, 13}, //0
+  {A7, 50, 12, 37, 33, 4, A0, 9, 13}, //1
+  {A15, 41, 8, 27, 24, 45, A2, 44, 46}, //2
+  {A9, 49, 3, 30, 31, 4, A3, 9, 13}, //3
+  {A8, 51, 11, 34, 36, 4, A2, 9, 13}, //4
+  {A12, 40, 6, 23, 22, 45, A4, 44, 46}, //5
+  {A13, 43, 2, 29, 28, 45, A1, 44, 46}, //6
+  {A11, 47, 10, 38, 39, 45, A3, 44, 46}, //7
+  {A14, 42, 7, 27, 26, 45, A0, 44, 46} //8
 };
 
 const int BUFFER_SIZE = 20;
@@ -231,7 +226,7 @@ char inData[BUFFER_SIZE];
 
 int index = 0;
 unsigned int serialTimer = 0;
-int STIMER_THRESHOLD = 20;
+int STIMER_THRESHOLD = 100;
 
 int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
 unsigned int ledCounter = 0; 
@@ -241,7 +236,7 @@ int currentPair = 0;
 int pixelCounter = 0;
 int pixelPrintCounter = 0;
 String debugPixels = "111111111";
-
+ 
 int touchCounter = 0;
 int touchSwap = 1000;
 
@@ -253,7 +248,7 @@ void setup() {
   
   pinMode(touchOut, OUTPUT);
 
-  startupAnimation();
+//  startupAnimation();
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
   TCCR2B = (TCCR2B & 0xF8) | 0x07;
@@ -265,7 +260,7 @@ void loop() {
   
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
-  if (debugPixels[pixelCounter] == 0) return;
+  if (debugPixels[pixelCounter] == '0') return;
   
   //  for (int i = 0; i < 5; i++) {
   serialRead();
@@ -275,8 +270,11 @@ void loop() {
 
   serialTimer++;
   if (serialTimer > STIMER_THRESHOLD) {
-    if (debugPixels[pixelPrintCounter] == '1')
-      pixels[pixelPrintCounter].serialPrintPixel(pixelPrintCounter);
+    while (debugPixels[pixelPrintCounter] == '0') {
+      pixelPrintCounter++;
+      if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
+    }
+    pixels[pixelPrintCounter].serialPrintPixel(pixelPrintCounter);
     serialTimer = 0;
     pixelPrintCounter++;
     if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
@@ -358,7 +356,21 @@ void serialRead() {
 
     } else {
       //set debug pixel, not currently used, #D
-      if (inData[1] == 'D') debugPixels = String(inData).substring(2, 11);
+      if (inData[1] == 'D') {
+        debugPixels = String(inData).substring(2, 11);
+        for (int i = 0; i < numPixels; i++) {
+          if (debugPixels[i] == 0) {
+            pixels[i].setTarget(_posStop);
+            while(abs(pixels[i].actualPos - _posStop) > 50) {
+              pixels[i].readPosition();
+              pixels[i].calculatePIDAction();
+              pixels[i].moveMotor();
+            }
+            pixels[i].action = 0;
+            pixels[i].moveMotor();
+          }
+        }
+      }
       
       //change led Delay
       if (inData[1] == 'L') ledDelay = (constrain(String(inData).substring(2, 6).toInt(), 1, 9999));
