@@ -200,15 +200,15 @@ struct pixel {
 const int numPixels = 9;
 // {analogPos, touchIn, motor, dirUp, dirDown, ledR, ledGround, ledG, ledB}
 pixel pixels[numPixels] = {
-  {A14, 42, 7, 27, 26, 45, A0, 44, 46}, //new 0
-  {A13, 53, 2, 29, 28, 45, A1, 44, 46}, //new 1
+  {A14, 42, 7, 27, 26, 45, A4, 44, 46}, //new 0
+  {A13, 53, 2, 29, 28, 45, A0, 44, 46}, //new 1
   {A10, 48, 5, 32, 35, 4, A1, 9, 13}, //new 2
-  {A15, 41, 8, 27, 24, 45, A2, 44, 46}, //new 3
-  {A9, 49, 3, 30, 31, 4, A3, 9, 13}, //new 4
-  {A7, 50, 12, 37, 33, 4, A0, 9, 13}, //new 5
-  {A11, 47, 10, 38, 39, 45, A3, 44, 46}, //new 6
-  {A12, 40, 6, 23, 22, 45, A4, 44, 46}, //new 7
-  {A8, 51, 11, 34, 36, 4, A2, 9, 13} //new 8 *broken*
+  {A15, 41, 8, 27, 24, 4, A3, 9, 13}, //new 3
+  {A9, 49, 3, 30, 31, 45, A2, 44, 46}, //new 4
+  {A7, 50, 12, 37, 33, 45, A3, 44,46}, //new 5
+  {A11, 47, 10, 38, 39, 45, A1, 44, 46}, //new 6
+  {A12, 40, 6, 23, 22, 4, A2, 9, 13}, //new 7
+  {A8, 51, 11, 34, 36, 4, A0, 9, 13} //new 8 *broken*
 };
 
 const unsigned int BUFFER_SIZE = 20;
@@ -218,14 +218,14 @@ unsigned int index = 0;
 unsigned int serialTimer = 0;
 unsigned int STIMER_THRESHOLD = 11;
 
-const unsigned int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
+const unsigned int ledPairs[5][2] = {{1, 8}, {2, 6}, {4, 7}, {3, 5}, {0, 0}};
 unsigned int ledCounter = 0;
 unsigned int ledDelay = 8;
 unsigned int currentPair = 0;
 
 unsigned int pixelCounter = 0;
 unsigned int pixelPrintCounter = 0;
-String debugPixels = "010000000";
+String debugPixels = "111111111";
 
 const unsigned int touchOut = 52;
 unsigned int touchCounter = 0;
@@ -235,7 +235,7 @@ void setup() {
 
   pinMode(touchOut, OUTPUT);
   digitalWrite(touchOut, HIGH);
-  assignmentTest();
+//  assignmentTest();
   //  startupAnimation();
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
@@ -344,6 +344,7 @@ void serialRead() {
         for (int i = 0; i < numPixels; i++) {
           if (debugPixels[i] == 0) {
             pixels[i].setTarget(_posStop);
+            pixels[i].setColor(0,0,0);
             while (abs(pixels[i].actualPos - _posStop) > 50) {
               pixels[i].readPosition();
               pixels[i].calculatePIDAction();
@@ -447,21 +448,21 @@ void startupAnimation() {
     delay(200);
   }
 }
-
-void assignmentTest() {
-  for (int i = 0; i < 9; i++ ) {
-    pixels[i].desiredPos = i*100;
-    pixels[i].red = 0;//(i == 0 || i == 3 || i == 6) ? 255 : 0;
-    pixels[i].green = 255;//(i == 1 || i == 4 || i == 7) ? 255 : 0;
-    pixels[i].blue = 0;//(i == 2 || i == 5 || i == 8) ? 255 : 0;
-  }
-}
-
-void singleTest(int i) {
-  for (int a = 0; a < 9; a++) {
-    pixels[a].desiredPos = 0;
-    pixels[a].setColor(0,0,0);
-  }
-  pixels[i].desiredPos = 1000;
-  pixels[i].setColor(255,255,255);
-}
+//
+//void assignmentTest() {
+//  for (int i = 0; i < 9; i++ ) {
+//    pixels[i].desiredPos = i*100;
+//    pixels[i].red = 0;//(i == 0 || i == 3 || i == 6) ? 255 : 0;
+//    pixels[i].green = 255;//(i == 1 || i == 4 || i == 7) ? 255 : 0;
+//    pixels[i].blue = 0;//(i == 2 || i == 5 || i == 8) ? 255 : 0;
+//  }
+//}
+//
+//void singleTest(int i) {
+//  for (int a = 0; a < 9; a++) {
+//    pixels[a].desiredPos = 0;
+//    pixels[a].setColor(0,0,0);
+//  }
+//  pixels[i].desiredPos = 1000;
+//  pixels[i].setColor(255,255,255);
+//}
