@@ -7,10 +7,32 @@
 			width: 100%;
 		}
 		.tile {
+			position: absolute;
 			width: 30%;
 			margin: 20px;
 			cursor: pointer;
 			display: inline-block;
+			overflow: hidden;
+			height: 285px;
+			transition: bottom 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out;
+			top: 0;
+			left: 0;
+			bottom: 0;
+		}
+		.tile:nth-of-type(3n+1) {
+			left: 0px;
+		}
+		.tile:nth-of-type(3n+2) {
+			left: 450px;
+		}
+		.tile:nth-of-type(3n+3) {
+			left: 900px;
+		}
+		.tile:nth-of-type(-n+6) {
+			top:00px;
+		}
+		.tile:nth-of-type(-n+3) {
+			top:100px;
 		}
 		.caption {
 			display: none;
@@ -21,14 +43,21 @@
 		  text-align: center;
 		  padding: 20px 0;
 		  width: 100%;
-		  bottom: 54px;
+		  bottom: 0px;
 		  position: relative;
 		  font-size: 18px;
+		  transition: bottom 1s;
 		}
 	</style>
 
-	<script src="../jquery.js"></script>
-	<link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
+	<script src="../hardware/arduino.js"></script>
+	<script src="../hardware/button.js"></script>
+	<script src="../hardware/grid.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../3D/haptic3D.css"/>
+  <script src="../3D/generator.js"></script>
+  <script src="../jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
   <script src="../Nav/nav.js"></script>
   <script src="about.js"></script>
 
