@@ -17,8 +17,7 @@ function changeDemo(url, id) {
     'bounds': {
       "width" :   window.screen.availWidth,
       "height":   window.screen.availHeight
-    },
-    "state": "fullscreen"
+    }
   }, function (createdWindow) {
     chrome.app.window.current().close();
   })
