@@ -159,8 +159,6 @@ struct pixel {
     Serial.print(",");
     Serial.print(actualPos);
     Serial.print(",");
-    Serial.print(lastPos);
-    Serial.print(",");
     Serial.print(desiredPos);
     Serial.print(",");
     Serial.print(action);
@@ -253,13 +251,6 @@ void setup() {
   Serial.begin(115200);
   
   pinMode(touchOut, OUTPUT);
-  
-  pixels[5].setColor(255,0,0);
-  pixels[3].setColor(255,0,0);
-  pixels[7].setColor(0,255,0);
-  pixels[6].setColor(255,80,0);
-  pixels[8].setColor(255,20,0);
-  pixels[2].setColor(255,0,0);
 
   startupAnimation();
   //timers for pwm
@@ -270,24 +261,14 @@ void setup() {
 }
 
 void loop() {
-  for (int i = 0; i < 5; i++) {
-    serialRead();
-  }
   
-  stepCounter++;
-  //counterclockwise snake
-  if (stepCounter == stepLimit) {
-    int tempRed = pixels[5].red;
-    int tempGreen = pixels[5].green;
-    int tempBlue = pixels[5].blue;
-    pixels[5].setColor(pixels[3].red, pixels[3].green, pixels[3].blue);
-    pixels[3].setColor(pixels[7].red, pixels[7].green, pixels[7].blue);
-    pixels[7].setColor(pixels[6].red, pixels[6].green, pixels[6].blue);
-    pixels[6].setColor(pixels[8].red, pixels[8].green, pixels[8].blue);
-    pixels[8].setColor(pixels[2].red, pixels[2].green, pixels[2].blue);
-    pixels[2].setColor(tempRed, tempGreen, tempBlue);
-    stepCounter = 0;
-  }
+  pixelCounter++;
+  if (pixelCounter == numPixels) pixelCounter = 0;
+  if (debugPixels[pixelCounter] == 0) return;
+  
+  //  for (int i = 0; i < 5; i++) {
+  serialRead();
+  //  }
   
   ledCounter++;
   if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
@@ -300,9 +281,6 @@ void loop() {
     digitalWrite(touchOut, LOW);
     touchCounter = 0;
   }*/
-
-  pixelCounter++;
-  if (pixelCounter == numPixels) pixelCounter = 0;
 
   pixels[pixelCounter].readPosition();
   pixels[pixelCounter].readTouchState();
