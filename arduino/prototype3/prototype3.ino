@@ -15,7 +15,7 @@ const int PWM_LOW = 0;
 const unsigned int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{10, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
-unsigned int touchSwap = 90;
+unsigned int touchSwap = 900;
 
 struct pixel {
   const int _ledR;
@@ -56,8 +56,8 @@ struct pixel {
     , touchState(0), touchCount(0)
   {
     setPIDPreset(0);
-    setColor(255, 0, 0);
-    setTarget(700);
+    setColor(0, 0, 0);
+    setTarget(800);
   
     pinMode(_analogPos, INPUT);
     pinMode(_touchIn, INPUT);
@@ -257,8 +257,10 @@ void loop() {
 
   touchCounter++;
   if (touchCounter == touchSwap) {
-    for (int i = 0; i < numPixels; i++)
+    for (int i = 0; i < numPixels; i++) {
       if (debugPixels[i] == '1') pixels[i].flushTouchPin();
+    }
+    digitalWrite(touchOut, HIGH);
     touchCounter = 0;
   };
 
