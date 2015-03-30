@@ -9,7 +9,6 @@ function bindButtons() {
   $('.nav').on('click', 'button.form', function() {changeDemo('Form/form.html','form');});
   $('.nav').on('click', 'button.soundBoard', function() {changeDemo('SoundBoard/soundBoard.html','soundBoard');});
   $('.nav').on('click', 'button.game', function() {changeDemo('Game/game.html','game');});
-  $('.nav').on('click', 'button.graph', function() {changeDemo('Graph/graph.html','graph');});
 }
 
 function changeDemo(url, id) {
@@ -28,7 +27,6 @@ function changeDemo(url, id) {
 function generateNavHTML() {
   var nav = $('<div>', {'class': 'nav'});
   nav.append($('<button>', {'class': '3d', 'text': 'SETUP'}));
-  nav.append($('<button>', {'class': 'graph', 'text': 'GRAPHS'}));
   nav.append($('<button>', {'class': 'audio', 'text': 'MUSIC'}));
   nav.append($('<button>', {'class': 'form', 'text': 'FORM'}));
   nav.append($('<button>', {'class': 'soundBoard', 'text': 'SOUND BOARD'}));

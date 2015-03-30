@@ -5,23 +5,87 @@ $(document).ready(function() {
   var tempColors = [0,0,0,0,0,0,0,0,0];
   var x = 3;
   var z = 3;
-  var connected = false;
 
   //debuggable gnerator and grid
   generator = new Generator();
   generator.makeHaptic(x,z,10,3.5,0.3,0.75, updateDesired, colorUpdate, null, null, colorSelector);
   generator.setZoom(1.5);
 
+  var data = {
+    labels: [],
+    datasets: [
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: 'rgba(0,0,0,0)',
+        data: []
+      },
+      {
+        strokeColor: "#fff",
+        data: []
+      }
+    ]
+  };
+
+  var dataCounter = 0;
+  var newData = [0,0,0,0,0,0,0,0,0];
+  var ctx = $("#pidChart").get(0).getContext("2d");
+  posChart = new Chart(ctx).Line(data, {
+    scaleOverride: true,
+    scaleSteps: 10,
+    scaleStepWidth: 100,
+    scaleStartValue: 0,
+    pointDot : false,
+    datasetFill : false,
+    animation: false,
+    showTooltips: false
+  });
+
   grid = new Grid();
   for (var i = 0; i < 9; i++) {
     grid.newButton(i, function(button) {
+      
+      newData[button.id] = button.position;
+      if (button.id == 8) {
+        if (dataCounter > 10) posChart.removeData();
+        posChart.addData(newData.concat(button.desiredPosition),'');
+        dataCounter++;
+      }
+
       var coordinates = grid.indexLookup(button.id);
       generator.setPos(coordinates[0], coordinates[1], button.position / 1000, false);
       generator.setDesiredPos(coordinates[0], coordinates[1], button.desiredPosition / 1000, false);
-      if (connected == false) {
-        connected = true;
-        $('.nav button').attr('disabled',false);
-      }
+
     });
   }
 
@@ -32,14 +96,15 @@ $(document).ready(function() {
   })
 
   function colorSelector(x, z, diffX) {
-    if (Math.abs(diffX) < 60) return;  
+    if (Math.abs(diffX) < 40) return;  
     var index = x*3 + z*1;
-    var setColor = currentColors[index] + Math.round(diffX/75);
+    var setColor = currentColors[index] + Math.round(diffX/50);
     if (setColor < 0) setColor += colors.length;
     if (setColor >= colors.length) setColor -= colors.length;
     tempColors[index] = setColor;
     generator.setLEDColor(x,z,colors[setColor], true);
     grid.updateColor(grid.coordinateLookup(x,z),colors[setColor]);
+    posChart.datasets[index].strokeColor = colors[setColor];
   }
 
   function colorUpdate(x, z) {
@@ -61,6 +126,8 @@ $(document).ready(function() {
         updateDesired(x_i,z_i,0);
       }
     }
+    for (dataset in posChart.datasets) posChart.datasets[dataset].strokeColor = 'rgba(0,0,0,0)';
+    posChart.datasets[posChart.datasets.length - 1].strokeColor = 'white';
     $('.scene').css('transition','transform 0.5s ease-in-out');
     generator.setRotate(325, 400);
     setTimeout(function() {$('.scene').css('transition','')},500);
