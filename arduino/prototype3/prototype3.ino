@@ -261,6 +261,7 @@ void setup() {
   pixels[8].setColor(255,20,0);
   pixels[2].setColor(255,0,0);
 
+  startupAnimation();
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
   TCCR2B = (TCCR2B & 0xF8) | 0x07;
@@ -391,3 +392,81 @@ void serialRead() {
   }
 }
 
+void startupAnimation() {
+  pixels[0].desiredPos = 200;
+  pixels[1].desiredPos = 400;
+  pixels[2].desiredPos = 200;
+  pixels[3].desiredPos = 400;
+  pixels[4].desiredPos = 600;
+  pixels[5].desiredPos = 400;
+  pixels[6].desiredPos = 200;
+  pixels[7].desiredPos = 400;
+  pixels[8].desiredPos = 200;
+
+  pixels[0].setColor(0,0,255);
+  pixels[1].setColor(0,255,0);
+  pixels[2].setColor(0,0,255);
+  pixels[3].setColor(0,255,0);
+  pixels[4].setColor(255,0,0);
+  pixels[5].setColor(0,255,0);
+  pixels[6].setColor(0,0,255);
+  pixels[7].setColor(0,255,0);
+  pixels[8].setColor(0,0,255);
+
+  delay(1000);
+
+  for (int a=0; a<4; a++) {
+    pixels[4].desiredPos += 100;
+    delay(500);
+  }
+
+  for (int a=0; a<6; a++) {
+    pixels[1].desiredPos += 100;
+    pixels[3].desiredPos += 100;
+    pixels[5].desiredPos += 100;
+    pixels[7].desiredPos += 100;
+    delay(400);
+  }
+
+  for (int a=0; a<8; a++) {
+    pixels[0].desiredPos += 100;
+    pixels[2].desiredPos += 100;
+    pixels[6].desiredPos += 100;
+    pixels[8].desiredPos += 100;
+    delay(300);
+  }
+
+  delay(1000);
+
+  pixels[0].setColor(255,0,0);
+  pixels[1].setColor(0,0,255);
+  pixels[2].setColor(255,0,0);
+  pixels[3].setColor(0,0,255);
+  pixels[4].setColor(0,255,0);
+  pixels[5].setColor(0,0,255);
+  pixels[6].setColor(255,0,0);
+  pixels[7].setColor(0,0,255);
+  pixels[8].setColor(255,0,0);
+
+  for (int a=0; a<10; a++) {
+    pixels[4].desiredPos -= 100;
+    delay(500);
+  }
+
+  for (int a=0; a<10; a++) {
+    pixels[1].desiredPos -= 100;
+    pixels[3].desiredPos -= 100;
+    pixels[5].desiredPos -= 100;
+    pixels[7].desiredPos -= 100;
+    delay(400);
+  }
+
+  for (int a=0; a<10; a++) {
+    pixels[0].desiredPos -= 100;
+    pixels[2].desiredPos -= 100;
+    pixels[6].desiredPos -= 100;
+    pixels[8].desiredPos -= 100;
+    delay(300);
+  }
+
+}
