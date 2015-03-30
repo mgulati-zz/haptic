@@ -3,6 +3,7 @@
 //variables used inside pixel
 const int _posTop = 1000;
 const int _posBottom = 0;
+const int _posFlush = 200;
 
 const int BUZZ_THRESHOLD = 0;
 const int MOTOR_MIN = 0;
@@ -270,6 +271,19 @@ void loop() {
   serialRead();
   //  }
   
+  updatePixel();
+
+  serialTimer++;
+  if (serialTimer > STIMER_THRESHOLD) {
+    if (debugPixels[pixelPrintCounter] == '1')
+      pixels[pixelPrintCounter].serialPrintPixel(pixelPrintCounter);
+    serialTimer = 0;
+    pixelPrintCounter++;
+    if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
+  }
+}
+
+void updatePixel() {
   ledCounter++;
   if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
   if (ledCounter % ledDelay == 0) writeLEDPair();
@@ -287,15 +301,6 @@ void loop() {
 
   pixels[pixelCounter].calculatePIDAction();
   pixels[pixelCounter].moveMotor();
-
-  serialTimer++;
-  if (serialTimer > STIMER_THRESHOLD) {
-    if (debugPixels[pixelPrintCounter] == '1')
-      pixels[pixelPrintCounter].serialPrintPixel(pixelPrintCounter);
-    serialTimer = 0;
-    pixelPrintCounter++;
-    if (pixelPrintCounter == numPixels) pixelPrintCounter = 0;
-  }
 }
 
 void writeLEDPair() {
@@ -370,6 +375,12 @@ void serialRead() {
   }
 }
 
+void updateAllPixels() {
+  for (int i = 0; i < 9; i++) {
+    updatePixel();
+  }
+}
+
 void startupAnimation() {
   pixels[0].desiredPos = 200;
   pixels[1].desiredPos = 400;
@@ -426,12 +437,12 @@ void startupAnimation() {
   pixels[7].setColor(0,0,255);
   pixels[8].setColor(255,0,0);
 
-  for (int a=0; a<10; a++) {
+  while(pixels[4].desiredPos > _posFlush) {
     pixels[4].desiredPos -= 100;
     delay(400);
   }
 
-  for (int a=0; a<10; a++) {
+  while(pixels[1].desiredPos > _posFlush) {
     pixels[1].desiredPos -= 100;
     pixels[3].desiredPos -= 100;
     pixels[5].desiredPos -= 100;
@@ -439,7 +450,7 @@ void startupAnimation() {
     delay(300);
   }
 
-  for (int a=0; a<10; a++) {
+  while(pixels[0].desiredPos > _posFlush) {
     pixels[0].desiredPos -= 100;
     pixels[2].desiredPos -= 100;
     pixels[6].desiredPos -= 100;
