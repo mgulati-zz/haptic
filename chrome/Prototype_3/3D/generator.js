@@ -244,6 +244,11 @@ function Generator () {
       setColor($('.' + id_class),color, stopAnimate);
     }
 
+    _self.setBorder = function (x,z,borderSetting) {
+      var id_class = x + '_' + z;
+      $('.' + id_class).children().css('border',borderSetting);
+    }
+
     _self.getColor = function(x, z) {
       return $('.' + x + '_' + z + ' .face.tp').css('background-color')
     }
