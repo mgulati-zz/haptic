@@ -251,9 +251,9 @@ void setup() {
 }
 
 void loop() {
-  //  for (int i = 0; i < 5; i++) {
-  serialRead();
-  //  }
+  for (int i = 0; i < 5; i++) {
+    serialRead();
+  }
   
   stepCounter++;
   //counterclockwise snake
