@@ -7,5 +7,13 @@ void setup() {
 }
 
 void loop() {
+  
+  Serial.print(analogRead(A10));
+  Serial.print(" ");
   Serial.println(touchSense.capacitiveSensor(10));
 }
+
+
+
+
+
