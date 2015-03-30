@@ -14,6 +14,7 @@ const int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
 const int touchOut = 52;
+const int touchMax = 100;
 
 struct pixel {
   const int _ledR;
@@ -38,6 +39,7 @@ struct pixel {
 
   int touchState;
   int touchCount;
+  int touchTemp;
 
   int red;
   int green;
@@ -92,7 +94,7 @@ struct pixel {
   }
 
   void readTouchState() {  
-    touchState = digitalRead(_touchIn);
+    //touchState = digitalRead(_touchIn);
 //    if (digitalRead(_touchIn) == HIGH) {
 //      touchCount += 1;
 //      if (touchCount > 50) {
@@ -102,6 +104,22 @@ struct pixel {
 //      touchCount = 0;
 //      touchState = 0;
 //    }
+    if (touchCount > touchMax){
+      touchCount = 0;
+      pinMode(_touchIn,OUTPUT);
+      digitalWrite(_touchIn,HIGH);
+    }
+
+    pinMode(_touchIn,INPUT);
+    touchTemp = digitalRead(_touchIn);
+
+    if (touchTemp == 1){
+      touchState = touchCount; 
+    }
+
+    touchCount++;
+
+
   }
 
   void calculatePIDAction() {
@@ -274,13 +292,13 @@ void loop() {
   if (ledCounter > (5 * ledDelay - 1)) ledCounter = 0;
   if (ledCounter % ledDelay == 0) writeLEDPair();
   
-  touchCounter++;
+  /*touchCounter++;
   if (touchCounter == touchSwap/2) 
     digitalWrite(touchOut, HIGH);
   else if (touchCounter == touchSwap) {
     digitalWrite(touchOut, LOW);
     touchCounter = 0;
-  }
+  }*/
 
   pixelCounter++;
   if (pixelCounter == numPixels) pixelCounter = 0;
