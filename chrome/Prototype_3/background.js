@@ -4,6 +4,6 @@ chrome.app.runtime.onLaunched.addListener(function() {
     'bounds': {
       "width" :   window.screen.availWidth,
       "height":   window.screen.availHeight
-    }
+    }, "state": "fullscreen"
   });
 });
