@@ -96,7 +96,8 @@ function Arduino (onLineReceived) {
   }
 
   function updateConnectionDisp() {
-    $(".connection").css("background-color", _self.connected ? "#00FF00" : "#FF0000");
+    $(".connection").css("color", _self.connected ? "#00FF00" : "#FF0000");
+    $(".connection").text(_self.connected ? "CONNECTED" : "PLUG ME IN");
   }
 
   function currentTime() {

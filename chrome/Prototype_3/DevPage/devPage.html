@@ -2,22 +2,33 @@
 
   <style>
     .leftPane {
-      width:60%;
+      width: 500px;
       float: left;
       cursor: move;
+      height: calc(100% - 75px);
+    }
+    .bottom {
+      bottom: 0px;
+      width: 100%;
+      height: 75px;
+      z-index: 10;
+      display: inline-block;
     }
     .rightPane {
-      width: 40%;
       float: right;
+      width: calc(100% - 500px);
+      height: calc(100% - 75px);
     }
     button {
-      width: 150px;
+      width: auto;
       padding: 15px;
       font-size: 20px;
       background: #4BBEDB;
-      border: none;
+      border: 0;
+      border-bottom: 5px solid #32626E;
       cursor: pointer;
-      position: absolute;
+      display: inline-block;
+      margin: 0px 10px 0px 20px;
     }
     button.disabled, 
     button.disabled:hover, button.disabled:focus:active, 
@@ -50,31 +61,30 @@
 
     .main-select {
       position: absolute;
-      background-color:#59ABE3;
-      color:white;
+      background-color: #59ABE3;
+      color: white;
       padding: 12px;
-      width: 150px;
-      font-family:arial,tahoma;
-      font-size:16px;
-      font-weight:bold;
-      color:#fff;
-      text-align:center;
-      text-shadow:0 -1px 0 rgba(0, 0, 0, 0.25);
-      border-radius:3px;
-      border:0;
-      outline:0;
+      font-family: arial,tahoma;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 3px;
+      border: 0;
+      outline: 0;
       opacity: 0.5;
       margin-left: 100px;
     }
     #a_select {
-      top: 455px;      
+      bottom: 3px;
+      left: 53px;
+      width: 128px;   
     }
     #pid_select {
-      top:615px;
-    }
-
-    button.main-button {
-      margin-left: 100px;
+      left: 369px;
+      width: 98px;
+      bottom: 3px;
     }
 
     #a_pid {
@@ -96,6 +106,8 @@
   <link rel="stylesheet" type="text/css" href="../Nav/nav.css"/>
   <script src="../Nav/nav.js"></script>
   
+  <script src="../Graph/Chart.js"></script>
+  
   <script src="devPage.js"></script>
 
 </head>
@@ -106,18 +118,20 @@
       </div>
     </div>
   </div>
-
   <div class="rightPane">
-    <button class="main-button" id="reset">RESET</button>
-    <button class="main-button" id="a_connect" href="">CONNECT</button>
-    <select class="main-button main-select" id="a_select"></select>
-    <button class="main-button" id="a_reset" href="">REFRESH</button>
-    <button class="main-button" id="a_pid">Set PID</button>
-    <select class="main-button main-select" id="pid_select">
-      <option value='0'>Normal</option>
-      <option value='1'>Hard</option>
-      <option value='2'>Etc</option>
-    </select>
+    <canvas id="pidChart" style="width: 100%; height: 100%;"></canvas>
+  </div>
+  <div class="bottom">
+      <button class="main-button" id="reset">RESET</button>
+      <button class="main-button" id="a_connect" href="">CONNECT</button>
+      <select class="main-button main-select" id="a_select"></select>
+      <button class="main-button" id="a_reset" href="">REFRESH</button>
+      <button class="main-button" id="a_pid">Set PID</button>
+      <select class="main-button main-select" id="pid_select">
+        <option value='0'>Normal</option>
+        <option value='1'>Hard</option>
+        <option value='2'>None</option>
+      </select>
   </div>
 
 </body>
