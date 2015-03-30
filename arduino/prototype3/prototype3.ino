@@ -3,17 +3,19 @@
 //variables used inside pixel
 const int _posTop = 1000;
 const int _posBottom = 0;
-const int _posStop = 300;
-const int _posFlush = 400;
+unsigned int _posStop = 300;
+unsigned int _posFlush = 400;
 
-const int BUZZ_THRESHOLD = 0;
-const int MOTOR_MIN = 0;
+unsigned int BUZZ_THRESHOLD = 0;
+unsigned int MOTOR_MIN = 0;
 
-const int PWM_HIGH = 255;
-const int PWM_LOW = 0;
+const unsigned int PWM_HIGH = 255;
+const unsigned int PWM_LOW = 0;
 
-const int NUM_PRESETS = 3;
+const unsigned int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
+
+unsigned int touchSwap = 100;
 
 struct pixel {
   const int _ledR;
@@ -209,26 +211,24 @@ pixel pixels[numPixels] = {
   {A14, 42, 7, 27, 26, 45, A0, 44, 46} //8
 };
 
-const int BUFFER_SIZE = 20;
+const unsigned int BUFFER_SIZE = 20;
 char inData[BUFFER_SIZE];
 
-int index = 0;
+unsigned int index = 0;
 unsigned int serialTimer = 0;
-int STIMER_THRESHOLD = 100;
+unsigned int STIMER_THRESHOLD = 100;
 
-int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
+const unsigned int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
 unsigned int ledCounter = 0;
-int ledDelay = 8;
-int currentPair = 0;
+unsigned int ledDelay = 8;
+unsigned int currentPair = 0;
 
-int pixelCounter = 0;
-int pixelPrintCounter = 0;
-String debugPixels = "000010000";
+unsigned int pixelCounter = 0;
+unsigned int pixelPrintCounter = 0;
+String debugPixels = "111111111";
 
-const int touchOut = 52;
-const int touchMax = 100;
-int touchCounter = 0;
-int touchSwap = 100;
+const unsigned int touchOut = 52;
+unsigned int touchCounter = 0;
 
 void setup() {
   Serial.begin(115200);
