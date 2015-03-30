@@ -7,19 +7,19 @@ function Grid() {
   var coordinates = {0: [0,0], 1:[0,1], 2:[0,2], 3:[1,0], 4:[1,1], 5:[1,2], 6:[2,0], 7:[2,1], 8:[2,2]};
 
   function onLineReceived(str) {
-      var strs = str.split(",");
-      if (strs.length != 5) return;
-      var id = parseInt(strs[0]);
-      if (id > _self.buttons.length || id < 0) return;
-      if ( _self.buttons[id].touch == parseInt(strs[1]) 
-           && _self.buttons[id].position == parseInt(strs[2])
-           && _self.buttons[id].desiredPosition == parseInt(strs[3])
-           && _self.buttons[id].pwmAction == parseInt(strs[4])) return;
-      var touch = parseInt(strs[1]);
-      var position = parseInt(strs[2]);
-      var desiredPosition = parseInt(strs[3]);
-      var pwmAction = parseInt(strs[4]);
-      _self.updateValues(id,touch, position, desiredPosition, pwmAction);
+    var strs = str.split(",");
+    if (strs.length != 5) return;
+    var id = parseInt(strs[0]);
+    if (id > _self.buttons.length || id < 0) return;
+    if ( _self.buttons[id].touch == parseInt(strs[1]) 
+         && _self.buttons[id].position == parseInt(strs[2])
+         && _self.buttons[id].desiredPosition == parseInt(strs[3])
+         && _self.buttons[id].pwmAction == parseInt(strs[4])) return;
+    var touch = parseInt(strs[1]);
+    var position = parseInt(strs[2]);
+    var desiredPosition = parseInt(strs[3]);
+    var pwmAction = parseInt(strs[4]);
+    _self.updateValues(id,touch, position, desiredPosition, pwmAction);
   }
 
   _self.newButton = function(id, onUpdate) {

@@ -18,9 +18,9 @@ function Button (id, arduino, onUpdate) {
 			&& (_self.pwmAction == pwmAction || pwmAction == null)) return;
 		_self.touch = (touch == null)? _self.touch:touch;
 		_self.lastPosition = (position == null)? _self.lastPosition : _self.position;
-    _self.position = (position == null)? _self.position : position;
-    _self.desiredPosition = (desiredPosition == null)? _self.desiredPosition : desiredPosition;
-    _self.pwmAction = (pwmAction == null)? _self.pwmAction : pwmAction;
+	    _self.position = (position == null)? _self.position : position;
+	    _self.desiredPosition = (desiredPosition == null)? _self.desiredPosition : desiredPosition;
+	    _self.pwmAction = (pwmAction == null)? _self.pwmAction : pwmAction;
 		onUpdate(_self);
 	}
 
