@@ -108,7 +108,7 @@ struct pixel {
     if (touchCount > touchMax){
       touchCount = 0;
       pinMode(_touchIn,OUTPUT);
-      digitalWrite(_touchIn,HIGH);
+      digitalWrite(_touchIn, LOW);
     }
 
     pinMode(_touchIn,INPUT);
