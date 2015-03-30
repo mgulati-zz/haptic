@@ -6,11 +6,11 @@ const int _posBottom = 0;
 unsigned int _posStop = 300;
 unsigned int _posFlush = 400;
 
-unsigned int BUZZ_THRESHOLD = 0;
-unsigned int MOTOR_MIN = 0;
+unsigned int BUZZ_THRESHOLD = 100;
+unsigned int MOTOR_MIN = 150;
 
-const unsigned int PWM_HIGH = 255;
-const unsigned int PWM_LOW = 0;
+const int PWM_HIGH = 255;
+const int PWM_LOW = 0;
 
 const unsigned int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
@@ -71,7 +71,7 @@ struct pixel {
   }
 
   void setPIDPreset(int preset) {
-    setPIDValues(presets[preset][0], presets[preset][1], presets[preset][2]);
+    setPIDValues(presets[preset][0], presets[preset][2], presets[preset][1]);
   }
 
   void setPIDValues(double p, double i, double d) {
@@ -117,7 +117,7 @@ struct pixel {
     if (derivative == 0 && error == 0) integral = 0;
 
     action = (error * kP) + (integral * kI) + (derivative * kD);
-    action = constrain(map(action, -500, 500, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
+    action = constrain(map(action, -1000, 1000, -PWM_HIGH, PWM_HIGH), -PWM_HIGH,  PWM_HIGH);
     if (abs(action) < BUZZ_THRESHOLD) action = PWM_LOW;
   }
 
