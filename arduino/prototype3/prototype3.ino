@@ -13,7 +13,7 @@ const int PWM_HIGH = 255;
 const int PWM_LOW = 0;
 
 const unsigned int NUM_PRESETS = 3;
-double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
+double presets[NUM_PRESETS][3] = {{10, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
 unsigned int touchSwap = 90;
 
@@ -58,7 +58,7 @@ struct pixel {
     setPIDPreset(0);
     setColor(255, 0, 0);
     setTarget(1000);
-
+  
     pinMode(_analogPos, INPUT);
     pinMode(_touchIn, INPUT);
     pinMode(_motor, OUTPUT);
@@ -225,7 +225,7 @@ unsigned int currentPair = 0;
 
 unsigned int pixelCounter = 0;
 unsigned int pixelPrintCounter = 0;
-String debugPixels = "111111111";
+String debugPixels = "111011111";
 
 const unsigned int touchOut = 52;
 unsigned int touchCounter = 0;
@@ -235,7 +235,7 @@ void setup() {
 
   pinMode(touchOut, OUTPUT);
   digitalWrite(touchOut, HIGH);
-
+  assignmentTest();
   //  startupAnimation();
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
@@ -446,5 +446,13 @@ void startupAnimation() {
     pixels[8].desiredPos -= 100;
     delay(200);
   }
+}
 
+void assignmentTest() {
+  for (int i = 0; i < 9; i++ ) {
+    pixels[i].desiredPos = i*100;
+    pixels[i].red = (i == 0 || i == 3 || i == 6) ? 255 : 0;
+    pixels[i].green = (i == 1 || i == 4 || i == 7) ? 255 : 0;
+    pixels[i].blue = (i == 2 || i == 5 || i == 8) ? 255 : 0;
+  }
 }
