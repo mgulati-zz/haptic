@@ -246,7 +246,7 @@ function Generator () {
 
     _self.setBorder = function (x,z,borderSetting) {
       var id_class = x + '_' + z;
-      $('.' + id_class).children().css('border',borderSetting);
+      $('.' + id_class).children('.tp').css('border',borderSetting);
     }
 
     _self.getColor = function(x, z) {

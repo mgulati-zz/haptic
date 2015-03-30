@@ -15,7 +15,7 @@ const unsigned int PWM_LOW = 0;
 const unsigned int NUM_PRESETS = 3;
 double presets[NUM_PRESETS][3] = {{0.6, 0.2, 0.02}, {10, 0.3, 0.02}, {0, 0, 0}};
 
-unsigned int touchSwap = 100;
+unsigned int touchSwap = 90;
 
 struct pixel {
   const int _ledR;
@@ -216,7 +216,7 @@ char inData[BUFFER_SIZE];
 
 unsigned int index = 0;
 unsigned int serialTimer = 0;
-unsigned int STIMER_THRESHOLD = 100;
+unsigned int STIMER_THRESHOLD = 11;
 
 const unsigned int ledPairs[5][2] = {{1, 8}, {4, 2}, {3, 7}, {6, 0}, {5, 5}};
 unsigned int ledCounter = 0;

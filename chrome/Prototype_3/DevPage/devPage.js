@@ -85,16 +85,8 @@ $(document).ready(function() {
       var coordinates = grid.indexLookup(button.id);
       generator.setPos(coordinates[0], coordinates[1], button.position / 1000, false);
       generator.setDesiredPos(coordinates[0], coordinates[1], button.desiredPosition / 1000, false);
-      
-
-      if (button.touchState == 1){
-        generator.SetBorder(coordinates[0],coordinates[1],'red');
-      }
-      else{
-        generator.SetBorder(coordinates[0],coordinates[1],'black');
-
-      }
-
+      generator.setBorder(coordinates[0], coordinates[1], (button.touch > 2)? '5px solid red' : '');
+      if (button.id == 4) console.log(button.touch);
 
     });
   }
