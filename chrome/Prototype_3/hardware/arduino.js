@@ -16,7 +16,7 @@ function Arduino (onLineReceived) {
       });
     } 
     // else console.log("Can't write without a connection");
-    // console.log(str);
+    console.log(str);
   }
 
   _self.getPorts = function(callback) {

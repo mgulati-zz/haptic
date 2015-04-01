@@ -5,6 +5,7 @@ $(document).ready(function() {
   var tempColors = [0,0,0,0,0,0,0,0,0];
   var x = 3;
   var z = 3;
+  var desPos = 800;
 
   //debuggable gnerator and grid
   generator = new Generator();
@@ -78,7 +79,7 @@ $(document).ready(function() {
       newData[button.id] = button.position;
       if (button.id == 8) {
         if (dataCounter > 10) posChart.removeData();
-        posChart.addData(newData.concat(button.desiredPosition),'');
+        posChart.addData(newData.concat(desPos),'');
         dataCounter++;
       }
 
@@ -158,6 +159,13 @@ $(document).ready(function() {
     for (var i = 0; i < 9; i++) {
       grid.updatePIDPreset(i, parseInt($("#pid_select").val()));
     }
+  });
+  $('#a_step').on('click', function() {
+    desPos = 1200 - desPos;
+    for (var i = 0; i < 9; i++) {
+      grid.updateDesiredPos(i, desPos);
+    }
+    posChart.datasets[posChart.datasets.length - 1].strokeColor = 'rgb(255,255,255)';
   });
   // $('.nav button').attr('disabled',true)
 });

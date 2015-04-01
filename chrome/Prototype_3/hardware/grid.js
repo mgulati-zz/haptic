@@ -39,7 +39,7 @@ function Grid() {
 
   _self.updateDesiredPos = function(i, desiredPos) {
     if (desiredPos == _self.buttons[i].desiredPosition) return;
-    _self.updateValues(i, null, null, null, desiredPos, null);
+    _self.updateValues(i, null, null, desiredPos, null);
     _self.buttons[i].sendTarget();
   }
 

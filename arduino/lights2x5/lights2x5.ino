@@ -1,19 +1,19 @@
 
 
-int red1 = 2;
-int red2 = 8;
+int red1 = 45;
+int red2 = 4;
 
-int green1 = 3;
+int green1 = 44;
 int green2 = 9;
 
-int blue1 = 4;
-int blue2 = 10;
+int blue1 = 46;
+int blue2 = 13;
 
-int ground1 = 22;
-int ground2 = 23;
-int ground3 = 24;
-int ground4 = 25; 
-int ground5 = 34;
+int ground1 = A0;
+int ground2 = A1;
+int ground3 = A2;
+int ground4 = A3;
+int ground5 = A4;
 
 int index = 1;
 
@@ -29,6 +29,13 @@ void setup() {
   pinMode(green2, OUTPUT);
   pinMode(blue1, OUTPUT);
   pinMode(blue2, OUTPUT);
+
+  // analogWrite(red1, 255);
+  // analogWrite(green1, 0);
+  // analogWrite(blue1, 0);
+  // analogWrite(red2, 0);
+  // analogWrite(green2, 255);
+  // analogWrite(blue2, 0);
 }
 
 
@@ -44,12 +51,12 @@ void loop() {
     //Write block
 
     analogWrite(red1, 255);
-    analogWrite(green1, 255);
-    analogWrite(blue1,255);
+    analogWrite(green1, 0);
+    analogWrite(blue1,0);
     analogWrite(red2, 255);
     analogWrite(green2, 0);
     analogWrite(blue2, 0);
-        digitalWrite(ground1,LOW);
+    digitalWrite(ground1,LOW);
     
   }
   if (index == 2) {
@@ -59,13 +66,13 @@ void loop() {
     digitalWrite(ground5,HIGH);   
     
     //Write block
-    analogWrite(red1, 255);
+    analogWrite(red1, 0);
     analogWrite(green1, 255);
-    analogWrite(blue1,255);
+    analogWrite(blue1,0);
     analogWrite(red2, 0);
     analogWrite(green2, 255);
     analogWrite(blue2, 0);
-        digitalWrite(ground2,LOW);
+    digitalWrite(ground2,LOW);
   }
   if (index == 3) {
     digitalWrite(ground2,HIGH);
@@ -74,8 +81,8 @@ void loop() {
     digitalWrite(ground5,HIGH);   
     
     //Write block
-    analogWrite(red1, 255);
-    analogWrite(green1, 255);
+    analogWrite(red1, 0);
+    analogWrite(green1, 0);
     analogWrite(blue1,255);
     analogWrite(red2, 0);
     analogWrite(green2, 0);
@@ -93,8 +100,8 @@ void loop() {
     analogWrite(green1, 255);
     analogWrite(blue1,255);
     analogWrite(red2, 255);
-    analogWrite(green2, 0);
-    analogWrite(blue2, 0);
+    analogWrite(green2, 255);
+    analogWrite(blue2, 255);
     digitalWrite(ground4,LOW);
   }
   if (index == 5){
@@ -105,11 +112,11 @@ void loop() {
     
     //Write block
 
-    analogWrite(red1, 255);
-    analogWrite(green1, 255);
-    analogWrite(blue1,255);
+    analogWrite(red1, 0);
+    analogWrite(green1, 0);
+    analogWrite(blue1,0);
     analogWrite(red2, 0);
-    analogWrite(green2, 255);
+    analogWrite(green2, 0);
     analogWrite(blue2, 0);
     digitalWrite(ground5,LOW);
   }
