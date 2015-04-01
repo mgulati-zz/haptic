@@ -1,5 +1,3 @@
-//#include <CapacitiveSensor.h>
-
 //variables used inside pixel
 const int _posTop = 1000;
 const int _posBottom = 0;
@@ -173,6 +171,7 @@ struct pixel {
     readPosition();
     unsigned int startPoint = actualPos;
     unsigned long startTime = millis();
+    action = testAction;
     moveMotor();
 
     if (testAction > 0) {
@@ -240,7 +239,7 @@ void setup() {
 
   pinMode(touchOut, OUTPUT);
   digitalWrite(touchOut, HIGH);
-//  assignmentTest();
+  //  assignmentTest();
   //  startupAnimation();
   //timers for pwm
   /*TCCR1B = (TCCR1B & 0xF8) | 0x05;
